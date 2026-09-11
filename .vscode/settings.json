@@ -1,0 +1,15 @@
+{
+  "files.exclude": {
+    "archive": true,
+    "scripts": true,
+    "output": true,
+    "lm_explore": true,
+    "node_modules": true,
+    "package.json": true,
+    "package-lock.json": true,
+    "seed.ts": true,
+    ".gitignore": true,
+    "playwright-report": true,
+    "test-results": true
+  }
+}

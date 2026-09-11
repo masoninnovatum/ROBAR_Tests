@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+    
+    <title>
+        Innovatum Web Menu Login
+    </title>
+
+    <link type="text/css" href="../Content/themes/cupertino/jquery-ui.css" rel="stylesheet">
+    <link type="text/css" href="Style/MainMenuPage.css" rel="stylesheet">
+    <link type="text/css" href="Style/MenuIcon.css" rel="Stylesheet">
+
+    <script nonce="" type="text/javascript" src="../Scripts/jquery-3.7.0.min.js"></script>
+    <script nonce="" type="text/javascript" src="../Scripts/jquery-ui-1.13.2.min.js"></script>
+    
+
+    <style type="text/css">
+        html {
+            height: 100%;
+        }
+
+        body {
+            display: block;
+            height: 100%;
+            margin: 0px !important;
+        }
+
+        .ui-tabs {
+            margin: 0 !important;
+            padding: 0px 0px 0px 0px !important;
+        }
+
+        .ui-tabs-nav {
+            padding: 0 !important;
+        }
+
+        #menuTab {
+            overflow: auto;
+        }
+    </style>
+
+    <script nonce="" type="text/javascript" src="Scripts/mainmenu.js"></script>
+    <script nonce="" type="text/javascript">
+        $(document).ready(function () {
+            setTabsWidgetHeight();
+            setTabPanelHeight($("#menuTab"));
+
+            $(window).on("resize", (function () {
+                setTabsWidgetHeight();
+                setTabPanelHeight($("#tabs div.ui-tabs-panel[aria-hidden='false']"));
+            }));
+
+            // Class: menuIcon
+            $(".menuIcon").each(function () {
+                $(this).on("click", onMenuIconClick);
+            });
+
+            document.getElementById('logout').removeAttribute("onclick");
+            document.getElementById("logout").addEventListener("click", function () { __doPostBack('logout', 'logout_ServerClick'); });
+        });
+
+        function onMenuIconClick(menuIconClicked) {
+            var iconURL = menuIconClicked.currentTarget.querySelector("#iconURL").value;
+            var iconTitle = menuIconClicked.currentTarget.querySelector("#iconTitle").value;
+            var iconHelpID = menuIconClicked.currentTarget.querySelector("#iconHelpID").value;
+
+            doMenuIconClick(iconURL, iconTitle, iconHelpID);
+        }
+    </script>
+</head>
+<body>
+    <div id="menu-header-container" class="ui-layout-north">
+        <table id="top_table">
+            <tbody><tr>
+                <td style="font-size: 12pt; text-align: left;" width="50%">
+                    <div style="vertical-align: middle; width: 60px; float: left; width: 54px; height: 44px; margin-right: 15px;">
+                        <img src="../Images/InnoLogo.jpg" alt="Innovatum">
+                    </div>
+                    <b>
+                        Innovatum Web Menu</b>
+                    <br>
+                    <span id="lblServer" class="serverLabel">Server: VMSRVTST703</span>
+                    <span id="lblVersion"></span>
+                </td>
+
+                <td align="right" width="50%">
+                    <span id="lblUserName" class="topUserName">[MBUser2]</span>
+                    <button id="logout" class="ui-button ui-corner-all ui-widget">
+                        Logout</button>
+                    <button id="help" class="ui-button ui-corner-all ui-widget">
+                        Help</button>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+    <div id="tabs" class="ui-layout-center ui-tabs ui-corner-all ui-widget ui-widget-content" style="padding-left: 5px; padding-right: 5px; height: 848px;">
+        <ul id="tabsList" role="tablist" class="ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header">
+            <li role="tab" tabindex="0" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab ui-tabs-active ui-state-active" aria-controls="menuTab" aria-labelledby="menuTab_li" aria-selected="true" aria-expanded="true"><a id="menuTab_li" href="#menuTab" tabindex="-1" class="ui-tabs-anchor">Main Menu</a></li>
+        </ul>
+        <div id="menuTab" aria-labelledby="menuTab_li" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false" style="height: 818.703px;">
+            <div id="menuTabInner">
+                <div id="webmenudiv" name="webmenudiv">
+                    <span id="wmcMenu"><div>
+	<span>Data and Labels</span><hr><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/mdm.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Master Data<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnovatumMDM/MasterData/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Master Data"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10032"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/templatemanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Template Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/TemplateManagement/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Template Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/dictionaryedit.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Dictionary Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DictionaryManagement/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Dictionary Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/campaignmanager.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Campaign Manager<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/CampaignManager/"><input type="hidden" id="iconTitle" value="Campaign Manager"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10021"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/viewlabelmaster.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">View Label Master<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ItemLabelMasterView/"><input type="hidden" id="iconTitle" value="View Label Master"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10077"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/labelcontrol.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Label Control<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LabelControl/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Label Control"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/lotmanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Lot Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Lot_Management&amp;Definition=Lots"><input type="hidden" id="iconTitle" value="Lot Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/workflowinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Workflow Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/WorkflowManagement/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Workflow Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/labeltypemanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Label Type Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Label_Type_Management&amp;Definition=LabelTypes"><input type="hidden" id="iconTitle" value="Label Type Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/bulkmasterreview.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Bulk Master Review<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages//LabelMasterReview/LabelMasterReview?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Bulk Master Review"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/mdxlsimport.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Master Data Excel Import<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/MasterDataExcelImport/JobSubmission?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Master Data Excel Import"><input type="hidden" id="iconHelpID" value=""></div></button></span><br><br><span>Document Control</span><hr><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/attachmentmanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Attachment Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LinkAttachmentManagement/AttachmentManagement?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Attachment Management"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10006"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/attachmentupload.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Attachment Upload<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LinkAttachmentManagement/UploadAttachments?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Attachment Upload"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/linkmanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Link Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LinkAttachmentManagement/LinkManagement?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Link Management"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10021"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/TrainingUpload.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Training Upload<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/TrainingUpload/Index?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Training Upload"><input type="hidden" id="iconHelpID" value=""></div></button></span><br><br><span>Printing</span><hr><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/versionprinting.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Version Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=VerPrint"><input type="hidden" id="iconTitle" value="Version Printing"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10009"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyitemlot.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Misc. Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=MiscPrint"><input type="hidden" id="iconTitle" value="Misc. Printing"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10008"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyorder.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print by order<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=print1"><input type="hidden" id="iconTitle" value="Print by order"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10057"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbylot.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print by lot<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=LotNumber"><input type="hidden" id="iconTitle" value="Print by lot"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10010"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbylotmulti.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print by order multi<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=OrderNumberMultiple"><input type="hidden" id="iconTitle" value="Print by order multi"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10056"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbylotmulti.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print by lot multi<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=LotNumberMultiple"><input type="hidden" id="iconTitle" value="Print by lot multi"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10054"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyorderlot.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print by order lot<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=OrderLot"><input type="hidden" id="iconTitle" value="Print by order lot"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10055"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/serverprinting.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Server Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=ServerPrint"><input type="hidden" id="iconTitle" value="Server Printing"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyitemlot.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">DX Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=DXPrinting"><input type="hidden" id="iconTitle" value="DX Printing"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10051"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/flexprinting.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Flex Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=FlexPrinting"><input type="hidden" id="iconTitle" value="Flex Printing"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/multidocumentprinting.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Multi Document Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/MultiDocPrinting/MultiDocumentPrinting?ConfigName=MultiDocPrint"><input type="hidden" id="iconTitle" value="Multi Document Printing"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/destinationlabeling.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Destination Labeling<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DestLabeling/DestLabeling?ConfigName=DestLabeling"><input type="hidden" id="iconTitle" value="Destination Labeling"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/labelhistoryinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print Reconciliation<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LabelHistory/LabelHistoryInquiry?sp=GetLabelHistoryInquiryData&amp;PageMode=Reconcile"><input type="hidden" id="iconTitle" value="Print Reconciliation"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbylot.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Single Piece Flow Printing<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/Print/InitialEntry?ConfigName=SPF"><input type="hidden" id="iconTitle" value="Single Piece Flow Printing"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyorder.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print Prep Testing<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/PrintPrep/PrintPreparation?ConfigName=Print1"><input type="hidden" id="iconTitle" value="Print Prep Testing"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printbyorder.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Service and Repair Print<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=SRPrint"><input type="hidden" id="iconTitle" value="Service and Repair Print"><input type="hidden" id="iconHelpID" value=""></div></button></span><br><br><span>Reports and Inquiries</span><hr><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/innoview.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">InnoView<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/innoview/Screens/MainMenu.aspx"><input type="hidden" id="iconTitle" value="InnoView"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10012"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printhistoryinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print History Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Print_History_Inquiry&amp;Definition=PrintHistory"><input type="hidden" id="iconTitle" value="Print History Inquiry"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10013"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/mdminquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">MD Job Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnovatumMDM/MasterData/JobInquiry?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="MD Job Inquiry"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10033"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/jobinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Job Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/CampaignManager/JobInquiry"><input type="hidden" id="iconTitle" value="Job Inquiry"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10025"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/templateimageinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Template Image Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/TemplateImageInquiry/"><input type="hidden" id="iconTitle" value="Template Image Inquiry"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10035"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/transmissioninquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Transmission Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnovatumMDM/COM/TransmissionInquiry?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Transmission Inquiry"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/labelhistoryinquiry.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Label History Inquiry<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/LabelHistory/LabelHistoryInquiry?sp=GetLabelHistoryInquiryData&amp;PageMode=Detail"><input type="hidden" id="iconTitle" value="Label History Inquiry"><input type="hidden" id="iconHelpID" value=""></div></button></span><br><br><span>Settings</span><hr><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/labeltypeexclusion.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Label Type Excl.<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/ROBAR/management/LabelTypeExclusion/ExclusionEdit.aspx"><input type="hidden" id="iconTitle" value="Label Type Excl."><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10006"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printercontrol.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Printer Control<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Printer_Control_Maintenance&amp;Definition=PrinterControl"><input type="hidden" id="iconTitle" value="Printer Control"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10023"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printentity.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print Entity Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/PrintEntity/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Print Entity Management"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10010"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/userprintentity.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">User Print Entity Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/PrintEntity/UserManagement?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="User Print Entity Management"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10010"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/badgemaintenance.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Badge Maintenance<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/UserBadgeMaintenance/"><input type="hidden" id="iconTitle" value="Badge Maintenance"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10024"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/PasswordReset.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Password Reset<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/PasswordReset/"><input type="hidden" id="iconTitle" value="Password Reset"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10034"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/passwordchange.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Password Change<input type="hidden" id="iconURL" value="http://vmsrvtst703/Innovatum/WebMenu/ChangePwd.aspx"><input type="hidden" id="iconTitle" value="Password Change"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/securitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Security Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/Security/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Security Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/codesmanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Codes Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/Codes/Management?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Codes Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/fielddefinitions.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Field Defs Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/FieldDefsManagement/Management?LinkedFromWebMenu=1"><input type="hidden" id="iconTitle" value="Field Defs Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/schemas.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Schemas<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnovatumMDM/Schemas/Edit?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Schemas"><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10066"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/tradingpartnerconfig.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Trading Partner Config.<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnovatumMDM/COM/TradingPartnerConfiguration?LinkedFromWebmenu=1"><input type="hidden" id="iconTitle" value="Trading Partner Config."><input type="hidden" id="iconHelpID" value="http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10076"></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Facility Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Facility_Management&amp;Definition=Facilities"><input type="hidden" id="iconTitle" value="Facility Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Global Settings Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Global_Settings_Management&amp;Definition=GlobalSettings"><input type="hidden" id="iconTitle" value="Global Settings Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Print Config Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Print_Config_Management&amp;Definition=PrintConfig"><input type="hidden" id="iconTitle" value="Print Config Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Notifications Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Notifications_Management&amp;Definition=Notifications"><input type="hidden" id="iconTitle" value="Notifications Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Notifications Link Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Notifications_Link_Management&amp;Definition=NotificationsLink"><input type="hidden" id="iconTitle" value="Notifications Link Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Dashboards Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Dashboards_Management&amp;Definition=Dashboards"><input type="hidden" id="iconTitle" value="Dashboards Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Dashboards Link Management<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Dashboards_Link_Management&amp;Definition=DashboardsLink"><input type="hidden" id="iconTitle" value="Dashboards Link Management"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Printer User Commands<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Printer_User_Commands&amp;Definition=PrinterUserCommands"><input type="hidden" id="iconTitle" value="Printer User Commands"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/facilitymanagement.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Prompt Samples<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Prompt_Samples&amp;Definition=PromptSamples"><input type="hidden" id="iconTitle" value="Prompt Samples"><input type="hidden" id="iconHelpID" value=""></div></button></span><span><button class="ui-button ui-widget ui-state-default ui-corner-all menuIcon"><img src="Images/printercontrol.png" alt="" class="menuIconImage"><br><div class="menuIconBtnText">Alternate Print File Control<input type="hidden" id="iconURL" value="http://vmsrvtst703/InnoPages/DynamicUI/DynamicUI?Heading=Alternate_Print_File_Control&amp;Definition=AlternatePrintFileControl"><input type="hidden" id="iconTitle" value="Alternate Print File Control"><input type="hidden" id="iconHelpID" value=""></div></button></span>
+</div></span>
+                </div>
+            </div>
+            <form name="form1" method="post" action="./MainMenu.aspx" id="form1">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="q6azADo+HPYPYsbAkEHiyJgQh1hYO/CYuAUqmi+JPxc7hfXq3rf8O8+KGEa+iAdk4F9Q9nmV764krsFjaYkannIWPp5YD6L4yQPMMpEtC6r8z2QK+5gR/VbQ388UBoy9YJPJrAkdQfNQcV7U/R2pAlPXOl9Nzcgz6Z/BZQO5ZCY2rCK1VgEx4eX5VQd9SnxBG8Ii7t785Xfl2P1zTau3kr5k0z4=">
+</div>
+
+<script nonce="" type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script nonce="" src="/innovatum/WebResource.axd?d=Cr6NY1haBII3CUWgTf-vRxkAVYzK1FJ6XORbJp5zHXYb1faJ2WnIXBUQYE-i4nGMszzp_Bd8NNpxf0uVdI32lDKWS0A1&amp;t=638901397900000000" type="text/javascript"></script>
+
+
+<script nonce="" src="/innovatum/WebResource.axd?d=uG3epwomqUuMrWhB97mpUYonpUpTANHLcJF8E0Gom-ONq9TKvtnKHs0dX1lsugezQKisU1DtOYxpb94t5g5M5vhxPic4OFs77xF83m1ab_qpafedKsF2UP-Pz0AMdG09qoyT7oBH3FWM1wNJ4TlUoX3RdR81&amp;t=639228409000000000" type="text/javascript"></script>
+<script nonce="" type="text/javascript">
+//<![CDATA[
+    var UID_COOKIE = "InnoSession_CurrentUser";
+    var TIMEOUT_COOKIE = "InnoSession_PageTimeout";
+    var Interval_Refresh;
+    var Interval_Valid;
+    function createCookie(name,value,seconds) {
+        if (seconds) {
+            var date = new Date();
+            date.setTime(date.getTime()+(seconds*1000));
+            var expires = "; expires="+date.toGMTString();
+         }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+   function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    function eraseCookie(name) {
+        createCookie(name,"",-1);
+    }
+    function RefreshUID() { RefreshUID(false); } 
+    function RefreshUID(skipCheckValid){
+        if(!skipCheckValid){ CheckValid();}
+        //createCookie(UID_COOKIE, "DA2D4C58895B7C", 60);
+    }
+    function RefreshTimeout(){
+        CheckValid();
+        var seconds = 600;
+        var date = new Date();
+        date.setTime(date.getTime()+(seconds*1000));
+        createCookie(TIMEOUT_COOKIE, date.toGMTString(), false);
+    }
+    function CheckValid() {
+        var timeout = readCookie(TIMEOUT_COOKIE);
+        var user = readCookie(UID_COOKIE);
+        if ((new Date(timeout) < new Date())||(user != "DA2D4C58895B7C")) {
+             clearInterval(Interval_Refresh); 
+             clearInterval(Interval_Valid);
+             doTimeout();
+        }
+    }
+    function redirectToLogin() {
+        window.location="http://vmsrvtst703/innovatum/WebMenu/Default.aspx?FullScreen=true&Logout=true&Timeout=true&ForwardURL=%2finnovatum%2fWebMenu%2fMainMenu.aspx";
+    }
+    function doTimeout(){
+        WebForm_DoCallback('menuTimeout',"",redirectToLogin,true,null,false)
+    }
+    function RefreshUIDProxy() { RefreshUID(); }
+    function CheckValidProxy() { CheckValid(); }
+    RefreshUID();
+    RefreshTimeout();
+    Interval_Refresh = setInterval(RefreshUIDProxy,3000);
+    Interval_Valid = setInterval (CheckValidProxy, 2000);
+        document.body.addEventListener("mousemove", (event) => { RefreshTimeout(); });
+//]]>
+</script>
+
+<script nonce="" src="/innovatum/ScriptResource.axd?d=t1rNQaI7A95XEw4BGDg64jTPY9pxCron1068BriZHycJoeZmB-mQo7x8suakztx3snuOhowFWVRESvWh9nHUKSE7_PjXv-COn4AYHFPrBbWcn9CyK2KXyW0U7VYOQFGqsg287CvV10owhD_QMQDmO9dfA4criHpLVp3yQrk7j3V47ouR0&amp;t=5c0e0825" type="text/javascript"></script>
+<script nonce="" type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<script nonce="" src="/innovatum/ScriptResource.axd?d=bnZeUsMf9dODMoY1UoADFNu8y-9jMLEso5W2QTNjnpgEKQYpt-cfoqk-VxrxqXXfCUMvKjzwrsMPR1OFHnHZ3QNKHLmUvO_HxhjEu8jSY2GWi4d6Oj5B_zre59ObLfZHpGnKPWtrb3ctM44whpLeUJzYwXs1i6irI7sce1b4EspOfhXO0&amp;t=5c0e0825" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="CC7A385A">
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="3mhkbu49vzfZY9RTWV7zPEi6UWNMA8/GV1/Uu0Pt5nWLQJ02wZgDoTVRBB5Mm4x/7hwEZC+Z7Mj1FX/Kbb30HSSUdjD4jKfTa23kLSqknqXc+afClAhYC2/nqrzvCo7J0qCI4KLRnUNMaJnGoYQ3qKUSOFg=">
+</div>
+                <script nonce="" type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('smMainScriptMgr', 'form1', ['tudpnlMain',''], [], [], 90, '');
+//]]>
+</script>
+
+                <div id="udpnlMain">
+	
+                        <span id="menuTimeout"></span>
+                    
+</div>
+            
+
+<script nonce="" type="text/javascript">
+//<![CDATA[
+tab_directory["default_help_url"] = "http://vmsrvtst703/Innovatum/WebHelp/en/index.html?10015";
+WebForm_InitCallback();//]]>
+</script>
+</form>
+        </div>
+    </div>
+
+
+</body></html>
