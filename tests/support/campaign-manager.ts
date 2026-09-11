@@ -1,4 +1,4 @@
-// Campaign Manager helpers shared across tests/campaign-manager/*.spec.ts.
+// Campaign Manager helpers shared across tests/Campaign-Manager/*.spec.ts.
 //
 // IMPORTANT -- concurrency hazard confirmed live (2026-09-04): Campaign Manager's grid
 // "Retrieve Items" appears to read/write some per-ACCOUNT (not per-browser-session) server-side
@@ -6,7 +6,7 @@
 // still open, or two test workers running at once) can cause one session's Retrieve Items to come
 // back with a COMPLETELY DIFFERENT item than the one just filtered for -- not an error, just
 // silently wrong data. This is why playwright.config.ts pins `workers: 1` for this whole suite.
-// If you ever raise worker count again, at minimum keep tests/campaign-manager/**/*.spec.ts
+// If you ever raise worker count again, at minimum keep tests/Campaign-Manager/**/*.spec.ts
 // serialized (see Playwright's fullyParallel / describe.serial), and never leave a manually
 // launched browser script logged in as mbuser1 running in the background while other automation
 // runs against the same server.

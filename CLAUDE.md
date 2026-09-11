@@ -9,7 +9,7 @@ and exploratory testing sessions are authored/reviewed.
 ## Layout
 
 - `tests/` — `@playwright/test` spec files (`*.spec.ts`), one subfolder per ROBAR module (e.g.
-  `campaign-manager/`, `template-management/`). Run with `npm test`, `npm run test:ui` for the
+  `Campaign-Manager/`, `Template-Management/`). Run with `npm test`, `npm run test:ui` for the
   interactive UI runner, or via the "Playwright Test for VS Code" extension's Test Explorer.
   `tests/support/robar.ts` holds shared login/navigation helpers — pull new cross-module helpers
   in there rather than duplicating login boilerplate per spec.
