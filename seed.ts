@@ -22,4 +22,12 @@ export const ROBAR = {
   password: requireEnv('ROBAR_PASSWORD'),
   // Optional. When unset, tests that create a template generate a random name themselves instead.
   templateName: process.env.ROBAR_TEMPLATE_NAME || undefined,
+  // Folder of existing .btw files tests can pick from for "browse for an existing template" flows
+  // (e.g. Replace Template). Defaults to Mason's local template library.
+  btwLibraryDir:
+    process.env.ROBAR_BTW_LIBRARY_DIR ||
+    String.raw`C:\Users\Mason\OneDrive - Innovatum, Inc\Desktop\Attachments and Upload Files\Templates`,
+  // Optional. Name (with or without .btw) of a specific file in btwLibraryDir to use. When unset,
+  // the newest-modified .btw file in that folder is used instead.
+  btwFile: process.env.ROBAR_BTW_FILE || undefined,
 };

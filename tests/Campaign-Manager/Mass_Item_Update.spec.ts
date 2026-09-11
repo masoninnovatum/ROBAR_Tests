@@ -1,23 +1,19 @@
-// Bulk action: Mass Item Update ("massitemupdate" in the #Action dropdown) -- REGRESSION TEST for
-// a confirmed bug, not a happy-path test.
+// Bulk action: Mass Item Update ("massitemupdate" in the #Action dropdown).
+// Creates an item, selects it in the grid, runs Mass Item Update to set its Item Group to a known
+// value, and confirms the item's ItemGroup value actually changed afterward (not just that the job
+// POST reported success).
 //
-// The Job Submission - Mass Update Submit button (#SubmitButton) does not actually submit: no
-// SubmitJob request ever fires when clicked, even with a fully valid form (Column + New Value +
-// full signature) against a genuinely unapproved, editable item. This was independently
-// reproduced here (confirming an earlier exploratory session's suspicion that couldn't be tested
-// at the time because no unapproved item was on hand) -- ruled out button-disabled-pending-
-// validation (checked #SubmitButton.disabled before and after an explicit blur on #NewValue0:
-// false both times) and ruled out a timing issue (same result across repeated runs).
-//
-// If this bug is ever fixed, this test will FAIL LOUDLY (the response-wait will start resolving
-// instead of timing out) -- when that happens, replace this with a normal happy-path assertion
-// (job Success + ItemGroup actually updated) and remove this comment block.
+// This replaces an earlier version of this test, which was a deliberate REGRESSION test asserting
+// the opposite: a confirmed bug where the Job Submission - Mass Update Submit button (#SubmitButton)
+// never actually fired a SubmitJob request, even against a fully valid form (Column + New Value +
+// full signature) on a genuinely unapproved, editable item. That test was written to fail loudly
+// the moment the bug was fixed, which is what happened -- Mason confirmed live (2026-09-11) that
+// Submit now works. See git history for the old regression-test version if this ever regresses.
 
 import { test, expect } from '@playwright/test';
 import * as cm from '../support/campaign-manager';
-import { USERNAME, PASSWORD } from '../support/robar';
 
-test('BUG: mass item update Submit button does not submit the job', async ({ page }) => {
+test('mass item update changes the selected item\'s Item Group', async ({ page }) => {
   const cmFrame = await cm.openCampaignManager(page);
   const { itemNumber, editFrame } = await cm.createItem(page, cmFrame);
 
@@ -25,27 +21,16 @@ test('BUG: mass item update Submit button does not submit the job', async ({ pag
   await cm.retrieveAndSelectItem(page, gridFrame, itemNumber);
   await cm.startBulkAction(page, gridFrame, 'massitemupdate');
 
-  await gridFrame.selectOption('#UpdateField0', 'ItemGroup');
-  await gridFrame.fill('#NewValue0', 'PlaywrightGroup');
-  await gridFrame.fill('#Description', 'Playwright mass update job');
-  await gridFrame.fill('#Signature_UserName', USERNAME);
-  await gridFrame.fill('#Signature_Password', PASSWORD);
-  await gridFrame.fill('#Signature_Comment', 'Updated by Playwright test');
-
-  let submitJobFired = false;
-  page.on('request', (r) => {
-    if (r.url().includes('/MassItemUpdate/SubmitJob')) submitJobFired = true;
+  const jobResult = await cm.submitJob(page, gridFrame, {
+    jobDescription: 'Playwright mass update job',
+    comment: 'Updated by Playwright test',
+    extraFields: async (frame) => {
+      await frame.selectOption('#UpdateField0', 'ItemGroup');
+      await frame.fill('#NewValue0', 'PlaywrightGroup');
+    },
   });
+  expect(jobResult.Success, `SubmitJob failed: ${JSON.stringify(jobResult)}`).toBe(true);
 
-  await gridFrame.click('#SubmitButton');
-  await page.waitForTimeout(5_000);
-
-  expect(
-    submitJobFired,
-    'SubmitJob request fired -- the confirmed bug appears to be FIXED. Replace this regression test with a happy-path assertion (see file header).'
-  ).toBe(false);
-
-  // Confirm the field genuinely never changed server-side, not just that the request didn't fire.
   await cm.goToItem(page, itemNumber);
-  await expect(page.locator('input[name="ItemGroup"]')).toHaveValue('');
+  await expect(page.locator('input[name="ItemGroup"]')).toHaveValue('PlaywrightGroup');
 });
