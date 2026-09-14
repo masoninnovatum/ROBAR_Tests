@@ -30,4 +30,11 @@ export const ROBAR = {
   // Optional. Name (with or without .btw) of a specific file in btwLibraryDir to use. When unset,
   // the newest-modified .btw file in that folder is used instead.
   btwFile: process.env.ROBAR_BTW_FILE || undefined,
+  // Master Data Management schema to use for tests that create/edit master data records. Defaults
+  // to "RobarMasterData", a pre-existing test schema in this environment.
+  mdmSchema: process.env.ROBAR_MDM_SCHEMA || 'RobarMasterData',
+  // Optional. Fixed Master Data item number for the "New Record" test. Leave unset/commented to
+  // generate a random "MBMDMNNNNN" item number each run (default behavior), matching how template
+  // and item names are generated elsewhere in this suite.
+  mdmItemNumber: process.env.ROBAR_MDM_ITEM_NUMBER || undefined,
 };
