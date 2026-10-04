@@ -15,6 +15,38 @@
 
 import type { Page } from '@playwright/test';
 import * as flaui from '../../scripts/flaui_bridge';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
+const execFileAsync = promisify(execFile);
+
+/** Forces a process's main window to the foreground. clickAt's SendInput click lands on whatever
+ * window is physically topmost at that screen pixel, so if anything else (Slack, Word, another
+ * browser) is in front of Playwright's Chromium, a "successful" click on the Sentinel prompt hits the
+ * wrong window and the prompt never closes. Confirmed live (2026-10-02): the launch worked all
+ * morning, then failed repeatedly once other windows were open on top. Best-effort -- Windows may
+ * still refuse a background process's foreground request, which is why callers retry. */
+async function bringWindowToForeground(pid: number): Promise<void> {
+  await execFileAsync('powershell.exe', [
+    '-NoProfile',
+    '-Command',
+    `
+    Add-Type @"
+    using System;
+    using System.Runtime.InteropServices;
+    public class FgWin {
+      [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+      [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    }
+"@ -ErrorAction SilentlyContinue
+    $p = Get-Process -Id ${pid} -ErrorAction SilentlyContinue
+    if ($p -and $p.MainWindowHandle -ne [IntPtr]::Zero) {
+      [FgWin]::ShowWindow($p.MainWindowHandle, 9) | Out-Null
+      [FgWin]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
+    }
+    `,
+  ]).catch(() => {});
+}
 
 /** Retries `action` until it resolves without an `.error` field, or throws with the last error
  * once `attempts` is exhausted. Pass `{ attempts: 1 }` whenever `action` already carries its own
@@ -101,6 +133,8 @@ export async function confirmSentinelLaunchPrompt(page: Page, browserPid: number
     if (!(tree || '').includes('Open SentinelLauncher?')) {
       return; // dialog confirmed gone -- a prior click (or none needed) already succeeded
     }
+    await bringWindowToForeground(browserPid);
+    await page.waitForTimeout(200);
     await flaui.clickAt({ processId: browserPid, name: 'Open SentinelLauncher', offsetX: 20, offsetY: 14 });
     await page.waitForTimeout(500);
   }
@@ -203,25 +237,143 @@ export async function closeTemplateEditor(page: Page, bartenderPid: number): Pro
     flaui.click({ processId: bartenderPid, title: 'Template Editor', name: 'Close Tab', automationId: 'btnCloseTab', method: 'mouse' })
   );
 
-  for (let attempt = 0; attempt < 30; attempt++) {
+  let exited = false;
+  for (let attempt = 0; attempt < 30 && !exited; attempt++) {
     const stillRunning = (await flaui.listProcesses()).some((p: { pid: number }) => p.pid === bartenderPid);
-    if (!stillRunning) return;
+    if (!stillRunning) {
+      exited = true;
+    } else {
+      await page.waitForTimeout(1000);
+    }
+  }
+  if (!exited) throw new Error(`Template Editor (pid ${bartenderPid}) never exited after clicking Close Tab.`);
+  // The editor WINDOW being gone is not enough: the Sentinel plugin / BarTender can keep closing for several more seconds and a
+  // still-closing window can end up on top of the browser (seen live 2026-10-04). Wait for them, then bring the browser back up.
+  await waitForBartenderClosed(page);
+}
+
+/**
+ * Processes still alive after BarTender's "Close Tab": the Sentinel BarTenderEdit plugin (any instance) plus any BarTender
+ * process that still owns a window. (flaui.listProcesses() only lists processes with a main window title, so it cannot see the
+ * plugin process.)
+ */
+export async function bartenderLeftovers(): Promise<string[]> {
+  try {
+    const { stdout } = await execFileAsync('powershell.exe', [
+      '-NoProfile',
+      '-Command',
+      `Get-Process | Where-Object { $_.ProcessName -like 'Innovatum.Sentinel.Plugin.BarTenderEdit*' -or (($_.ProcessName -like 'bartend*' -or $_.ProcessName -like 'BarTender*') -and $_.MainWindowHandle -ne 0) } | ForEach-Object { $_.ProcessName + ':' + $_.Id }`,
+    ]);
+    return stdout.split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/** Waits (up to `timeoutSeconds`) until `bartenderLeftovers()` is empty, then raises Playwright's browser window. Soft: logs, never throws. */
+export async function waitForBartenderClosed(page: Page, timeoutSeconds = 90): Promise<boolean> {
+  let leftovers: string[] = [];
+  for (let attempt = 0; attempt < timeoutSeconds; attempt++) {
+    leftovers = await bartenderLeftovers();
+    if (leftovers.length === 0) break;
+    if (attempt % 5 === 0) console.log(`waiting for BarTender to close: ${JSON.stringify(leftovers)}`);
     await page.waitForTimeout(1000);
   }
-  throw new Error(`Template Editor (pid ${bartenderPid}) never exited after clicking Close Tab.`);
+  if (leftovers.length > 0) console.log(`BarTender processes still present after ${timeoutSeconds}s: ${JSON.stringify(leftovers)}`);
+  await page.waitForTimeout(1000);
+  try {
+    await bringWindowToForeground(await resolveBrowserPid(page));
+  } catch {
+    // best effort only
+  }
+  return leftovers.length === 0;
+}
+
+export interface AddTextObjectOptions {
+  /**
+   * When true (the default), the object is centered on the template via BarTender's native
+   * "Center Horizontally/Vertically On Template" Arrange commands after placement -- matches the
+   * original single-object behavior exactly. Set to false for a SECOND (or later) object on the
+   * same template -- centering always aims at the same dead-center spot, so a second centered
+   * object would land exactly on top of the first one. When false, the object is left wherever
+   * `placeAtOffset` (or the default placement point) put it.
+   */
+  center?: boolean;
+  /**
+   * Workspace-relative offset (in the same coordinate space `getProperty('Workspace',
+   * 'BoundingRectangle')` reports, i.e. pixels from Workspace's own top-left) to drag-place this
+   * object at. Defaults to Workspace's own center -- fine for a single, centered object, but for
+   * multiple objects on one template, pass a distinct offset per call so they don't stack on each
+   * other.
+   *
+   * **Don't compute this as a fraction of Workspace's full Width/Height (confirmed live
+   * 2026-09-30, caught by the user watching a real run)** -- e.g. `Width * 0.25` looks like a
+   * reasonable "quarter of the way across" offset but actually overshoots the label entirely,
+   * landing the object on the surrounding canvas background instead. The label only occupies a
+   * portion of the visibly-larger Workspace pane (confirmed: the same Workspace rect this session
+   * reported `Width: 1608, Height: 725` for a 4"x2" label at 227% zoom -- the label itself is
+   * nowhere near that large in the same units). Workspace's own CENTER (`Width/2, Height/2`) is
+   * the one point already proven, repeatedly, to land reliably on the label -- offset a SECOND
+   * object from THAT anchor by a modest, fixed amount instead (center minus ~150/~135 -- see
+   * `secondTextObjectOffset`; the earlier ~150/~80 hit the right ANCHOR but was too close, so the
+   * two objects' text overlapped by about half a line, confirmed visually 2026-10-02), not from
+   * Workspace's raw top-left corner by a large fraction of its full size.
+   */
+  placeAtOffset?: { x: number; y: number };
+}
+
+/**
+ * Placement for a SECOND text object on a template whose first object was auto-centered (the
+ * default of `addTextObjectBoundToSharename`), leaving visible space between the two. Pass the
+ * result as `placeAtOffset` together with `center: false`.
+ *
+ * Measured live (2026-10-02, the standard 4"x2" Carton Label at the default zoom, Workspace rect
+ * 1608x725): a default text box is ~68px tall and the centered object's box spans roughly
+ * center +/- 34px. The second object is placed ABOVE it: 135px above center leaves ~45px of clear
+ * space between the two objects' text, with both well inside the label. 80px above (the old value)
+ * overlapped the centered object by about half a line.
+ */
+export function secondTextObjectOffset(workspace: { Width: number; Height: number }): { x: number; y: number } {
+  return {
+    x: Math.round(workspace.Width / 2) - 150,
+    y: Math.round(workspace.Height / 2) - 135,
+  };
 }
 
 /**
  * Adds a Text object to the template's canvas and binds its data source to `sharename` (e.g.
  * "I_Num") -- byte-for-byte transcription of Create_and_Approve_Template.spec.ts's "Add a Text
- * object" and "Name its data source" steps. See that file for the full troubleshooting history:
- * why "Text" must be targeted as a MenuItem, why "Normal" is chosen via a raw Enter keypress
- * instead of clicking it, why placement is a drag read against Workspace's real
- * BoundingRectangle, why centering uses BarTender's native Arrange commands instead of pixel math,
- * and why the data source is renamed via real screen coordinates on Workspace rather than looking
- * up "Sample Text" as an element (it isn't one).
+ * object" and "Name its data source" steps, EXCEPT for the Properties step (see below). See that
+ * file for the full troubleshooting history: why "Text" must be targeted as a MenuItem, why
+ * "Normal" is chosen via a raw Enter keypress instead of clicking it, why placement is a drag read
+ * against Workspace's real BoundingRectangle, and why centering uses BarTender's native Arrange
+ * commands instead of pixel math.
+ *
+ * **Opening Properties via the `Edit` menu, not a right-click (fixed 2026-09-30):** the original
+ * version right-clicked at Workspace's own computed center as a stand-in for the placed object's
+ * true center, on the assumption the object ends up exactly there after centering. Confirmed live
+ * (2026-09-30, investigated by launching BarTender standalone via `BarTend.exe` directly --
+ * independent of the ROBAR web menu entirely, since BarTender is just a third-party desktop app --
+ * to iterate faster without the Sentinel-launch round trip) that this assumption doesn't hold
+ * precisely enough: the object WAS genuinely centered on the template (confirmed both via the
+ * Undo button's own label, "Undo Center Vertically On Template", and by direct visual inspection),
+ * but Workspace's own bounding-rectangle center is evidently NOT exactly the same point as the
+ * template's/object's true center in this environment, and the right-click missed, landing on the
+ * label instead of the object. Root fix: the object stays selected after being placed and
+ * centered (confirmed: Arrange commands act on the current selection with no extra select-click
+ * needed), so `Edit > Properties...` (a real menu item, confirmed via dump-tree to carry the
+ * shortcut label "Alt+Enter") opens the exact same "Text Properties" dialog with no coordinate
+ * targeting of the object at all -- eliminating the precision problem entirely rather than tuning
+ * it. Confirmed live for TWO objects placed at two different positions in the same template
+ * (one centered, one deliberately off-center), both opened Properties via this same menu path with
+ * no failures across repeated attempts.
  */
-export async function addTextObjectBoundToSharename(page: Page, bartenderPid: number, sharename: string): Promise<void> {
+export async function addTextObjectBoundToSharename(
+  page: Page,
+  bartenderPid: number,
+  sharename: string,
+  { center = true, placeAtOffset }: AddTextObjectOptions = {}
+): Promise<void> {
   // -- Add a Text object --
   await until(
     page,
@@ -232,12 +384,13 @@ export async function addTextObjectBoundToSharename(page: Page, bartenderPid: nu
   await page.waitForTimeout(300); // let the flyout finish rendering/taking focus before Enter
   await flaui.sendKeys({ keys: ['RETURN'] });
 
-  // Place it on the canvas.
+  // Place it on the canvas. Default target is Workspace's own center (fine for a single object);
+  // pass `placeAtOffset` for additional objects so they don't stack on top of each other.
   const workspaceRect = await untilValue(page, 'read the Workspace canvas BoundingRectangle', () =>
     flaui.getProperty({ processId: bartenderPid, name: 'Workspace', property: 'BoundingRectangle' })
   );
-  const centerX = Math.round(workspaceRect.value.Width / 2);
-  const centerY = Math.round(workspaceRect.value.Height / 2);
+  const targetX = placeAtOffset?.x ?? Math.round(workspaceRect.value.Width / 2);
+  const targetY = placeAtOffset?.y ?? Math.round(workspaceRect.value.Height / 2);
   await until(
     page,
     'drag to place the text object on the label',
@@ -245,47 +398,44 @@ export async function addTextObjectBoundToSharename(page: Page, bartenderPid: nu
       flaui.drag({
         processId: bartenderPid,
         name: 'Workspace',
-        fromOffsetX: centerX,
-        fromOffsetY: centerY,
-        toOffsetX: centerX + 100,
-        toOffsetY: centerY + 30,
+        fromOffsetX: targetX,
+        fromOffsetY: targetY,
+        toOffsetX: targetX + 100,
+        toOffsetY: targetY + 30,
         retrySeconds: 30,
       }),
     { attempts: 1 }
   );
 
-  // -- Center it precisely on the label --
-  await until(
-    page,
-    'center the text object horizontally on the template',
-    () => flaui.click({ processId: bartenderPid, name: 'Center Horizontally On Template', retrySeconds: 30 }),
-    { attempts: 1 }
-  );
-  await until(
-    page,
-    'center the text object vertically on the template',
-    () => flaui.click({ processId: bartenderPid, name: 'Center Vertically On Template', retrySeconds: 30 }),
-    { attempts: 1 }
-  );
+  // -- Center it precisely on the label (skip for a 2nd+ object -- see AddTextObjectOptions) --
+  if (center) {
+    await until(
+      page,
+      'center the text object horizontally on the template',
+      () => flaui.click({ processId: bartenderPid, name: 'Center Horizontally On Template', retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+    await until(
+      page,
+      'center the text object vertically on the template',
+      () => flaui.click({ processId: bartenderPid, name: 'Center Vertically On Template', retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+  }
 
   // -- Name its data source --
+  // Opens Properties via the Edit menu -- the object is already selected from placement/centering
+  // above, so this needs no click on the object itself and no coordinate targeting at all (see
+  // this function's own doc comment for why the previous right-click approach was replaced).
   await until(
     page,
-    'right-click the placed text object (via Workspace coordinates)',
-    () =>
-      flaui.clickAt({
-        processId: bartenderPid,
-        name: 'Workspace',
-        offsetX: centerX,
-        offsetY: centerY,
-        button: 'right',
-        retrySeconds: 30,
-      }),
+    'open the Edit menu',
+    () => flaui.click({ processId: bartenderPid, name: 'Edit', controlType: 'MenuItem', retrySeconds: 15 }),
     { attempts: 1 }
   );
   await until(
     page,
-    'click "Properties..." in its context menu',
+    'click "Properties..." in the Edit menu',
     () => flaui.click({ processId: bartenderPid, name: 'Properties...', retrySeconds: 30 }),
     { attempts: 1 }
   );
@@ -322,6 +472,31 @@ export async function addTextObjectBoundToSharename(page: Page, bartenderPid: nu
     () => flaui.click({ processId: bartenderPid, elementName: 'Text Properties', name: 'Close', automationId: '1', retrySeconds: 30 }),
     { attempts: 1 }
   );
+}
+
+/**
+ * Captures the label canvas with BarTender's View > Data Source Names overlay on, so each text box
+ * shows the sharename it is bound to -- the evidence screenshot the user wants in UATs and formal
+ * test scripts after a template is created. Turns the overlay on, captures the `Workspace` element
+ * (the label canvas -- the "Template Editor" window itself is only the banner strip) to `outPath`,
+ * then turns it back off so the user's BarTender view setting isn't left changed.
+ *
+ * The menu item's real name is "Data Source Names<TAB>F12" (shortcut text included) and it is a toggle;
+ * flaui.click matches by substring. Confirmed live 2026-10-02.
+ */
+export async function captureDataSourceNames(page: Page, bartenderPid: number, outPath: string): Promise<void> {
+  const toggle = async (what: string) => {
+    await until(page, `open the View menu (${what})`, () =>
+      flaui.click({ processId: bartenderPid, name: 'View', controlType: 'MenuItem', retrySeconds: 15 }), { attempts: 1 });
+    await page.waitForTimeout(500);
+    await until(page, `click View > Data Source Names (${what})`, () =>
+      flaui.click({ processId: bartenderPid, name: 'Data Source Names', controlType: 'MenuItem', retrySeconds: 15 }), { attempts: 1 });
+    await page.waitForTimeout(1000);
+  };
+
+  await toggle('on');
+  await flaui.screenshot({ processId: bartenderPid, elementName: 'Workspace', outPath });
+  await toggle('off');
 }
 
 /** Clicks Save in the Template Editor wrapper's action bar -- byte-for-byte transcription of

@@ -143,6 +143,30 @@ async function clickAt({ processId, title, name, automationId, offsetX, offsetY,
   return runCli(args, retrySeconds ? (retrySeconds + 30) * 1000 : undefined);
 }
 
+/** Real OS-level mouse move (SendInput, no click) to a point inside a named container, held for
+ *  `holdMs`. For triggering a native title-attribute tooltip that a CDP-driven Playwright
+ *  `.hover()` doesn't reliably trigger (confirmed live 2026-09-28 -- see Program.cs's CmdHoverAt
+ *  comment for the full story). Take a screenshot (via this same module's `screenshot()`, against
+ *  the same processId) while this call is blocked/holding is not possible since it's synchronous --
+ *  call this with a `holdMs` long enough, then screenshot immediately after it returns, or run
+ *  screenshot from a second concurrent process if a mid-hold capture is ever needed.
+ *  @param {{processId?: number, title?: string, name: string, automationId?: string, offsetX: number, offsetY: number, holdMs?: number, retrySeconds?: number}} opts
+ */
+async function hoverAt({ processId, title, name, automationId, offsetX, offsetY, holdMs, retrySeconds }) {
+  const args = [
+    'hover-at',
+    ...buildTargetArgs({ processId, title }),
+    '--offset-x', String(offsetX),
+    '--offset-y', String(offsetY),
+  ];
+  if (name) args.push('--name', name);
+  if (automationId) args.push('--automation-id', automationId);
+  if (holdMs) args.push('--hold-ms', String(holdMs));
+  if (retrySeconds) args.push('--retry-seconds', String(retrySeconds));
+  const timeoutMs = (retrySeconds ? retrySeconds + 30 : 60) * 1000 + (holdMs || 1500);
+  return runCli(args, timeoutMs);
+}
+
 /** Click-and-drags from one point to another, both as pixel offsets from a container's top-left.
  *  Read the container's BoundingRectangle first (getProperty) to compute good offsets rather than
  *  guessing -- e.g. to land centered on a canvas surface regardless of its actual size/position.
@@ -201,9 +225,12 @@ async function setText({ processId, title, name, value, automationId, controlTyp
   return runCli(args, retrySeconds ? (retrySeconds + 30) * 1000 : undefined);
 }
 
-/** @param {{processId?: number, title?: string, outPath: string}} opts */
-async function screenshot({ processId, title, outPath }) {
-  const args = ['screenshot', ...buildTargetArgs({ processId, title }), '--out', outPath];
+/** Captures a window, or -- with `elementName`/`elementAutomationId` -- just that element (e.g.
+ *  `elementName: 'Workspace'` for BarTender's label canvas; the "Template Editor" window itself is
+ *  only the banner strip).
+ *  @param {{processId?: number, title?: string, elementName?: string, elementAutomationId?: string, outPath: string}} opts */
+async function screenshot({ processId, title, elementName, elementAutomationId, outPath }) {
+  const args = ['screenshot', ...buildTargetArgs({ processId, title }), ...buildElementArgs({ elementName, elementAutomationId }), '--out', outPath];
   return runCli(args);
 }
 
@@ -232,6 +259,7 @@ module.exports = {
   click,
   rightClick,
   clickAt,
+  hoverAt,
   drag,
   getProperty,
   setText,

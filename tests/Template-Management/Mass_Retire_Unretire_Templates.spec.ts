@@ -27,7 +27,7 @@
 //   account's persisted last search) -- no need to re-add the filter row for the second pass.
 
 import { test, expect } from '@playwright/test';
-import { login, openMenuItem, findFrame } from '../support/robar';
+import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as bartender from '../support/bartender';
 
 // See View_Label_Characteristics.spec.ts's comment: headless:true now uses a dedicated headless-
@@ -117,8 +117,8 @@ test('mass retire and unretire templates toggles the selected template', async (
     await expect(frame.locator('#unretireItems')).toBeDisabled();
 
     await frame.fill('#txtJobDescription', 'Playwright retire templates job');
-    await frame.fill('#sigUser', 'mbuser1');
-    await frame.fill('#sigPassword', 'Password1');
+    await frame.fill('#sigUser', USERNAME);
+    await frame.fill('#sigPassword', PASSWORD);
     // Confirmed live: same Submit Job blur gotcha as Mass_Approve_Templates.spec.ts -- stays
     // disabled until Password is explicitly blurred.
     await frame.locator('#sigPassword').press('Tab');
@@ -177,8 +177,8 @@ test('mass retire and unretire templates toggles the selected template', async (
     await page.waitForTimeout(500);
 
     await frame.fill('#txtJobDescription', 'Playwright unretire templates job');
-    await frame.fill('#sigUser', 'mbuser1');
-    await frame.fill('#sigPassword', 'Password1');
+    await frame.fill('#sigUser', USERNAME);
+    await frame.fill('#sigPassword', PASSWORD);
     await frame.locator('#sigPassword').press('Tab');
     await frame.selectOption('#sigReason', { label: 'General' });
     await page.waitForTimeout(500);

@@ -5,8 +5,13 @@
 import { test, expect } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD, TEMPLATE_NAME } from '../support/robar';
 import * as flaui from '../../scripts/flaui_bridge';
+import * as bartender from '../support/bartender';
 
-test('create a new template and upload its file', async ({ page }) => {
+// FlaUI can only find a real browser window -- the config's default headless:true uses a
+// headless-shell build with no OS window (same note as the other BarTender-driving specs).
+test.use({ headless: false });
+
+test('create a new template and upload its file', async ({ page }, testInfo) => {
   // The default 120s test timeout (playwright.config.ts) is too tight once FlaUI is driving
   // BarTender -- observed live (2026-09-11) that BarTender's own startup alone can take a while
   // after its wrapper window first appears, and the retry budgets below are sized around that.
@@ -362,6 +367,13 @@ test('create a new template and upload its file', async ({ page }) => {
       flaui.click({ processId: bartenderPid, elementName: 'Text Properties', name: 'Close', automationId: '1', retrySeconds: 30 }),
       { attempts: 1 }
     );
+
+    // -- Evidence: View > Data Source Names --
+    // Overlays each text box's sharename on the label itself; attached to the Playwright report.
+    // The helper turns the overlay back off afterwards, so Save/Approve below are unaffected.
+    const dsnShot = testInfo.outputPath('template_data_source_names.png');
+    await bartender.captureDataSourceNames(page, bartenderPid, dsnShot);
+    await testInfo.attach('BarTender View > Data Source Names', { path: dsnShot, contentType: 'image/png' });
 
     // -- Save --
     // btnSave lives in the wrapper's action bar, not the BarTender Designer window itself --

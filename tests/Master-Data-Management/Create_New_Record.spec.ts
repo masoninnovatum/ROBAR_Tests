@@ -78,7 +78,7 @@ test('new record creates item-schema and non-item-schema master data records, an
     // See header comment (discrepancy #3) -- specific to the RobarMasterData fixture schema.
     if (schemaName === 'RobarMasterData') {
       await mdm.selectDropdownFieldByCaption(frame, 'Labeler Duns Number', 'Innovatum');
-      await mdm.fillFieldByCaption(frame, 'Primary DI Number', '00841646' + Math.floor(Math.random() * 1000000));
+      await mdm.fillFieldByCaption(frame, 'Primary DI Number', '00841646' + String(Math.floor(Math.random() * 1000000)).padStart(6, '0'));
       await mdm.fillFieldByCaption(frame, 'Brand Name', 'Playwright Test Brand');
     }
 

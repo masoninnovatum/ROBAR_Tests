@@ -16,7 +16,7 @@
 // "Completed" and Percent Complete "100 %" -- not a JSON response to assert on directly.
 
 import { test, expect } from '@playwright/test';
-import { login, openMenuItem, findFrame } from '../support/robar';
+import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as bartender from '../support/bartender';
 
 // See View_Label_Characteristics.spec.ts's comment: headless:true now uses a dedicated headless-
@@ -100,8 +100,8 @@ test('mass approve templates approves the selected template', async ({ page }) =
 
   await test.step('submit the approval job', async () => {
     await frame.fill('#txtJobDescription', 'Playwright approve templates job');
-    await frame.fill('#sigUser', 'mbuser1');
-    await frame.fill('#sigPassword', 'Password1');
+    await frame.fill('#sigUser', USERNAME);
+    await frame.fill('#sigPassword', PASSWORD);
     // Confirmed live: the Submit Job button's `sigValid()` binding does not recompute purely from
     // filling the fields -- it stayed disabled even after every field was filled until Password
     // was explicitly blurred. Tab out of it before relying on the button's enabled state.
@@ -145,6 +145,6 @@ test('mass approve templates approves the selected template', async ({ page }) =
     ]);
 
     const row = frame.locator('#grdJqGrid tr').filter({ hasText: templateName });
-    await expect(row).toContainText('mbuser1', { ignoreCase: true });
+    await expect(row).toContainText(USERNAME, { ignoreCase: true });
   });
 });
