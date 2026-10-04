@@ -8,11 +8,16 @@ export const USERNAME = ROBAR.username;
 export const PASSWORD = ROBAR.password;
 export const TEMPLATE_NAME = ROBAR.templateName;
 
-/** Logs into the WebMenu. Call once per test at the top. */
+/** Logs into the WebMenu as the seed user. Call once per test at the top. */
 export async function login(page: Page): Promise<void> {
+  await loginAs(page, USERNAME, PASSWORD);
+}
+
+/** Logs into the WebMenu as an explicit user (e.g. a throw-away MB* test user in a second browser context). */
+export async function loginAs(page: Page, username: string, password: string): Promise<void> {
   await page.goto(BASE_URL);
-  await page.fill('.userID', USERNAME);
-  await page.fill('.Password', PASSWORD);
+  await page.fill('.userID', username);
+  await page.fill('.Password', password);
   await page.click('.loginBtn');
   await page.waitForLoadState('networkidle');
 }
