@@ -1,0 +1,14 @@
+{
+  "SM-01": "MBPWS1_458504",
+  "SM-02": "MBPWS2_458504",
+  "SM-03": "MBPWS3_458504",
+  "expiredUser": "MBPWT_458504",
+  "normalUser": "MBPWN_458504",
+  "goodPw": "abc12345",
+  "stamp": "458504",
+  "expiredUserPw": "newpw1234",
+  "pcUser": "MBPWC_657419",
+  "noCountUser": "MBPWK_657419",
+  "lockUser": "MBPWL_657419",
+  "svUser": "MBPWV_240465"
+}

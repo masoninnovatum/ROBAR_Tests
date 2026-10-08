@@ -1,0 +1,104 @@
+{
+  "N-settings": {
+    "actual": "GlobalSettings (LegacySettings): {\"PasswordNeedsLetters\":\"N\",\"PasswordNeedsNumbers\":\"N\",\"PasswordMinLength\":\"5\"}; Password Reset hidden fields: {\"minLength\":\"5\",\"needsLetters\":\"false\",\"needsNumbers\":\"false\"}",
+    "result": "Pass",
+    "notes": "confirms both rules are OFF in the page that reads them",
+    "at": "2026-10-07T17:18:02.343Z"
+  },
+  "N-SM-digits-only": {
+    "actual": "Security Management add user \"12345678\" -> added; new login -> MENU ",
+    "result": "Pass",
+    "notes": "accepted (Security Management never checks) and logs in",
+    "at": "2026-10-07T17:18:24.475Z"
+  },
+  "N-SM-letters-only": {
+    "actual": "Security Management add user \"abcdefgh\" -> added; new login -> MENU ",
+    "result": "Pass",
+    "notes": "accepted (Security Management never checks) and logs in",
+    "at": "2026-10-07T17:18:38.982Z"
+  },
+  "N-SM-symbols-only": {
+    "actual": "Security Management add user \"!!!!!!!!\" -> added; new login -> MENU ",
+    "result": "Pass",
+    "notes": "accepted (Security Management never checks) and logs in",
+    "at": "2026-10-07T17:18:53.660Z"
+  },
+  "N-SM-mixed-case-letters": {
+    "actual": "Security Management add user \"AbCdEfGh\" -> added; new login -> MENU ",
+    "result": "Pass",
+    "notes": "accepted (Security Management never checks) and logs in",
+    "at": "2026-10-07T17:19:08.703Z"
+  },
+  "N-EP-digits-only": {
+    "actual": "Expired Password page, new password \"12345678\": MENU \"\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:19:25.964Z"
+  },
+  "N-EP-letters-only": {
+    "actual": "Expired Password page, new password \"abcdefgh\": MENU \"\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:19:42.246Z"
+  },
+  "N-EP-symbols-only": {
+    "actual": "Expired Password page, new password \"!!!!!!!!\": MENU \"\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:19:58.234Z"
+  },
+  "N-EP-mixed-case-letters": {
+    "actual": "Expired Password page, new password \"AbCdEfGh\": MENU \"\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:20:14.662Z"
+  },
+  "N-PC-digits-only": {
+    "actual": "Password Change, new password \"12345678\": \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:20:29.187Z"
+  },
+  "N-PC-letters-only": {
+    "actual": "Password Change, new password \"abcdefgh\": \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:20:33.724Z"
+  },
+  "N-PC-symbols-only": {
+    "actual": "Password Change, new password \"!!!!!!!!\": \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:20:39.906Z"
+  },
+  "N-PC-mixed-case-letters": {
+    "actual": "Password Change, new password \"AbCdEfGh\": \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:20:43.239Z"
+  },
+  "N-PR-digits-only": {
+    "actual": "Password Reset, new password \"12345678\": \"Success Close Password reset successfully. Ok\"; login with it -> MENU",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:21:04.117Z"
+  },
+  "N-PR-letters-only": {
+    "actual": "Password Reset, new password \"abcdefgh\": \"Success Close Password reset successfully. Ok\"; login with it -> MENU",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:21:14.911Z"
+  },
+  "N-PR-symbols-only": {
+    "actual": "Password Reset, new password \"!!!!!!!!\": \"Success Close Password reset successfully. Ok\"; login with it -> MENU",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:21:23.692Z"
+  },
+  "N-PR-mixed-case-letters": {
+    "actual": "Password Reset, new password \"AbCdEfGh\": \"Success Close Password reset successfully. Ok\"; login with it -> MENU",
+    "result": "Pass",
+    "notes": "expected accepted with both rules off",
+    "at": "2026-10-07T17:21:32.663Z"
+  }
+}
