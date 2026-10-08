@@ -119,6 +119,40 @@ export async function toggleProcess(page: Page, f: Frame, group: string, process
   return response.json();
 }
 
+/**
+ * Sets an MB group's authorizations to EXACTLY `processes` (clear all via Select All, then tick each) and verifies it after reopening the Security page.
+ * `page` must already be logged in as an admin (the test user); only MB groups are allowed (assertMb).
+ */
+export async function setGroupProcesses(page: Page, group: string, processes: string[]): Promise<Frame> {
+  assertMb(group);
+  let f = await reopenSecurity(page);
+  await setView(f, 'GROUP');
+  await selectRow(page, f, groupRow(f, group));
+  const current = await readProcesses(f);
+  const already = Object.keys(current).filter((k) => current[k]).sort();
+  if (JSON.stringify(already) === JSON.stringify([...processes].sort())) return f;
+  if (already.length > 0) {
+    const selectAll = f.locator('#cbSelectAll');
+    if (!(await selectAll.isChecked())) {
+      await Promise.all([page.waitForResponse((r) => r.url().includes('/Security/UpdateAllSecurityProcesses'), { timeout: 20_000 }), selectAll.setChecked(true, { timeout: 5000 })]);
+      await page.waitForTimeout(1000);
+    }
+    await Promise.all([page.waitForResponse((r) => r.url().includes('/Security/UpdateAllSecurityProcesses'), { timeout: 20_000 }), selectAll.setChecked(false, { timeout: 5000 })]);
+    await page.waitForTimeout(1000);
+  }
+  for (const p of processes) {
+    const r = await toggleProcess(page, f, group, p, true);
+    if (!r.Success) throw new Error(`could not authorize ${p} for ${group}: ${JSON.stringify(r)}`);
+  }
+  f = await reopenSecurity(page);
+  await setView(f, 'GROUP');
+  await selectRow(page, f, groupRow(f, group));
+  const after = await readProcesses(f);
+  const now = Object.keys(after).filter((k) => after[k]).sort();
+  if (JSON.stringify(now) !== JSON.stringify([...processes].sort())) throw new Error(`${group} holds ${now.join(',')} instead of ${processes.join(',')}`);
+  return f;
+}
+
 /** Opens the Add (name undefined) or Edit dialog for the SELECTED group/user and waits for it to load. */
 export async function openDialog(f: Frame, kind: 'group' | 'user', mode: 'add' | 'edit'): Promise<Locator> {
   await f.locator(mode === 'add' ? '#btnAddRecord' : '#btnEditRecord').click({ timeout: 5000 });

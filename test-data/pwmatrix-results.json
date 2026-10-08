@@ -1,0 +1,482 @@
+{
+  "SM-04": {
+    "actual": "blank password: added=false messages=[\"Password is required\"]",
+    "result": "Pass",
+    "notes": "blank password",
+    "at": "2026-10-07T16:11:26.253Z"
+  },
+  "SM-04b": {
+    "actual": "mismatch: added=false messages=[\"Password values do not match\"]",
+    "result": "Pass",
+    "notes": "password != confirm",
+    "at": "2026-10-07T16:11:34.022Z"
+  },
+  "SM-01": {
+    "actual": "one-character password (min 5): added=true messages=[]; login as that user -> MENU",
+    "result": "Gap",
+    "notes": "weak password accepted by Security Management",
+    "at": "2026-10-07T16:11:48.926Z"
+  },
+  "SM-02": {
+    "actual": "digits-only (letters required): added=true messages=[]; login as that user -> MENU",
+    "result": "Gap",
+    "notes": "weak password accepted by Security Management",
+    "at": "2026-10-07T16:12:03.242Z"
+  },
+  "SM-03": {
+    "actual": "letters-only (numbers required): added=true messages=[]; login as that user -> MENU",
+    "result": "Gap",
+    "notes": "weak password accepted by Security Management",
+    "at": "2026-10-07T16:12:17.664Z"
+  },
+  "SM-05": {
+    "actual": "reset ticked -> login EXPIRED Your password has expired and must be reset; reset unticked -> login MENU ",
+    "result": "Pass",
+    "notes": "expect ticked=EXPIRED page, unticked=MENU",
+    "at": "2026-10-07T16:12:46.438Z"
+  },
+  "SM-07": {
+    "actual": "edit dialog visibility {\"password\":false,\"confirm\":false,\"reset\":false,\"active\":true}",
+    "result": "Pass",
+    "notes": "edit cannot set a password",
+    "at": "2026-10-07T16:12:53.895Z"
+  },
+  "NL-06": {
+    "actual": "correct credentials, expired password -> EXPIRED Your password has expired and must be reset",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:20.009Z"
+  },
+  "EP-01": {
+    "actual": "new password 4 chars (min 5): EXPIRED \"Your new password must be at least 5 characters\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:21.687Z"
+  },
+  "EP-04": {
+    "actual": "digits only (letters required): EXPIRED \"Your new password must contain letters\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:23.288Z"
+  },
+  "EP-03": {
+    "actual": "letters only (numbers required): EXPIRED \"Your new password must contain numbers\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:25.185Z"
+  },
+  "EP-06a": {
+    "actual": "mismatch: EXPIRED \"Passwords do not match\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:27.458Z"
+  },
+  "EP-06b": {
+    "actual": "new = old: EXPIRED \"New password must be different than the current password\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:29.049Z"
+  },
+  "EP-06c": {
+    "actual": "wrong old password (counts as a failed attempt): EXPIRED \"Old Password is incorrect\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:30.660Z"
+  },
+  "EP-07": {
+    "actual": "anatomy {\"userIdDisabled\":true,\"fields\":[\"UserID|text|MBPWT_458504\",\"oldPasswordInput|password|\",\"newPasswordInput|password|\",\"confirmNewPasswordInput|password|\",\"|submit|Submit\",\"passwordResetResetBtn|button|Reset\"]}; reset/cancel button label \"Reset\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:30.665Z"
+  },
+  "EP-02": {
+    "actual": "new password exactly 5 chars: MENU \"\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:33.369Z"
+  },
+  "PR-06": {
+    "actual": "temporary reset: \"Success Close Password reset successfully. Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:47.910Z"
+  },
+  "PR-06b": {
+    "actual": "login after temporary reset -> EXPIRED Your password has expired and must be reset",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:50.398Z"
+  },
+  "EP-05": {
+    "actual": "reuse of the previous password (A, retired by the EP change): EXPIRED \"That password cannot be reused at this time\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:52.037Z"
+  },
+  "EP-05b": {
+    "actual": "reuse of B (retired by the reset): EXPIRED \"That password cannot be reused at this time\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:53.697Z"
+  },
+  "EP-05c": {
+    "actual": "a never-used password: MENU \"\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:13:56.234Z"
+  },
+  "PC-01": {
+    "actual": "new password 4 chars (min 5): \"Your password must be at least 5 characters!\"",
+    "result": "Pass",
+    "notes": "expected /at least 5 characters/i",
+    "at": "2026-10-07T16:15:02.659Z"
+  },
+  "PC-03": {
+    "actual": "letters only (numbers required): \"Your password must contain numbers!\"",
+    "result": "Pass",
+    "notes": "expected /contain numbers/i",
+    "at": "2026-10-07T16:15:06.355Z"
+  },
+  "PC-04": {
+    "actual": "digits only (letters required): \"Your password must contain letters!\"",
+    "result": "Pass",
+    "notes": "expected /contain letters/i",
+    "at": "2026-10-07T16:15:09.807Z"
+  },
+  "PC-02": {
+    "actual": "new password exactly 5 chars (A -> B): \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected /updated successfully/i",
+    "at": "2026-10-07T16:15:13.073Z"
+  },
+  "PC-05": {
+    "actual": "reuse of the previous password A: \"That password cannot be reused at this time!\"",
+    "result": "Pass",
+    "notes": "expected /cannot be reused/i",
+    "at": "2026-10-07T16:15:16.634Z"
+  },
+  "PC-06": {
+    "actual": "new = CURRENT password (ab123 -> ab123): \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "expected /updated successfully/i",
+    "at": "2026-10-07T16:15:20.078Z"
+  },
+  "PC-08": {
+    "actual": "4x wrong current + invalid new -> [\"Your password must be at least 5 characters!\",\"Your password must be at least 5 characters!\",\"Your password must be at least 5 characters!\",\"Your password must be at least 5 characters!\"]; then normal login -> MENU ",
+    "result": "Pass",
+    "notes": "policy checked before the current password; no failed attempts counted",
+    "at": "2026-10-07T16:15:37.029Z"
+  },
+  "PC-07": {
+    "actual": "3x wrong current + valid new -> [\"Invalid Username/Password. UserID:MBPWL_657419\",\"Invalid Username/Password. UserID:MBPWL_657419\",\"Invalid Username/Password. UserID:MBPWL_657419\"]; then the RIGHT current -> \"User account has been locked out.\"; new-login with the right password -> ERROR \"Invalid UserID/Password\"",
+    "result": "Pass",
+    "notes": "user left locked for PR-08",
+    "at": "2026-10-07T16:15:53.176Z"
+  },
+  "PC-09": {
+    "actual": "ChangePwd.aspx opens with NO session: true; a user with only Login_WebMenu sees a \"Password Change\" module entry: false (6 entries seen)",
+    "result": "Gap",
+    "notes": "page needs no login (security note)",
+    "at": "2026-10-07T16:15:59.341Z"
+  },
+  "PR-01": {
+    "actual": "4 chars with letters and digits (min 5): \"Error Close Password is too short. Required characters:5 Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:18:27.778Z"
+  },
+  "PR-02": {
+    "actual": "digits only: \"Error Close Password must contain letters. Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:18:32.463Z"
+  },
+  "PR-03": {
+    "actual": "letters only: \"Error Close Password must contain numbers. Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:18:37.070Z"
+  },
+  "PR-04": {
+    "actual": "3 letters (several violations): \"Error Close Password must contain numbers. Password is too short. Required characters:5 Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:18:41.733Z"
+  },
+  "PR-05": {
+    "actual": "reset to a previously used password (A): \"Error Close The new password was invalid. The new password was invalid. Ok\"",
+    "result": "Pass",
+    "notes": "server returns the generic \"The new password was invalid.\"",
+    "at": "2026-10-07T16:18:46.357Z"
+  },
+  "PR-07": {
+    "actual": "non-temporary reset: \"Success Close Password reset successfully. Ok\"; login -> MENU ",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:18:54.875Z"
+  },
+  "PR-08": {
+    "actual": "unlock list entry \"MBPWL_657419 - Locked\"; unlock: \"Success Close User unlocked successfully. Ok\"; login after unlock -> MENU ",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:19:03.282Z"
+  },
+  "NL-01a": {
+    "actual": "unknown user -> ERROR \"Invalid UserID/Password\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:20:42.829Z"
+  },
+  "NL-01b": {
+    "actual": "valid user, wrong password -> ERROR \"Invalid UserID/Password\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:20:45.531Z"
+  },
+  "NL-02": {
+    "actual": "2 wrong,right,2 wrong,right -> [\"ERROR(Invalid UserID/Password)\",\"ERROR(Invalid UserID/Password)\",\"MENU\",\"ERROR(Invalid UserID/Password)\",\"ERROR(Invalid UserID/Password)\",\"MENU\"]",
+    "result": "Pass",
+    "notes": "successful login clears the counter",
+    "at": "2026-10-07T16:21:26.137Z"
+  },
+  "NL-03": {
+    "actual": "3 wrong then the right password -> [\"ERROR(Invalid UserID/Password)\",\"ERROR(Invalid UserID/Password)\",\"ERROR(Invalid UserID/Password)\",\"ERROR(Invalid UserID/Password)\"]",
+    "result": "Pass",
+    "notes": "right password refused after the 3rd failure; reason hidden",
+    "at": "2026-10-07T16:21:36.878Z"
+  },
+  "NL-04": {
+    "actual": "disabled user -> ERROR \"Invalid UserID/Password\"; locked user -> ERROR(Invalid UserID/Password)",
+    "result": "Gap",
+    "notes": "new login shows the same text for disabled and locked (legacy login shows the reason)",
+    "at": "2026-10-07T16:21:59.904Z"
+  },
+  "NL-05": {
+    "actual": "6 quick wrong attempts took ms [2580,2537,2490,3105,3114,3191]",
+    "result": "Pass",
+    "notes": "delay grows after the 3rd attempt in 60 s",
+    "at": "2026-10-07T16:22:17.138Z"
+  },
+  "PR-09": {
+    "actual": "locked user MBPWR_031461: login before reset -> ERROR; reset: \"Success Close Password reset successfully. Ok\"; login after -> MENU ",
+    "result": "Pass",
+    "notes": "a reset clears the lock (FailCount 0, Enabled Y)",
+    "at": "2026-10-07T16:23:37.742Z"
+  },
+  "SM-06": {
+    "actual": "3 wrong logins -> [\"ERROR\",\"ERROR\",\"ERROR\"]; right password while locked -> ERROR; Active shown in grid before: false, in dialog: false; after ticking Active in Security Management, right password -> ERROR Invalid UserID/Password",
+    "result": "Gap",
+    "notes": "Active tick does NOT clear the fail count; PR Unlock is required",
+    "at": "2026-10-07T16:24:44.376Z"
+  },
+  "PC-09b": {
+    "actual": "user with only Login_WebMenu: \"Password Change\" in modules list = false; \"Password Reset\" = false",
+    "result": "Pass",
+    "notes": "tile gating by PasswordChange_Option / ResetPassword_Option",
+    "at": "2026-10-07T16:24:50.629Z"
+  },
+  "NL-10": {
+    "actual": "deep link ?moduleName=Print History Inquiry: without PrintHist_Login -> module text on page false; with it -> true",
+    "result": "Pass",
+    "notes": "module opens by default only when authorized",
+    "at": "2026-10-07T16:25:32.752Z"
+  },
+  "R2-settings": {
+    "actual": "Password Reset hidden fields now {\"minLength\":\"8\",\"needsLetters\":\"true\",\"needsNumbers\":\"false\"}",
+    "result": "Pass",
+    "notes": "confirms R2 min length and numbers are in force",
+    "at": "2026-10-07T16:33:19.051Z"
+  },
+  "SM-09": {
+    "actual": "1-char and 7-char passwords with MinLength 8 / NeedsNumbers N: both users added; logins -> MENU, MENU",
+    "result": "Gap",
+    "notes": "Security Management still ignores all password settings",
+    "at": "2026-10-07T16:33:57.961Z"
+  },
+  "SM-10": {
+    "actual": "ChangeOnReset N: reset ticked -> EXPIRED; unticked -> MENU",
+    "result": "Pass",
+    "notes": "same outcome as R1 (setting has no effect)",
+    "at": "2026-10-07T16:34:25.580Z"
+  },
+  "EP-08": {
+    "actual": "7 chars at MinLength 8: EXPIRED \"Your new password must be at least 8 characters\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:34:27.204Z"
+  },
+  "EP-09": {
+    "actual": "8 letters only with NeedsNumbers N: MENU \"\"",
+    "result": "Pass",
+    "notes": "also proves length 8 is accepted",
+    "at": "2026-10-07T16:34:29.931Z"
+  },
+  "PR-11a": {
+    "actual": "ChangeOnReset N, temporary tick on: \"Success Close Password reset successfully. Ok\"; next login -> EXPIRED",
+    "result": "Pass",
+    "notes": "tick decides, setting ignored",
+    "at": "2026-10-07T16:34:37.375Z"
+  },
+  "EP-10": {
+    "actual": "reuse days 0: new = a previously used password (abcdefgh): MENU \"\"",
+    "result": "Pass",
+    "notes": "blocked only while age < days (0 = never)",
+    "at": "2026-10-07T16:34:39.971Z"
+  },
+  "PR-11b": {
+    "actual": "ChangeOnReset N, tick off: \"Success Close Password reset successfully. Ok\"; login -> MENU",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:34:48.275Z"
+  },
+  "PR-12": {
+    "actual": "MinLength 8 / numbers off / reuse 0: 7 chars -> \"Error Close Password is too short. Required characters:8 Ok\"; 8 letters -> \"Success Close Password reset successfully. Ok\"; reset to a previously used password (abc12345) -> \"Success Close Password reset successfully. Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:35:02.587Z"
+  },
+  "PC-10": {
+    "actual": "new password 7 chars at min 8: \"Your password must be at least 8 characters!\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:35:21.814Z"
+  },
+  "PC-11": {
+    "actual": "letters only 8 chars (numbers off): \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:35:25.130Z"
+  },
+  "PC-12": {
+    "actual": "reuse days 0: back to the previous password: \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:35:28.397Z"
+  },
+  "PC-13": {
+    "actual": "lock count 5: 4 wrong then right -> \"Your password has been updated successfully.\"; 5 wrong (Invalid Username/Password. UserID:MBPWR_774253) then right -> \"User account has been locked out.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:36:28.346Z"
+  },
+  "NL-07": {
+    "actual": "lock count 5: 4 wrong -> [\"ERROR\",\"ERROR\",\"ERROR\",\"ERROR\"]; 5th wrong -> ERROR; right password afterwards -> ERROR",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:36:58.522Z"
+  },
+  "PR-14": {
+    "actual": "after 4 wrong: listed Locked = false; after 5: listed Locked = true",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:36:58.523Z"
+  },
+  "R3-settings": {
+    "actual": "Password Reset hidden fields now {\"minLength\":\"1\",\"needsLetters\":\"false\",\"needsNumbers\":\"true\"}",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:44:34.882Z"
+  },
+  "EP-11": {
+    "actual": "NeedsLetters N / NeedsNumbers Y / min 1: letters-only -> EXPIRED \"Your new password must contain numbers\"; digits-only 123456 -> MENU \"\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:44:58.226Z"
+  },
+  "EP-11b": {
+    "actual": "single-character password \"1\" at MinLength 1: MENU \"\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:45:08.866Z"
+  },
+  "PC-14a": {
+    "actual": "letters only (numbers still required): \"Your password must contain numbers!\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:45:28.587Z"
+  },
+  "PC-14b": {
+    "actual": "digits only (letters off): \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:45:32.019Z"
+  },
+  "PC-14c": {
+    "actual": "one digit at MinLength 1: \"Your password has been updated successfully.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:45:35.304Z"
+  },
+  "PR-13": {
+    "actual": "NeedsLetters N / MinLength 1: one digit -> \"Success Close Password reset successfully. Ok\"; letters only -> \"Error Close Password must contain numbers. Ok\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:45:55.561Z"
+  },
+  "NL-08": {
+    "actual": "lock count 1: one wrong login -> ERROR; right password straight after -> ERROR",
+    "result": "Pass",
+    "notes": "locked after the first failure",
+    "at": "2026-10-07T16:46:16.061Z"
+  },
+  "PC-15": {
+    "actual": "lock count 1: one wrong current + valid new -> \"Invalid Username/Password. UserID:MBPWL1_464530\"; right current -> \"User account has been locked out.\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:46:33.768Z"
+  },
+  "SM-11": {
+    "actual": "after the first failed login (lock count 1) the Security Management grid shows Active = false for MBPWN8_464530",
+    "result": "Pass",
+    "notes": "lock = Enabled N",
+    "at": "2026-10-07T16:46:38.387Z"
+  },
+  "R4-settings": {
+    "actual": "Password Reset hidden fields now {\"minLength\":\"5\",\"needsLetters\":\"false\",\"needsNumbers\":\"false\"}",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:51:14.902Z"
+  },
+  "NL-09": {
+    "actual": "ChangeDays 0: two users created with the reset tick OFF -> EXPIRED, EXPIRED",
+    "result": "Pass",
+    "notes": "every login expired",
+    "at": "2026-10-07T16:51:49.737Z"
+  },
+  "EP-13": {
+    "actual": "both complexity rules off, min 5: 4 symbols -> EXPIRED \"Your new password must be at least 5 characters\"; 5 symbols !!!!! -> MENU \"\"",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:51:54.298Z"
+  },
+  "EP-12": {
+    "actual": "after changing the password (PasswordSet = now), logging in again -> EXPIRED Your password has expired and must be reset",
+    "result": "Pass",
+    "notes": "ChangeDays 0: expired immediately every time",
+    "at": "2026-10-07T16:51:56.964Z"
+  },
+  "PC-16": {
+    "actual": "Password Change \"Your password has been updated successfully.\"; then new login -> EXPIRED Your password has expired and must be reset",
+    "result": "Pass",
+    "notes": "",
+    "at": "2026-10-07T16:52:03.100Z"
+  },
+  "NL-09-legacy": {
+    "actual": "legacy login (http://vmsrvtst703/innovatum/WebMenu/) as an expired user -> http://vmsrvtst703/innovatum/WebMenu/ChangePwd.aspx?Expired=true | Change Password Your password has expired. Please update your password now. Username: Current Password: New Password: Confirm New Password: 7.0.3.20198",
+    "result": "Pass",
+    "notes": "comparison with the new login: legacy redirects to ChangePwd.aspx?Expired=true",
+    "at": "2026-10-07T16:52:08.851Z"
+  },
+  "NL-09-admin": {
+    "actual": "the seed user MBUser1 on the new login with ChangeDays 0 -> MENU ",
+    "result": "Pass",
+    "notes": "informational: PasswordSet of MBUser1",
+    "at": "2026-10-07T16:52:18.109Z"
+  },
+  "R5-baseline": {
+    "actual": "hidden fields {\"minLength\":\"5\",\"needsLetters\":\"true\",\"needsNumbers\":\"true\"}; new user (tick off) login -> MENU (ChangeDays 90); PC short -> \"Your password must be at least 5 characters!\", letters-only -> \"Your password must contain numbers!\", digits-only -> \"Your password must contain letters!\"; 2 wrong then right -> MENU; 3 wrong then right -> ERROR",
+    "result": "Pass",
+    "notes": "baseline 90/Y/365/3/5/Y/Y observable behavior",
+    "at": "2026-10-07T16:57:36.454Z"
+  }
+}
