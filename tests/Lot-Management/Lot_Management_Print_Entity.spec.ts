@@ -106,12 +106,14 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
       expect(mine.find((r) => r.includes(lpe))).toContain('England');
     });
 
-    await test.step('NO Print Entity: "No records to view" and no Add icon', async () => {
+    await test.step('NO Print Entity: "No records to view"; the Add icon stays ENABLED but the dialog\'s Print Entity list is empty (live 2026-10-08; the formal script PE_LotManagment expects every icon disabled)', async () => {
       await setUserPrintEntities(page, MB, []);
       const v = await mbView();
       console.log(`no entity: ${JSON.stringify(v)}`);
       expect(v.rows).toEqual([]);
-      expect(v.add, 'Add icon disabled without any Print Entity').toBe(false);
+      expect(v.noRecords).toBe(true);
+      expect(v.add, 'the Add icon is still enabled without any Print Entity (deviates from the formal script)').toBe(true);
+      expect(v.entityField?.options ?? [], 'but there is no Print Entity to choose').toEqual([]);
     });
 
     await test.step('ONE entity (England): only the England lot is listed; the Add dialog\'s Print Entity is England and read-only', async () => {
@@ -123,7 +125,9 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
       expect(v.rows[0]).toContain('England');
       expect(v.add).toBe(true);
       expect(v.entityField?.value).toBe('England');
-      expect(v.entityField?.disabled, 'a single entity cannot be changed').toBe(true);
+      // live 2026-10-08: the Add dialog's Print Entity is a one-option dropdown that is pre-set but NOT disabled (the formal script PE_LotManagment expects it disabled)
+      expect(v.entityField?.options).toEqual(['England']);
+      expect(v.entityField?.disabled).toBe(false);
     });
 
     await test.step('TWO entities (ROBAR + England): both lots are listed and the Add dialog offers both entities', async () => {

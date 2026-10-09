@@ -11,7 +11,8 @@ export const PDF = 'Microsoft Print to PDF';
 export class PrintByLot {
   f!: Frame;
   pid = 0;
-  constructor(readonly page: Page) {}
+  /** `tile` = the menu tile of the legacy PrintScreen module ("Print by lot" default, "Print by order" for Print by Order). */
+  constructor(readonly page: Page, readonly tile = 'Print by lot') {}
 
   async frame(): Promise<Frame> {
     for (let i = 0; i < 20; i++) {
@@ -27,12 +28,12 @@ export class PrintByLot {
   /** Opens the Print by lot tile (closing a stale tab first); confirms the Sentinel prompt. */
   async open(): Promise<void> {
     const { page } = this;
-    await page.locator('li.ui-tabs-tab:has-text("Print by lot") .ui-icon-close').click({ timeout: 2000 }).catch(() => {});
+    await page.locator(`li.ui-tabs-tab:has-text("${this.tile}") .ui-icon-close`).click({ timeout: 2000 }).catch(() => {});
     await page.locator('li.ui-tabs-tab:has-text("Main Menu")').click({ timeout: 3000 }).catch(() => {});
-    await page.getByRole('button', { name: 'Print by lot', exact: true }).click();
+    await page.getByRole('button', { name: this.tile, exact: true }).click();
     await page.waitForTimeout(4000);
     this.pid = await bartender.resolveBrowserPid(page);
-    await bartender.confirmSentinelLaunchPrompt(page, this.pid);
+    await bartender.confirmSentinelLaunchPrompt(page, this.pid).catch(() => {}); // the prompt is not always shown when opening the screen
     this.f = await this.frame();
     await page.waitForTimeout(3000);
   }

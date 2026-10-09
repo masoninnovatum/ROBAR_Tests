@@ -100,5 +100,11 @@
     "result": "Pass",
     "notes": "expected accepted with both rules off",
     "at": "2026-10-07T17:21:32.663Z"
+  },
+  "6512-spike": {
+    "actual": "[{\"settings\":{\"PasswordMinLength\":\"5\",\"PasswordNeedsLetters\":\"Y\",\"PasswordNeedsNumbers\":\"Y\"}},{\"label\":\"short\",\"pw\":\"a1b2\",\"id\":\"MB6512SH695299\",\"added\":false,\"messages\":[\"Password must be at least 5 characters\"]},{\"label\":\"digits-only\",\"pw\":\"12345678\",\"id\":\"MB6512DI695299\",\"added\":false,\"messages\":[\"Password must contain letters\"]},{\"label\":\"letters-only\",\"pw\":\"abcdefgh\",\"id\":\"MB6512LE695299\",\"ad",
+    "result": "N/A",
+    "notes": "",
+    "at": "2026-10-08T15:04:39.486Z"
   }
 }
