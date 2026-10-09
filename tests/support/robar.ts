@@ -16,6 +16,9 @@ export async function login(page: Page): Promise<void> {
 /** Logs into the WebMenu as an explicit user (e.g. a throw-away MB* test user in a second browser context). */
 export async function loginAs(page: Page, username: string, password: string): Promise<void> {
   await page.goto(BASE_URL);
+  // the login form is occasionally slow after heavy runs (seen 2026-10-08: page.fill('.userID') timing out in a fresh context): wait longer and retry the load once
+  if (!(await page.locator('.userID').waitFor({ timeout: 45_000 }).then(() => true).catch(() => false))) await page.goto(BASE_URL);
+  await page.locator('.userID').waitFor({ timeout: 60_000 });
   await page.fill('.userID', username);
   await page.fill('.Password', password);
   await page.click('.loginBtn');

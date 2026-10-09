@@ -46,6 +46,8 @@ export interface FixtureOptions {
   /** false = stop after the LCN is assigned (no Recreate Master) */
   master?: boolean;
   prefix?: string;
+  /** item fields to set on the Item Edit page before Save, by field name (e.g. { Qty2: '3', u5: '2' }); a field on another tab is reached through that tab's link */
+  itemFields?: Record<string, string>;
 }
 
 export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}): Promise<string> {
@@ -74,6 +76,16 @@ export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}
   await page.waitForTimeout(1000);
   await editFrame.selectOption('select[name="txtTemplateName"]', TEMPLATE);
   await editFrame.fill('input[name="txtDescription"]', 'Playwright item with a Label Master (Multi Document Printing)');
+  for (const [name, value] of Object.entries(opts.itemFields ?? {})) {
+    const field = editFrame.locator(`[name="${name}"]`).first();
+    if (!(await field.isVisible())) {
+      // the field sits on another tab of the Item Edit page: open that tab first
+      const panelId = await field.evaluate((e) => (e.closest('[role="tabpanel"], .ui-tabs-panel') as HTMLElement | null)?.id ?? '');
+      if (panelId) await editFrame.locator(`a[href="#${panelId}"]`).first().click();
+      await page.waitForTimeout(500);
+    }
+    await field.fill(value);
+  }
   const [saveResponse] = await Promise.all([
     page.waitForResponse((r) => r.url().includes('/items/') && r.request().method() === 'POST', { timeout: 15_000 }),
     editFrame.click('button:has-text("Save")'),
