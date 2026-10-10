@@ -1,6 +1,6 @@
 // Print by Order with PrintEntityRequired = Y and AddLotReasonRequired = Y (live 2026-10-08, HEADED: Sentinel prompts are confirmed with FlaUI -- hands off the mouse; seed user Claude01 holding `*`).
 // Legacy `PrintScreen.aspx?ConfigName=print1`: Print Entity dropdown + Shop Order Number -> Next -> (new order) Reason Code dialog -> Item / Lot / Order -> Next -> Lot Panel -> Next -> label screen -> Print.
-// Only "Microsoft Print to PDF". A real print creates the lot (printed lots cannot be deleted): one throw-away lot MBPOE<stamp> per run, written with the CHOSEN Print Entity.
+// Only "Microsoft Print to PDF". A real print creates the lot (the printed lot can still be deleted in Lot Management, verified 2026-10-09): one throw-away lot MBPOE<stamp> per run, written with the CHOSEN Print Entity.
 // Also covers "last used entity": after a print with entity X the dropdown defaults to X on the next visit (documented in PE_PrintByLot / PE_PrintByOrder), and the reprint / history of that order.
 // Skips unless PrintEntityRequired = Y.
 

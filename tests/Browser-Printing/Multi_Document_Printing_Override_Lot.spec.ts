@@ -1,6 +1,6 @@
 // Multi Document Printing: Override Lot Data (live 2026-10-06, Claude01, HEADED). Source: LotPanel.cshtml / LotPanelModel.js -- the "Override Lot Data" checkbox (#overrideLotCheckBox, needs process
 // Override_Lot_At_Print) makes the lot fields editable per their layout (Expires / Manufactured need BP_AllowMfgChangeAtPrint for Manufactured); Save / Cancel buttons appear; Save validates
-// (Manufactured must be before Expires) and writes the lot. A throw-away lot `MBMDPV<stamp>` is created by the real print (lots cannot be deleted). Headed: FlaUI confirms the two Sentinel prompts.
+// (Manufactured must be before Expires) and writes the lot. A throw-away lot `MBMDPV<stamp>` is created by the real print (deletable in Lot Management, verified 2026-10-09). Headed: FlaUI confirms the two Sentinel prompts.
 
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';

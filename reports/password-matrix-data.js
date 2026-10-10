@@ -105,16 +105,20 @@ add('NL-09', 'R4', 'NL', 'PasswordChangeDays', 'ChangeDays 0 sends every login t
 add('NL-10', 'R1', 'NL', '(auto-open)', 'moduleName deep link', 'logged off', 'http://vmsrvtst703/ROBAR/Account/Login?moduleName=Print History Inquiry', 'Logs in and opens the module by default; without the security process the plain main menu opens (script 1.1 section 2).');
 
 // ---- Security Management (SM)
-add('SM-01', 'R1', 'SM', 'PasswordMinLength', 'Add a user with a 1-character password', 'MB group; MB test user id', 'Security Management > Users > Add: password = confirm = a; "Reset password at next logon" ticked.', 'EXPECTED GAP: accepted although min is 5 (DIT #6512).');
-add('SM-02', 'R1', 'SM', 'PasswordNeedsLetters', 'Digits-only password', 'NeedsLetters Y', 'Add user with 123456.', 'EXPECTED GAP: accepted.');
-add('SM-03', 'R1', 'SM', 'PasswordNeedsNumbers', 'Letters-only password', 'NeedsNumbers Y', 'Add user with abcdef.', 'EXPECTED GAP: accepted.');
+add('SM-01', 'R1', 'SM', 'PasswordMinLength', 'Add a user with a 1-character password', 'MB group; MB test user id', 'Security Management > Users > Add: password = confirm = a; "Reset password at next logon" ticked.', 'PRE-FIX (R1, 2026-10-07): accepted although min is 5 (DIT #6512). FIXED 2026-10-08 - see SM-12.');
+add('SM-02', 'R1', 'SM', 'PasswordNeedsLetters', 'Digits-only password', 'NeedsLetters Y', 'Add user with 123456.', 'PRE-FIX (R1): accepted. FIXED 2026-10-08 - see SM-13.');
+add('SM-03', 'R1', 'SM', 'PasswordNeedsNumbers', 'Letters-only password', 'NeedsNumbers Y', 'Add user with abcdef.', 'PRE-FIX (R1): accepted. FIXED 2026-10-08 - see SM-14.');
 add('SM-04', 'R1', 'SM', '(validation)', 'Only the validations that exist', 'none', 'Blank password; password != confirm; AD tick.', '"Password is required" / "Password values do not match"; AD tick disables the password fields.');
 add('SM-05', 'R1', 'SM', 'PasswordChangeDays / ChangeOnReset', 'Reset at next logon ticked vs unticked', 'two new MB users', 'Add both; log in as each on /ROBAR/.', 'Ticked -> EP at first login (PasswordSet 1900-01-01); unticked -> main menu directly even with a non-conforming password (the gap Mark Fredrikson described).');
 add('SM-06', 'R1', 'SM', 'PasswordFailLockCount', 'Re-enable a locked user with the Active tick', 'locked MB user', 'Edit user: untick/tick Active; try to log in.', 'EXPECTED GAP: still "locked out" because FailCount is not cleared (needs PR Unlock).');
 add('SM-07', 'R1', 'SM', '(edit)', 'Edit cannot set or reset a password', 'existing MB user', 'Open Edit.', 'Password / Confirm / Reset fields are hidden in edit mode.');
 add('SM-08', 'R1', 'SM', 'PasswordDaysBeforeReuse', 'New user with a previously used password', 'n/a', 'Add a user reusing an old password.', 'No history check (a new user has none); noted for completeness.');
-add('SM-09', 'R2', 'SM', 'PasswordMinLength / NeedsNumbers', 'Settings change has no effect on user add', 'R2 values', 'Repeat SM-01 with 1 char; letters-only.', 'Still accepted (the gap persists with every value).');
+add('SM-09', 'R2', 'SM', 'PasswordMinLength / NeedsNumbers', 'Settings change has no effect on user add', 'R2 values', 'Repeat SM-01 with 1 char; letters-only.', 'PRE-FIX (R2): still accepted (the gap persisted with every value; fixed 2026-10-08 in DIT #6512, see SM-12..SM-15).');
 add('SM-10', 'R2', 'SM', 'PasswordChangeOnReset', 'ChangeOnReset N does not change the tick behavior', 'ChangeOnReset N', 'Repeat SM-05.', 'Same outcome.');
 add('SM-11', 'R3', 'SM', 'PasswordFailLockCount', 'Lock count 1', 'lock 1', 'Lock a user with one wrong login; check the Security grid / PR.', 'User disabled after the first failure (Active unticked in Security Management).');
+add('SM-12', 'Post-fix', 'SM', 'PasswordMinLength', 'DIT #6512 fixed: 4-character password with MinLength 5', 'MinLength 5, NeedsLetters Y, NeedsNumbers Y (services restarted)', 'Security Management > Users > Add: password = confirm = a1b2.', 'Verified 2026-10-08 (UAT_6512): the dialog stays open with "Password must be at least 5 characters"; no user is created.');
+add('SM-13', 'Post-fix', 'SM', 'PasswordNeedsLetters', 'DIT #6512 fixed: digits-only password', 'NeedsLetters Y', 'Add user with 12345678.', 'Verified 2026-10-08 (UAT_6512): "Password must contain letters"; no user is created.');
+add('SM-14', 'Post-fix', 'SM', 'PasswordNeedsNumbers', 'DIT #6512 fixed: letters-only password', 'NeedsNumbers Y', 'Add user with abcdefgh.', 'Verified 2026-10-08 (UAT_6512): "Password must contain numbers"; no user is created.');
+add('SM-15', 'Post-fix', 'SM', 'all three', 'DIT #6512 fixed: a compliant password creates the user', 'MinLength 5, letters Y, numbers Y', 'Add user with abc12345 (8 characters, letters and numbers).', 'Verified 2026-10-08 (UAT_6512): the user is created without a password message and appears in the grid.');
 
 module.exports = { SURFACES, SETTINGS, MATRIX, ROUNDS, CASES };

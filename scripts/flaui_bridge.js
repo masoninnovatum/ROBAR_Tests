@@ -150,7 +150,7 @@ async function clickAt({ processId, title, name, automationId, offsetX, offsetY,
  *  the same processId) while this call is blocked/holding is not possible since it's synchronous --
  *  call this with a `holdMs` long enough, then screenshot immediately after it returns, or run
  *  screenshot from a second concurrent process if a mid-hold capture is ever needed.
- *  @param {{processId?: number, title?: string, name: string, automationId?: string, offsetX: number, offsetY: number, holdMs?: number, retrySeconds?: number}} opts
+ *  @param {{processId?: number, title?: string, name?: string, automationId?: string, offsetX: number, offsetY: number, holdMs?: number, retrySeconds?: number}} opts
  */
 async function hoverAt({ processId, title, name, automationId, offsetX, offsetY, holdMs, retrySeconds }) {
   const args = [
@@ -187,7 +187,7 @@ async function drag({ processId, title, name, automationId, fromOffsetX, fromOff
   return runCli(args, retrySeconds ? (retrySeconds + 30) * 1000 : undefined);
 }
 
-/** @param {{processId?: number, title?: string, name: string, property: 'IsEnabled'|'Name'|'Text'|'Value'|'IsOffscreen'|'BoundingRectangle', automationId?: string, controlType?: string, elementName?: string, elementAutomationId?: string, retrySeconds?: number, expectValue?: string}} opts */
+/** @param {{processId?: number, title?: string, name: string, property: 'IsEnabled'|'Name'|'Text'|'Value'|'IsOffscreen'|'BoundingRectangle'|'ToggleState', automationId?: string, controlType?: string, elementName?: string, elementAutomationId?: string, retrySeconds?: number, expectValue?: string}} opts */
 async function getProperty({ processId, title, name, property, automationId, controlType, elementName, elementAutomationId, retrySeconds, expectValue }) {
   const args = [
     'get-property',

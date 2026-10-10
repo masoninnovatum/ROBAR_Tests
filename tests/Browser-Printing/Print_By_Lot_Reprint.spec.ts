@@ -1,7 +1,7 @@
 // Print by Lot REPRINT (live 2026-10-07, HEADED, PrintEntityRequired = N). After a print the whole print panel is disabled (only Reset works). Reset + re-entering the printed lot gives the label screen
 // with "Reprint" ticked and DISABLED and a "Reprint Options" block: User ID (pre-filled with the logged-in user), Password, Reason (Damaged Labels / Incorrect Data Entry), Comments. Print without a reason
 // = "Please select a reprint reason."; a missing / wrong password = "Invalid Username/Password. UserID:<user>" and the Print button is disabled until the password field gets key events again.
-// One throw-away lot MBPBR<stamp> per run (lots cannot be deleted). Only Microsoft Print to PDF.
+// One throw-away lot MBPBR<stamp> per run (the lot can be deleted again in Lot Management, verified 2026-10-09). Only Microsoft Print to PDF.
 
 import { test, expect } from '@playwright/test';
 import { login, PASSWORD, USERNAME } from '../support/robar';

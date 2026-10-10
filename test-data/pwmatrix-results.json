@@ -478,5 +478,29 @@
     "result": "Pass",
     "notes": "baseline 90/Y/365/3/5/Y/Y observable behavior",
     "at": "2026-10-07T16:57:36.454Z"
+  },
+  "SM-12": {
+    "actual": "a1b2 (MinLength 5): user not created; message \"Password must be at least 5 characters\"",
+    "result": "Pass",
+    "notes": "DIT #6512 fixed (UAT_6512 execution)",
+    "at": "2026-10-08T00:00:00.000Z"
+  },
+  "SM-13": {
+    "actual": "12345678 (NeedsLetters Y): user not created; message \"Password must contain letters\"",
+    "result": "Pass",
+    "notes": "DIT #6512 fixed (UAT_6512 execution)",
+    "at": "2026-10-08T00:00:00.000Z"
+  },
+  "SM-14": {
+    "actual": "abcdefgh (NeedsNumbers Y): user not created; message \"Password must contain numbers\"",
+    "result": "Pass",
+    "notes": "DIT #6512 fixed (UAT_6512 execution)",
+    "at": "2026-10-08T00:00:00.000Z"
+  },
+  "SM-15": {
+    "actual": "abc12345: user created, no password message, found in the Users grid",
+    "result": "Pass",
+    "notes": "DIT #6512 fixed (UAT_6512 execution)",
+    "at": "2026-10-08T00:00:00.000Z"
   }
 }

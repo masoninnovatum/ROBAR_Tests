@@ -1,7 +1,7 @@
 // Print by Lot with PrintEntityRequired = N (the TST703 value; read-only check, LastTouch 09/29/2026), live 2026-10-07, HEADED (Sentinel prompts confirmed with FlaUI -- hands off the mouse).
 // Legacy WebForms screen `Innovatum/ROBAR/printing/Screens/PrintScreen.aspx?ConfigName=LotNumber`: Lot Number -> Next -> (unknown lot: "No lot found." + Item / Shop Order fields) -> Next -> Lot Panel
 // (Override Lot Data) -> Next -> label type / Label Control / printer screen -> Print. With the setting N there is NO Print Entity dropdown and a new lot is written with entity ROBAR.
-// Only "Microsoft Print to PDF" is ever used. A real print creates the lot (lots cannot be deleted): one throw-away lot `MBPBL<stamp>` per run. Skips itself when the setting is Y.
+// Only "Microsoft Print to PDF" is ever used. A real print creates the lot (the lot can be deleted again in Lot Management, verified 2026-10-09): one throw-away lot `MBPBL<stamp>` per run. Skips itself when the setting is Y.
 
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
