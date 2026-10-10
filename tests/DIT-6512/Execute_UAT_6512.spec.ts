@@ -74,5 +74,6 @@ test('UAT 6512 execution', async ({ page }) => {
   const r5 = await attempt(5, `MB6512D${stamp}`, 'abc12345');
   expect(r5.stillOpen).toBe(false);
 
-  fs.writeFileSync('test-data/uat6512-results.json', JSON.stringify({ stamp, vals, results }, null, 2));
+  fs.mkdirSync('test-data/run-results', { recursive: true });
+  fs.writeFileSync('test-data/run-results/uat6512-results.json', JSON.stringify({ stamp, vals, results }, null, 2));
 });

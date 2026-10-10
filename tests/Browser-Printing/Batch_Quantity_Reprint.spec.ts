@@ -1,7 +1,7 @@
 // Reprint rule with Batch Quantity (live 2026-10-09, HEADED, Print to PDF only, FEW copies; seed user Claude01, TST703).
 // ValMaster FRS-8.1.9.1/9.2 (module "WEB - Print Request"): with ReprintBasedOnBatchQty = Y the Reprint box is defaulted AND forced on when (already printed qty + qty about to print) exceeds the batch qty
 // x multiplier + extra of the item / label type; reprint records in the history are ignored in the count. Item A (Qty2 3, u5 2), Override Batch Qty 1 -> allowed total 5 copies.
-// Sequence on ONE new order/lot: print 3 (total 3), print 2 (total 5 = allowed), print 1 (total 6 > 5 -> must be a reprint). 6 copies in all. The lot stays (printed lots cannot be deleted).
+// Sequence on ONE new order/lot: print 3 (total 3), print 2 (total 5 = allowed), print 1 (total 6 > 5 -> must be a reprint). 6 copies in all. The lot stays unless deleted in Lot Management (possible, verified 2026-10-09).
 
 import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
@@ -126,5 +126,6 @@ test('Batch Quantity reprint threshold: Reprint box forced on when printed + abo
     console.log(`PRINT reprint 1: ${result.slice(-160)}`);
     expect(result).toMatch(/Printed PID_\w+\.prn to Microsoft Print to PDF/);
   });
-  fs.writeFileSync('test-data/batchqty-reprint-results.json', JSON.stringify({ order, lot, states }, null, 2));
+  fs.mkdirSync('test-data/run-results', { recursive: true });
+  fs.writeFileSync('test-data/run-results/batchqty-reprint-results.json', JSON.stringify({ order, lot, states }, null, 2));
 });

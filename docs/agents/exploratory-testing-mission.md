@@ -36,9 +36,10 @@ prompt — read it, then go do the work it describes.
 
 ## How to resume this in a fresh session
 
-1. Read `robar-module-reference.md`, `formal-scripts-reviewed.md`, and this file before starting
-   any module-specific work.
-2. Check `robar-module-reference.md`'s "Open To-Dos for Live/Exploratory Testing" section —
+1. Read the module's file in `modules/` (`robar-module-reference.md` is now the INDEX of those files, restructured
+   2026-10-09; older mentions of "robar-module-reference.md" in this document mean the module file that holds that
+   section), `formal-scripts-reviewed.md`, and this file before starting any module-specific work.
+2. Check the "Open To-Dos for Live/Exploratory Testing" section (`modules/00-overview-and-todos.md`) —
    unresolved items to settle opportunistically when other work happens to touch them, not to
    chase proactively on their own.
 3. Prefer the TST703 environment for this kind of exploratory/knowledge-building work; reserve

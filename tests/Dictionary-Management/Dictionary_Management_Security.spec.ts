@@ -83,7 +83,6 @@ test('Dictionary Management: each DM_* process switches on its own control; the 
       const ef = dm.editFrame(p);
       out.editable = ef ? await ef.locator('#nonHtmlTrans').isEnabled() : null;
     }
-    out.p = p;
     return out;
   };
   const show = (label: string, r: Awaited<ReturnType<typeof inspect>>) => console.log(`${label}: tile=${r.tile} main=${JSON.stringify(r.main)} row=${JSON.stringify(r.row)} bulk=${JSON.stringify(r.bulk)}`);

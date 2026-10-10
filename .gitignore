@@ -5,3 +5,4 @@ npm-debug.log*
 *.log
 .env
 .claude-logs/
+test-data/run-results/

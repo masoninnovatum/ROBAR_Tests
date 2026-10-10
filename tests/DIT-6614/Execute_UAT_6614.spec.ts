@@ -83,6 +83,7 @@ test('UAT 6614 execution', async ({ page }) => {
   log.deleted = !(await f.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).includes(name);
   shot(9);
   log.jsErrors = jsErrors;
-  fs.writeFileSync('test-data/uat6614-results.json', JSON.stringify(log, null, 2));
+  fs.mkdirSync('test-data/run-results', { recursive: true });
+  fs.writeFileSync('test-data/run-results/uat6614-results.json', JSON.stringify(log, null, 2));
   expect(state.newJsErrors, 'JavaScript errors while selecting the deactivated preset').toEqual([]);
 });

@@ -33,3 +33,11 @@ Destination Labeling cannot be tested beyond order creation / scanning / securit
 3. **Print Config rows for ConfigName `DestLabeling`** values (read-only now): `AutoCheckRequireVerification`, `AutoCheckMultipleCopies`, `AutoCheckPrintLabels`, `AutoCheckPrintDocs`, `WarnWhenPrintedLabelsExceedsValue`, `PrintServerTimeout`, `StartingSerialNumber`, `BarcodeParseStoredProcedure`, `IdleScreenColor` / `BusyScreenColor` / `CompleteScreenColor`: I would flip some (e.g. blank BarcodeParseStoredProcedure for F.10.2) one at a time.
 4. **Global Settings error messages (F.7.10-12, F.23.14, F.26.4):** blank `DestCode_SchemaName`, blank `DestVerificationTemplate`, invalid `DestTemplate_*` one at a time (owner `Innovatum.Pages.DestinationLabeling.Printing.WCF`, restart needed).
 The Global Settings page query for "Dest" settings hung in automation today (no actionTimeout in a throwaway spike): re-read them with `readGlobalSetting` when needed.
+
+### Print Request requirements (2026-10-09, requested by Claude; Mason flips; nothing flipped by Claude)
+| Print Config (Print1 / LotNumber) | Wanted value | Requirement | Restore |
+|---|---|---|---|
+| `AllowManualDateEntry` | Y (and note `ManualEntryDateFormat`, default mm/dd/yy) | WEB20141203F1.0.1 - 1.0.5 manual date entry / format error / re-entry / no Next on a bad format / select-all on focus | N |
+| `WarnWhenPrintedLabelsExceedsValue` | a small number, e.g. 3 (default 5000) | WEB20141205F1.0.2 / 1.0.4, WB20141205F1.0.3 warning when the total labels exceed the value; Yes continues, No allows changing quantity | 5000 |
+| `GetStartingSerial` | Y (needs an S_Ser item; MBBQR5071799 exists, template SingleSer_na) | FRS-8.1.6.3 - 8.1.6.5 starting serial entry, `Specify_Starting_Serial_Num` | N |
+| `TestPrintRequiredForLot` then `TestPrintRequiredForSession` | Y (one at a time) | WP20130208001F103.2.2 / 2.3 required test print per lot / per session, `BP_Test_Print_Override` | N |
