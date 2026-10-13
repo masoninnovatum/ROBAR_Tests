@@ -22,8 +22,8 @@ test('Test Print: red Test Print button, repeatable, excluded from reprint; defa
   await login(page);
   const A = JSON.parse(fs.readFileSync('test-data/batchqty-item-a.json', 'utf8')).item as string;
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBPTP${stamp}`;
-  const lot = `MBPTP${stamp}L`;
+  const order = `CLPTP${stamp}`;
+  const lot = `CLPTP${stamp}L`;
 
   const buttonState = async (pb: Awaited<ReturnType<typeof toOrderLabelScreen>>) => {
     const b = pb.opt('btnDoPrint');

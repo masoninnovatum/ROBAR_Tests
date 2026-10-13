@@ -24,3 +24,5 @@ Not found / not checked: statements outside these topics. A full contradiction s
 
 Still open for a human decision: the formal "Open To-Dos" list in modules/00-overview-and-todos.md (never re-reviewed), and statements outside the topics above (a full read-through per module would be needed).
 - Open To-Dos list (modules/00-overview-and-todos.md): reviewed 2026-10-10 - items 4, 5, 7, 9 resolved, item 1 narrowed, items 2, 3, 6, 8, 10 still open (status table appended to that file).
+
+- 2026-10-12: `dit-tracker.md` row 2026-10-04 "Schemas rename leaves SCH_ unchanged" and the matching sentence in modules/master-data-management.md are WRONG (code comment misread): the rename renames the SCH_ process(es) and disables them until re-enabled for the new name (user, 2026-10-12).

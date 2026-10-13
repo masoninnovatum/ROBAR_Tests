@@ -9,6 +9,9 @@ The single 570 KB file was split into per-module files in `modules/` (lossless; 
 | modules/00-overview-and-todos.md | overview of the whole reference, open to-dos for live testing |
 | modules/bartender-sentinel-playbook.md | driving BarTender / Sentinel native dialogs with FlaUI (playbook) |
 | modules/campaign-manager.md | Campaign Manager incl. bulk actions, Job Inquiry |
+| modules/flex-printing.md | Flex Printing (PrintScreen FlexPrinting config, identifiers, add lot at print time, date picker) |
+| modules/innoview.md | InnoView report app: menu categories, reports, prompts, security |
+| modules/attachment-management.md | Attachment Management and Attachment Upload (grid, upload, FP_ gating) |
 | modules/codes-management.md | Codes Management (+ ValMaster re-check) |
 | modules/destination-labeling.md | Destination Labeling (DL) |
 | modules/dictionary-management.md | Dictionary Management (+ re-check, server-side authz) |

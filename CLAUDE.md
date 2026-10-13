@@ -2,9 +2,9 @@
 
 Playwright-based browser automation for QA work against Innovatum Suite 7 (ROBAR) — driving the
 live UI to execute formal test scripts, capture screenshots, and fill out forms. Sibling to the
-`MsBuild` repo (the actual Suite 7 source, at
-`C:\Users\Mason\OneDrive - Innovatum, Inc\Desktop\MsBuild`), which is where formal test scripts
-and exploratory testing sessions are authored/reviewed.
+Suite 7 source (read-only reference snapshots under `C:\DB_Copies\703_<build>\`, e.g. `703_20198`).
+Knowledge files (module reference, DIT tracker, ValMaster notes) live in `docs/agents/` in this repo;
+the old `Desktop\MsBuild` copy was retired 2026-10-13.
 
 ## Layout
 
@@ -31,7 +31,7 @@ a bare script — only `.spec.ts` files show up in VS Code's Test Explorer (requ
 
 ## Module Behavior Reference (QA)
 
-`C:\Users\Mason\OneDrive - Innovatum, Inc\Desktop\MsBuild\.agents\robar-module-reference.md` is a
+`C:\Users\Mason\ROBAR_Tests\docs\agents\robar-module-reference.md` is a
 consolidated, living reference of how individual ROBAR modules actually behave — navigation,
 required fields, security process names, bulk-action gotchas, confirmed bugs. It's built from
 formal QA test scripts and live exploratory testing, and is shared across both the MsBuild repo

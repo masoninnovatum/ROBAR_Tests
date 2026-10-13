@@ -27,6 +27,21 @@ for (const f of files.filter((x) => norm(x).includes(LOC_DIR))) {
   const re = /Generate\(\s*"Innovatum\.InnoUserException\.(Err_\w+)",\s*"(\w+)"/g;
   let m;
   while ((m = re.exec(s))) seeded.add(`${m[1]}.${m[2]}`);
+  // second seed form: Generate(Err_RobarPrintWeb.Key, "text", "")  (enum reference instead of string literals)
+  const re2 = /Generate\(\s*(Err_\w+)\.(\w+)\s*,/g;
+  while ((m = re2.exec(s))) seeded.add(`${m[1]}.${m[2]}`);
+}
+// also keys seeded by the SQL upgrade scripts (Robar/DB/UpgradeScripts/*.sql insert into localizationresourcedef)
+const sqlDir = path.join(root, 'Robar/DB/UpgradeScripts');
+const sqlSeeded = new Set();
+if (fs.existsSync(sqlDir)) {
+  for (const f of fs.readdirSync(sqlDir).filter((x) => x.endsWith('.sql'))) {
+    const t = fs.readFileSync(path.join(sqlDir, f), 'utf8');
+    if (!/localizationresourcedef/i.test(t)) continue;
+    const re = /'(\w+)'/g;
+    let m;
+    while ((m = re.exec(t))) sqlSeeded.add(m[1]);
+  }
 }
 const used = new Map();
 for (const f of files) {
@@ -39,6 +54,6 @@ for (const f of files) {
     if (!used.has(k)) used.set(k, norm(f));
   }
 }
-const missing = [...used].filter(([k]) => !seeded.has(k)).sort((a, b) => a[0].localeCompare(b[0]));
+const missing = [...used].filter(([k]) => !seeded.has(k) && !sqlSeeded.has(k.split('.')[1])).sort((a, b) => a[0].localeCompare(b[0]));
 console.log(`seeded keys: ${seeded.size}; keys used in code: ${used.size}; used but NOT seeded: ${missing.length}`);
 for (const [k, f] of missing) console.log(`${k}   <- ${f.split('/').slice(-3).join('/')}`);

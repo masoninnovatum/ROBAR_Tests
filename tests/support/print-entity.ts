@@ -6,7 +6,7 @@ import { expect } from '@playwright/test';
 import { openMenuItem, findFrame } from './robar';
 
 export async function setUserPrintEntities(page: Page, userId: string, entities: string[]): Promise<void> {
-  if (!/^MB/i.test(userId)) throw new Error(`refusing to change the Print Entities of non-MB user ${userId}`);
+  if (!/^(MB|CL)/i.test(userId)) throw new Error(`refusing to change the Print Entities of user ${userId}: only MB* / CL* test users`);
   await page.locator('li.ui-tabs-tab:has-text("User Print Entity Management") .ui-icon-close').click({ timeout: 2000 }).catch(() => {});
   await page.locator('li.ui-tabs-tab:has-text("Main Menu")').click({ timeout: 3000 }).catch(() => {});
   await openMenuItem(page, 'User Print Entity Management');

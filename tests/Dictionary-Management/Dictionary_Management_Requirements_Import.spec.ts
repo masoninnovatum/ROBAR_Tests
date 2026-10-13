@@ -1,6 +1,6 @@
 // Dictionary Management Excel Import vs the ValMaster requirements (2026-10-09; .agents/valmaster-dictionary-management.md): Sheet dropdown (F.2.17 / F.2.18), import defaults (F.2.11-F.2.15),
 // all-or-nothing validation (F.2.21), overwriting an APPROVED record creates a new unapproved version when ApprovedBy / ApprovalDateTime are blank (F.2.6). Seed user, headless, TST703. Own records
-// MBDMX<stamp>a/b/c/d (undeletable). A requirement the system does not meet is recorded as a test annotation `deviation <id>`.
+// CLDMX<stamp>a/b/c/d (undeletable). A requirement the system does not meet is recorded as a test annotation `deviation <id>`.
 
 import { test, expect } from '@playwright/test';
 import type { Frame, Page } from '@playwright/test';
@@ -74,8 +74,8 @@ async function signAndSubmit(page: Page, description: string): Promise<string> {
 test('Dictionary Management Excel Import vs ValMaster: sheet dropdown, defaults, all-or-nothing validation, overwrite of an approved record', async ({ page }) => {
   test.setTimeout(1_500_000);
   const stamp = Date.now().toString().slice(-6);
-  const LANG = `MBLangX${stamp}`;
-  const [PA, PB, PC, PD] = ['a', 'b', 'c', 'd'].map((s) => `MBDMX${stamp}${s}`);
+  const LANG = `CLLangX${stamp}`;
+  const [PA, PB, PC, PD] = ['a', 'b', 'c', 'd'].map((s) => `CLDMX${stamp}${s}`);
   const d = new Date();
   const today = `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
   await dm.openDictionary(page);
@@ -113,7 +113,7 @@ test('Dictionary Management Excel Import vs ValMaster: sheet dropdown, defaults,
       expect(after).toContain('Upload Successful');
       await importFrame(page).locator('a').filter({ hasText: 'Dictionary Management' }).first().click();
       await page.waitForTimeout(4000);
-      const r = await dm.search(page, `MBDMX${stamp}`, { version: 'Any', latest: false, effective: false });
+      const r = await dm.search(page, `CLDMX${stamp}`, { version: 'Any', latest: false, effective: false });
       const row = (p: string) => r.rows.find((x) => x.includes(p)) ?? '';
       console.log(`imported rows: ${JSON.stringify(r.rows)}`);
       const a = row(PA);

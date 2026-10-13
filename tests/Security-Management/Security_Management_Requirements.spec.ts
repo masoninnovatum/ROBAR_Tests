@@ -1,4 +1,4 @@
-// Security Management re-checked against ValMaster (module "Security Management", SE.150915.*; live 2026-10-09, headless, TST703). MB fixtures only: group MBPWLoginGrp / user MBPWLogin01 and ONE new user MBSMR<stamp>
+// Security Management re-checked against ValMaster (module "Security Management", SE.150915.*; live 2026-10-09, headless, TST703). MB fixtures only: group MBPWLoginGrp / user MBPWLogin01 and ONE new user CLSMR<stamp>
 // (users cannot be deleted; it is deactivated at the end). Requirements = expectation; differences are annotated `deviation <id>` (the spec stays green).
 // Covered here (the older Security_Users / Security_Groups specs already cover messages, defaults, filters, Select All, group inheritance):
 //   F.8.5 process-name tooltip = the process Description; F.2.12 + F.2.7 reset-password-at-next-logon prompt and an inactive user cannot log in;
@@ -21,7 +21,7 @@ test('Security Management vs ValMaster: tooltip, reset-at-next-logon, inactive u
   test.setTimeout(900_000);
   sec.assertMb(GROUP);
   const stamp = Date.now().toString().slice(-6);
-  const user = `MBSMR${stamp}`;
+  const user = `CLSMR${stamp}`;
   sec.assertMb(user);
   let f: Frame = await sec.openSecurity(page);
 

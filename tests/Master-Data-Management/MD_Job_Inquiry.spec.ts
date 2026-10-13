@@ -12,7 +12,7 @@ test('MD Job Inquiry finds a Mass Approve job by its Job Id and opens its detail
   test.setTimeout(420_000);
   let frame: Frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDJ${stamp}`;
+  const prefix = `CLMDJ${stamp}`;
   const nums = ['A', 'B'].map((s) => prefix + s);
   let jobId = '';
 

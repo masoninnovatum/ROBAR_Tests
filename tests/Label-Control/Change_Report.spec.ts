@@ -29,7 +29,7 @@ test('Change Report completes for a record with a Label Master and saves the rep
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCCR' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCCR' + Date.now().toString().slice(-7);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');

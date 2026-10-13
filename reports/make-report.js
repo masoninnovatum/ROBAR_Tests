@@ -1,11 +1,15 @@
-// Builds Training-Issues-Report.xlsx from issues-data.js (run: node reports/make-report.js <output.xlsx>)
+// Builds TWO workbooks from issues-data.js (since 2026-10-13): Defects + Observations, and Script / wording differences.
+// Run: node reports/make-report.js <base-path-without-extension>  ->  <base>-Defects-Observations.xlsx and <base>-Script-Wording.xlsx
+// (optional 2nd arg D,O / S builds one workbook only; the 1st arg is then the full .xlsx path)
 const ExcelJS = require('exceljs');
-const rows = require('./issues-data.js');
+const allRows = require('./issues-data.js');
 
-const out = process.argv[2] || 'Training-Issues-Report.xlsx';
+const base = process.argv[2] || 'Training-Issues-Report';
+const onlyTypes = process.argv[3];
 const typeLabel = { D: 'Defect', O: 'Observation / to confirm', S: 'Script / wording difference' };
 
-(async () => {
+async function build(out, types, label) {
+  const rows = allRows.filter((r) => types.includes(r.type));
   const wb = new ExcelJS.Workbook();
   wb.creator = 'Claude (QA training sessions)';
   const ws = wb.addWorksheet('Issues', { views: [{ state: 'frozen', ySplit: 1 }] });
@@ -45,11 +49,12 @@ const typeLabel = { D: 'Defect', O: 'Observation / to confirm', S: 'Script / wor
   ws.autoFilter = { from: 'A1', to: 'I1' };
 
   const about = wb.addWorksheet('Read me');
+  void label;
   about.columns = [{ width: 110 }];
   [
-    'Issues found during the exploratory / Playwright training sessions on TST703 (Suite 7, 7.0.3.20198), 2026-08-25 to 2026-10-09.',
+    `Issues found during the exploratory / Playwright training sessions on TST703 (Suite 7, 7.0.3.20198) - ${label}. Sorted by Date Discovered, oldest first.`,
     '',
-    'Date Discovered = the day the issue was first observed or logged (rows are sorted by it, oldest first). It comes from the date on the matching row of .agents/dit-tracker.md or, for the August findings, from the exploratory session log of that day. Where the date is approximate or the issue was first seen earlier than it was confirmed, the cell has a note (hover the red corner). Rows marked "Not yet checked against the DIT sheet" were added on 2026-10-09 and have not been matched to existing DIT tickets yet.',
+    'Date Discovered = the day the issue was first observed or logged (rows are sorted by it, oldest first). It comes from the date on the matching row of .agents/dit-tracker.md or, for the August findings, from the exploratory session log of that day. Where the date is approximate or the issue was first seen earlier than it was confirmed, the cell has a note (hover the red corner). The rows added on 2026-10-09 / 10 were matched against the DIT sheet on 2026-10-11 (the 53 tickets of the affected modules were read; keyword matching only, so a manual look is still worthwhile).',
     'Columns: Description = the issue and what the user experiences; Root Cause = what in the code/config causes it (or "Not diagnosed" when it could not be traced); Possible Corrective Action = what would fix it; DIT = an existing Development Issue Tracking ticket that matches.',
     'Type: Defect = reproduced / confirmed; Observation = behavior to confirm with developers (may be by design); Script / wording difference = formal script and product disagree.',
     'DIT colors: green = the DIT describes the same issue; blue = related ticket only (same area / different defect); no color = no matching DIT found.',
@@ -61,5 +66,11 @@ const typeLabel = { D: 'Defect', O: 'Observation / to confirm', S: 'Script / wor
   about.getRow(1).font = { bold: true, size: 13 };
 
   await wb.xlsx.writeFile(out);
-  console.log(`wrote ${out} (${rows.length} issues)`);
+  console.log(`wrote ${out} (${rows.length} rows: ${label})`);
+}
+
+(async () => {
+  if (onlyTypes) { await build(base, onlyTypes.split(','), onlyTypes === 'S' ? 'Script / wording differences' : 'Defects and Observations'); return; }
+  await build(`${base}-Defects-Observations.xlsx`, ['D', 'O'], 'Defects and Observations');
+  await build(`${base}-Script-Wording.xlsx`, ['S'], 'Script / wording differences');
 })();

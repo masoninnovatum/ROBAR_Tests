@@ -1,6 +1,6 @@
 // Dictionary Management Excel Import (live 2026-10-07, headless, TST703, seed user): Actions > Excel Import = InnoPages/DictionaryManagement/FileSubmission ("Dictionary Excel Data Upload"):
 // Download Template link, #spreadsheetFile (+ #fileDisplay), #sheetName, #btnValidate (disabled until a file + sheet), validation grid, signature block, Submit Job. Formal scripts DM_ExcelImport-1.2 and
-// DM_ExcelImport_Update-1.3. Self-contained: builds its own workbooks with ExcelJS and its own phrases MBDMI<stamp>x (records cannot be deleted).
+// DM_ExcelImport_Update-1.3. Self-contained: builds its own workbooks with ExcelJS and its own phrases CLDMI<stamp>x (records cannot be deleted).
 
 import { test, expect } from '@playwright/test';
 import type { Frame, Page } from '@playwright/test';
@@ -67,8 +67,8 @@ async function sign(page: Page, description: string, user = USERNAME, pw = PASSW
 test('Dictionary Management Excel Import: template, validation errors, new rows, overwrite prompt, signer rights', async ({ page, browser }) => {
   test.setTimeout(1_200_000);
   const stamp = Date.now().toString().slice(-6);
-  const LANG = `MBLangI${stamp}`;
-  const P1 = `MBDMI${stamp}a`;
+  const LANG = `CLLangI${stamp}`;
+  const P1 = `CLDMI${stamp}a`;
   const files: string[] = [];
   await dm.openDictionary(page);
 

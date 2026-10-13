@@ -1,5 +1,5 @@
 // Dictionary Management Bulk Actions (live 2026-10-07, headless, TST703, seed user): Mass Approve, New Version of an approved record, version filters, Mass Retire / Unretire, Export to Excel.
-// Each bulk action = Job Submission page (description + e-signature + reason code, Submit Job disabled until complete) -> async Job Detail. Self-contained: creates its own phrases MBDMB<stamp>x
+// Each bulk action = Job Submission page (description + e-signature + reason code, Submit Job disabled until complete) -> async Job Detail. Self-contained: creates its own phrases CLDMB<stamp>x
 // (records cannot be deleted; the retire test leaves one retired record behind).
 
 import { test, expect } from '@playwright/test';
@@ -74,13 +74,13 @@ async function createEntry(page: Page, phrase: string, language: string, transla
 test('Dictionary Management Bulk Actions: Mass Approve, New Version of an approved record, version filters, Retire / Unretire, Export to Excel', async ({ page }) => {
   test.setTimeout(1_200_000);
   const stamp = Date.now().toString().slice(-6);
-  const LANG = `MBLangB${stamp}`;
-  const PA = `MBDMB${stamp}a`;
-  const PB = `MBDMB${stamp}b`;
+  const LANG = `CLLangB${stamp}`;
+  const PA = `CLDMB${stamp}a`;
+  const PB = `CLDMB${stamp}b`;
   await dm.openDictionary(page);
   await createEntry(page, PA, LANG, 'Bulk A');
   await createEntry(page, PB, LANG, 'Bulk B');
-  let r = await dm.search(page, `MBDMB${stamp}`);
+  let r = await dm.search(page, `CLDMB${stamp}`);
   expect(r.rows).toHaveLength(2);
 
   await test.step('Mass Approve: job submission page, Submit Job disabled until complete, Job Detail, record becomes approved', async () => {
@@ -153,15 +153,15 @@ test('Dictionary Management Bulk Actions: Mass Approve, New Version of an approv
   });
 
   await test.step('Version filters and Latest Only on a phrase with versions 0 (approved) and 1 (unapproved) plus an unapproved phrase', async () => {
-    const all = await dm.search(page, `MBDMB${stamp}`);
+    const all = await dm.search(page, `CLDMB${stamp}`);
     expect(all.rows).toHaveLength(3);
-    const approved = await dm.search(page, `MBDMB${stamp}`, { version: 'Approved' });
+    const approved = await dm.search(page, `CLDMB${stamp}`, { version: 'Approved' });
     expect(approved.rows, 'Approved = only the approved version 0 of PA').toHaveLength(1);
-    const unapproved = await dm.search(page, `MBDMB${stamp}`, { version: 'Unapproved' });
+    const unapproved = await dm.search(page, `CLDMB${stamp}`, { version: 'Unapproved' });
     expect(unapproved.rows, 'Unapproved = PA v1 and PB').toHaveLength(2);
-    const lastApproved = await dm.search(page, `MBDMB${stamp}`, { version: 'Last Version Is Approved' });
+    const lastApproved = await dm.search(page, `CLDMB${stamp}`, { version: 'Last Version Is Approved' });
     console.log(`Last Version Is Approved: ${lastApproved.rows.length} rows ${JSON.stringify(lastApproved.rows)}`);
-    const latest = await dm.search(page, `MBDMB${stamp}`, { latest: true });
+    const latest = await dm.search(page, `CLDMB${stamp}`, { latest: true });
     expect(latest.rows, 'Latest Only = PA v1 and PB').toHaveLength(2);
     expect(latest.rows.some((x) => /Bulk A v1/.test(x))).toBe(true);
     expect(latest.rows.some((x) => /Bulk A /.test(x) && !/v1/.test(x))).toBe(false);
@@ -202,7 +202,7 @@ test('Dictionary Management Bulk Actions: Mass Approve, New Version of an approv
   });
 
   await test.step('Export to Excel: job submission (description + filename), Job Detail with a download link, the file holds the selected rows', async () => {
-    r = await dm.search(page, `MBDMB${stamp}`);
+    r = await dm.search(page, `CLDMB${stamp}`);
     const jf = await startBulk(page, r.frame, [PA, PB], 'Export to Excel');
     const body = (await jf.locator('body').innerText()).replace(/\s+/g, ' ');
     console.log(`export page: ${body.slice(0, 300)}`);

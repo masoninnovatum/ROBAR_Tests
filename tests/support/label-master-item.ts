@@ -61,7 +61,7 @@ export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}
     await closeLc(page);
     if (found) return saved;
   }
-  const itemNumber = (opts.prefix ?? 'MBMDPM') + Date.now().toString().slice(-7);
+  const itemNumber = (opts.prefix ?? 'CLMDPM') + Date.now().toString().slice(-7);
 
   await openMenuItem(page, 'Campaign Manager');
   const cmFrame = await findFrame(page, 'campaignmanager');

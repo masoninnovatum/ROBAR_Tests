@@ -16,7 +16,7 @@ test('For Items, Latest Version Only, Effective Only, operators and Limit Result
   test.setTimeout(600_000);
   let frame: Frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDF${stamp}`;
+  const prefix = `CLMDF${stamp}`;
   const [a, b, z, u] = ['A', 'B', 'Z', 'U'].map((s) => prefix + s);
 
   const approveOnEditPage = async () => {

@@ -59,7 +59,7 @@ test('new record creates item-schema and non-item-schema master data records, an
   await page.waitForTimeout(1000);
 
   const schemaName = ROBAR.mdmSchema;
-  const itemNumber = ROBAR.mdmItemNumber || 'MBMDM' + Math.floor(Math.random() * 100000);
+  const itemNumber = ROBAR.mdmItemNumber || 'CLMDM' + Math.floor(Math.random() * 100000);
 
   await test.step(`creates a new record for an item schema (${schemaName})`, async () => {
     await mdm.selectSchema(frame, schemaName);

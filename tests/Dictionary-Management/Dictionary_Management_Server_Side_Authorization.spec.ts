@@ -49,7 +49,7 @@ test('Dictionary Management: the JSON write endpoints refuse a user without DM_N
     };
 
     await test.step('NewRecord without DM_NewEntry is refused (Success false, "not authorized" / the process name)', async () => {
-      const r = await post('NewRecord', { phrase: `MBSEC${stamp}`, language: 'English', translation: 'pw server side check', effectiveBegin: '10/09/2026', effectiveEnd: '12/31/2099', effectiveBeginClientTimezoneOffsetMinutes: '0', effectiveEndClientTimezoneOffsetMinutes: '0' });
+      const r = await post('NewRecord', { phrase: `CLSEC${stamp}`, language: 'English', translation: 'pw server side check', effectiveBegin: '10/09/2026', effectiveEnd: '12/31/2099', effectiveBeginClientTimezoneOffsetMinutes: '0', effectiveEndClientTimezoneOffsetMinutes: '0' });
       const refused = /"Success":false/i.test(r.text) && /authoriz|DM_NewEntry/i.test(r.text);
       if (!refused) deviation('Dictionary server-side authorization', 'NewRecord refused for a user without DM_NewEntry', `${r.status} ${r.text}`);
       expect.soft(refused, 'NewRecord refused').toBe(true);

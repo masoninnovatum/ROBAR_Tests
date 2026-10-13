@@ -43,7 +43,7 @@ test('Get Data options: unapproved Master Data on/off and Use Sample Data', asyn
   await openMenuItem(page, 'Template Management');
   let tmFrame = await findFrame(page, 'TemplateManagement');
   const stamp = Date.now().toString().slice(-6);
-  const templateName = 'MBGDOpt' + stamp;
+  const templateName = 'CLGDOpt' + stamp;
   const brand = 'OptBrand' + stamp;
   let itemNumber = '';
 

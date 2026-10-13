@@ -19,7 +19,7 @@ test('Linked Documents security: the button is disabled without LM_View_LinkMana
   test.setTimeout(900_000);
   sec.assertMb(GROUP);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   let template = '';
   let workflowId = '';
   let f: Frame;
@@ -64,7 +64,7 @@ test('Linked Documents security: the button is disabled without LM_View_LinkMana
       await sec.setGroupProcesses(page, GROUP, VOTER);
       f = await wf.openWorkflowManagement(page);
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPWFlow/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PWFlow/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPresetWithSteps(page, pf, preset, [{ user: `${USERNAME} (`, group: 1 }, { user: `${MB} (`, group: 1 }]);
     });
 

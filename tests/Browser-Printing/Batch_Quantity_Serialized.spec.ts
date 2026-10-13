@@ -32,8 +32,8 @@ test('serialized templates (S_USerial / S_Ser): Copy on Print by Order and Copie
 
   const copyByOrder = async (itemNumber: string, batch: string | null): Promise<string> => {
     n += 1;
-    const order = `MBBQZO${stamp}${n}`;
-    const lot = `MBBQZL${stamp}${n}`;
+    const order = `CLBQZO${stamp}${n}`;
+    const lot = `CLBQZL${stamp}${n}`;
     lots.push(lot);
     const pb = new PrintByLot(page, 'Print by order');
     await pb.open();
@@ -66,7 +66,7 @@ test('serialized templates (S_USerial / S_Ser): Copy on Print by Order and Copie
 
   const copiesInMdp = async (itemNumber: string, batch: string): Promise<string> => {
     n += 1;
-    const lot = `MBBQZL${stamp}${n}`;
+    const lot = `CLBQZL${stamp}${n}`;
     lots.push(lot);
     await page.locator('li.ui-tabs-tab:has-text("Multi Document Printing") .ui-icon-close').click({ timeout: 2000 }).catch(() => {});
     await page.locator('li.ui-tabs-tab:has-text("Main Menu")').click({ timeout: 3000 }).catch(() => {});
@@ -81,7 +81,7 @@ test('serialized templates (S_USerial / S_Ser): Copy on Print by Order and Copie
       f = frame();
     }
     await f.locator('select').first().selectOption({ label: 'ROBAR' }).catch(() => {});
-    await f.locator('input[name="FlexLot_OrderNum"]').fill(`MBBQZO${stamp}${n}`);
+    await f.locator('input[name="FlexLot_OrderNum"]').fill(`CLBQZO${stamp}${n}`);
     await f.locator('input[name="FlexLot_LotNum"]').fill(lot);
     await f.locator('input[name="FlexLot_ItemNumber"]').fill(itemNumber);
     await f.locator('input[name="FlexLot_ItemNumber"]').press('Tab');

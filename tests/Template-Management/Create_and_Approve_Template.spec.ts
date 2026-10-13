@@ -32,7 +32,7 @@ test('create a new template and upload its file', async ({ page }, testInfo) => 
   await page.waitForTimeout(1000);
 
   // ROBAR_TEMPLATE_NAME (seed.ts / .env) overrides this; unset generates a random name each run.
-  const templateName = TEMPLATE_NAME || 'MBFlaUITest' + Math.floor(Math.random() * 100000);
+  const templateName = TEMPLATE_NAME || 'CLFlaUITest' + Math.floor(Math.random() * 100000);
   await frame.fill('#txtTemplateName', templateName);
   await frame.fill('#txtDescription', 'Created via automated Playwright test');
   await frame.selectOption('#ddlLabelType', { value: 'Carton Label' });

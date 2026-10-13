@@ -1,7 +1,7 @@
 // Print by Lot REPRINT (live 2026-10-07, HEADED, PrintEntityRequired = N). After a print the whole print panel is disabled (only Reset works). Reset + re-entering the printed lot gives the label screen
 // with "Reprint" ticked and DISABLED and a "Reprint Options" block: User ID (pre-filled with the logged-in user), Password, Reason (Damaged Labels / Incorrect Data Entry), Comments. Print without a reason
 // = "Please select a reprint reason."; a missing / wrong password = "Invalid Username/Password. UserID:<user>" and the Print button is disabled until the password field gets key events again.
-// One throw-away lot MBPBR<stamp> per run (the lot can be deleted again in Lot Management, verified 2026-10-09). Only Microsoft Print to PDF.
+// One throw-away lot CLPBR<stamp> per run (the lot can be deleted again in Lot Management, verified 2026-10-09). Only Microsoft Print to PDF.
 
 import { test, expect } from '@playwright/test';
 import { login, PASSWORD, USERNAME } from '../support/robar';
@@ -17,7 +17,7 @@ test('Print by Lot reprint: Reprint box locked on, reason + password required, w
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const lot = `MBPBR${stamp}`;
+  const lot = `CLPBR${stamp}`;
   const p = new PrintByLot(page);
 
   const msg = async (): Promise<string> => {
@@ -36,7 +36,7 @@ test('Print by Lot reprint: Reprint box locked on, reason + password required, w
 
   await test.step('first print of a new lot succeeds', async () => {
     await p.open();
-    await p.toLabelScreen(lot, ITEM, `MBPBRO${stamp}`);
+    await p.toLabelScreen(lot, ITEM, `CLPBRO${stamp}`);
     expect(await p.print()).toMatch(/Printed PID_\w+\.prn to Microsoft Print to PDF/);
     await expect(p.opt('btnDoPrint'), 'the whole print panel is locked after a print').toBeDisabled();
   });

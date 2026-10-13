@@ -41,7 +41,7 @@ test('view/edit template opens an existing template and persists a change made t
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBViewEditTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLViewEditTest' + Math.floor(Math.random() * 100000);
   const sharename = 'I_Num';
 
   await test.step('create a throwaway template, unmodified, to view/edit afterward', async () => {

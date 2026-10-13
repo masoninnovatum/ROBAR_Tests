@@ -15,7 +15,7 @@ test('Quick Edit pages through selected records and saves only the changed ones'
   test.setTimeout(480_000);
   let frame: Frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDQ${stamp}`;
+  const prefix = `CLMDQ${stamp}`;
   const [a, b, c] = ['A', 'B', 'C'].map((s) => prefix + s);
 
   await test.step('create three records', async () => {

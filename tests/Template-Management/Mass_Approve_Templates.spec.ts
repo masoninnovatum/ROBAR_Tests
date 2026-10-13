@@ -32,7 +32,7 @@ test('mass approve templates approves the selected template', async ({ page }) =
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBApproveTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLApproveTest' + Math.floor(Math.random() * 100000);
 
   await test.step('create a throwaway unapproved template', async () => {
     await frame.click('#drpMainActions');

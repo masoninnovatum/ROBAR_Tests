@@ -30,7 +30,7 @@ test('edit attributes updates a template\'s description, and rejects a blank one
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBEditAttrsTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLEditAttrsTest' + Math.floor(Math.random() * 100000);
   const originalDescription = 'Created via automated Playwright test (Edit Attributes)';
   const updatedDescription = 'Updated via automated Playwright test (Edit Attributes)';
 

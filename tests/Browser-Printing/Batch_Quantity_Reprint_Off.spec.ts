@@ -22,8 +22,8 @@ test('ReprintBasedOnBatchQty = N: after ONE printed copy every further print is 
   await login(page);
   const A = item('test-data/batchqty-item-a.json');
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBBQN${stamp}`;
-  const lot = `MBBQN${stamp}L`;
+  const order = `CLBQN${stamp}`;
+  const lot = `CLBQN${stamp}L`;
   console.log(`ORDER ${order} LOT ${lot}`);
 
   const state = async (pb: PrintByLot, label: string) => {

@@ -1,7 +1,7 @@
 // Multi Document Printing with PrintEntityRequired = Y and AddLotReasonRequired = Y (live 2026-10-08, HEADED: native "Open SentinelLauncher?" prompts are confirmed with FlaUI -- hands off the mouse;
 // seed user Claude01 holding `*`). Entry panel: Print Entity dropdown (first <select>, no id) + Order / Lot / Item -> Next -> (new lot) Reason Code dialog -> Lot Panel + Labeling rows -> Carton Label on the
 // "Microsoft Print to PDF" row -> Print. Verifies: the chosen entity is written to the lot (Lot Management), and the last used entity is the default on the next visit.
-// A real print creates the lot (the printed lot can still be deleted in Lot Management, verified 2026-10-09): one throw-away `MBMDPE<stamp>` lot per run. Skips unless PrintEntityRequired = Y.
+// A real print creates the lot (the printed lot can still be deleted in Lot Management, verified 2026-10-09): one throw-away `CLMDPE<stamp>` lot per run. Skips unless PrintEntityRequired = Y.
 
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
@@ -22,8 +22,8 @@ test('Multi Document Printing, PrintEntityRequired = Y: entity dropdown, Reason 
   console.log(`PrintEntityRequired = ${setting}`);
   test.skip(setting !== 'Y', `PrintEntityRequired is ${setting}; this spec covers Y`);
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBMDPEO${stamp}`;
-  const lot = `MBMDPE${stamp}`;
+  const order = `CLMDPEO${stamp}`;
+  const lot = `CLMDPE${stamp}`;
   let browserPid = 0;
   let f: Frame;
   let chosen = '';

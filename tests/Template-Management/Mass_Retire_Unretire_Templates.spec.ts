@@ -42,7 +42,7 @@ test('mass retire and unretire templates toggles the selected template', async (
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBRetireTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLRetireTest' + Math.floor(Math.random() * 100000);
 
   // Checks the template's row and opens the given Bulk Actions menu item. Retrieve Data must have
   // already run and the row must already be on screen.

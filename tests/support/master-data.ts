@@ -179,7 +179,7 @@ export interface NewRecordOptions {
  * leaving the browser on the Master Data Edit page. Returns the item number.
  */
 export async function createValidRecord(page: Page, frame: Frame, options: NewRecordOptions = {}): Promise<string> {
-  const itemNumber = options.itemNumber ?? 'MBMDM' + Date.now().toString().slice(-7);
+  const itemNumber = options.itemNumber ?? 'CLMDM' + Date.now().toString().slice(-7);
   await selectSchema(frame, options.schema ?? 'RobarMasterData');
   await openNewRecordAction(frame);
   await submitNewItemDialog(page, frame, itemNumber, options.description ?? 'Playwright MDM record');

@@ -10,7 +10,7 @@ test('Assign Labels creates unapproved Campaign Manager items for the selected r
   test.setTimeout(480_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDL${stamp}`;
+  const prefix = `CLMDL${stamp}`;
   const [a, b] = ['A', 'B'].map((s) => prefix + s);
 
   await test.step('create two MDM records', async () => {

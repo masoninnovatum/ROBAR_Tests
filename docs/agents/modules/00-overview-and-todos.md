@@ -116,3 +116,7 @@ other work already touching that screen.
 | 8 | AlphaNumeric Counter / DataMatrix dedicated testing | **STILL OPEN** (the `KeyNotFoundException` bug was fixed 2026-09-30; focused Counters testing the user wanted has not started) | printing.md |
 | 9 | Link to Label Master third message variant | **RESOLVED** 2026-10-02 (already marked) | - |
 | 10 | Item Edit RTF Editor | **PAUSED by the user** (deprioritized); resume only on request | campaign-manager.md |
+
+### UPDATE 2026-10-11 to the review table above
+- Item 3 (Mass Item Update numeric message): **RESOLVED** - live text is "Value can only be positive number." (no "a"), shown in a dialog (Close / Continue) AFTER Submit (server-side check, not on blur); the script's recorded Actual ("a positive number") is wrong, its Expected column and the 2026-09-24 code note were right. Needs an UNAPPROVED (editable) item: an approved item shows "Some items are not editable" and disables the form; the numeric field is `Qty1` ("Qty 1"); the only reason code is DataLoad.
+- Item 2 (Excel Import messages): **PARTLY RESOLVED** - file-level messages and "no Cancel button" settled (see the Campaign Manager Excel Import block in campaign-manager.md, 4 live cases); row-level messages ("Data not formatted correctly.", "ApprovedBy must be blank.") still untested - needs a real item workbook (template: the column list on Job Detail).

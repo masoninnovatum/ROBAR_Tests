@@ -18,7 +18,7 @@ test('Edit Workflows: add user at end / beginning, replace user, delete user on 
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await wf.openWorkflowManagement(page);
 
@@ -85,7 +85,7 @@ test('Edit Workflows: add user at end / beginning, replace user, delete user on 
   try {
     await test.step('setup: preset with one step for the test user; reject leftover open "PW edit" workflows; create workflows A and B', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`]);
       f = await wf.showNewestFirst(page, 'Open Only');
       const left = f.locator('#gridResults tr.jqgrow').filter({ hasText: /PW edit [AB] \d+/ });

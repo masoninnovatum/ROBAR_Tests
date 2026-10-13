@@ -35,7 +35,7 @@ test('AddLotReasonRequired: the Reason Code dialog on the print screens', async 
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const lot = (n: string) => `MBRL${stamp}${n}`;
+  const lot = (n: string) => `CLRL${stamp}${n}`;
 
   const screens: Array<{ tile: string; order: boolean; lot: boolean }> = [
     { tile: 'Print by order', order: true, lot: false },
@@ -82,23 +82,23 @@ test('AddLotReasonRequired: the Reason Code dialog on the print screens', async 
     expect(body).toContain('Override Lot');
     expect(body).toContain('Item: MI080301');
     const g = await du.reopenDynamicUi(page, 'Lot Management');
-    await du.retrieve(page, g, 'LotNum', 'Contains', `MBRL${stamp}`, { expectRows: false });
+    await du.retrieve(page, g, 'LotNum', 'Contains', `CLRL${stamp}`, { expectRows: false });
     await page.waitForTimeout(5000);
     const rows = await du.rows(g);
     console.log(`lots created before printing: ${JSON.stringify(rows)}`);
     // live 2026-10-08: the lot record is already created when the Lot Panel appears (placeholder dates 01/01/1900), before anything is printed
-    expect(rows.filter((r) => r.includes(`MBRL${stamp}P`))).toHaveLength(1);
-    expect(rows.find((r) => r.includes(`MBRL${stamp}P`))).toContain('MI080301');
-    expect(rows.find((r) => r.includes(`MBRL${stamp}P`))).toContain('01/01/1900');
+    expect(rows.filter((r) => r.includes(`CLRL${stamp}P`))).toHaveLength(1);
+    expect(rows.find((r) => r.includes(`CLRL${stamp}P`))).toContain('MI080301');
+    expect(rows.find((r) => r.includes(`CLRL${stamp}P`))).toContain('01/01/1900');
     // clean up the lot (Lot Management delete)
-    await du.selectGridRow(g, `MBRL${stamp}P`);
+    await du.selectGridRow(g, `CLRL${stamp}P`);
     await g.click('#del_grdJqGrid');
     await page.waitForTimeout(1200);
     await g.locator('.ui-jqdialog:visible .fm-button').filter({ hasText: 'Delete' }).first().click();
     await page.waitForTimeout(3000);
-    await du.retrieve(page, g, 'LotNum', 'Contains', `MBRL${stamp}`, { expectRows: false });
+    await du.retrieve(page, g, 'LotNum', 'Contains', `CLRL${stamp}`, { expectRows: false });
     await page.waitForTimeout(4000);
-    expect((await du.rows(g)).filter((r) => r.includes(`MBRL${stamp}`)), 'lot deleted').toEqual([]);
+    expect((await du.rows(g)).filter((r) => r.includes(`CLRL${stamp}`)), 'lot deleted').toEqual([]);
   });
 
   await test.step('Print by order lot: no Reason Code dialog (its config is not Y); "No Lot found ... Please fix or continue."', async () => {

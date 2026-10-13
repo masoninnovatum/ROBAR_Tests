@@ -4,7 +4,7 @@
 // "Microsoft Print to PDF" row (HARD RULE: never a real printer). Opening the module AND every Print raise the native "Open SentinelLauncher?"
 // prompt, which is confirmed with FlaUI (real mouse -- do not touch the mouse/keyboard). Needs a user with a Print Entity (User Print Entity
 // Management) and an item with an assigned LCN (MI080301 / LCN0000324 / template A1TemplateMT on TST703).
-// A real print creates the lot (the lot can be deleted again in Lot Management, verified 2026-10-09): one throw-away `MBMDPL<stamp>` lot per run.
+// A real print creates the lot (the lot can be deleted again in Lot Management, verified 2026-10-09): one throw-away `CLMDPL<stamp>` lot per run.
 
 import { test, expect } from '@playwright/test';
 import type { Frame, Page } from '@playwright/test';
@@ -21,8 +21,8 @@ test('Multi Document Printing: entry, lot panel, label rows, preview, Test Print
   test.setTimeout(600_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBMDPO${stamp}`;
-  const lot = `MBMDPL${stamp}`;
+  const order = `CLMDPO${stamp}`;
+  const lot = `CLMDPL${stamp}`;
   let browserPid = 0;
   let f: Frame;
 

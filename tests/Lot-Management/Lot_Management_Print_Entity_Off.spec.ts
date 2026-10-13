@@ -1,7 +1,7 @@
 // Lot Management with PrintEntityRequired = N (the TST703 value, read-only check of Global Settings; LastTouch 09/29/2026). With the setting OFF the Print Entity is NOT enforced:
 // `SP_LotsPrintEntities` returns only `ROBAR` for every user (also for a user holding `*` or several entities), so the Add dialog's Print Entity dropdown has the single option ROBAR, lots are
 // listed to every user whatever his Print Entities are (even none), and Excel Import accepts only ROBAR in the PrintEntity column ("ROBAR is a required value for this column").
-// MB fixtures only (MBPWLoginGrp / MBPWLogin01); one throw-away lot MBLPO<stamp>; the MB user ends without entities, the group without processes. Skipped automatically when the setting is Y.
+// MB fixtures only (MBPWLoginGrp / MBPWLogin01); one throw-away lot CLLPO<stamp>; the MB user ends without entities, the group without processes. Skipped automatically when the setting is Y.
 
 import { test, expect } from '@playwright/test';
 import type { Browser, Frame, Page } from '@playwright/test';
@@ -28,12 +28,12 @@ test('Lot Management with PrintEntityRequired = N: ROBAR only, lots visible to e
   console.log(`PrintEntityRequired = ${setting}`);
   test.skip(setting !== 'N', `PrintEntityRequired is ${setting}; this spec covers the N behavior (see Lot_Management_Print_Entity.spec.ts for Y)`);
   const stamp = Date.now().toString().slice(-6);
-  const lot = `MBLPO${stamp}`;
+  const lot = `CLLPO${stamp}`;
   let g: Frame;
 
   const openLots = async (p: Page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };

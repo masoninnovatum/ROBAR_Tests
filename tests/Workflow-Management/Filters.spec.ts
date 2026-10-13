@@ -16,7 +16,7 @@ test('Workflow Management filters: Included vs Can Vote, open-for-voting, status
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await wf.openWorkflowManagement(page);
 
@@ -52,7 +52,7 @@ test('Workflow Management filters: Included vs Can Vote, open-for-voting, status
   try {
     await test.step('setup: two-step preset (test user, MBUser3), workflows W1 and W2; the test user votes W1 (approve) so it waits for MBUser3', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`, 'MBUser3 (']);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

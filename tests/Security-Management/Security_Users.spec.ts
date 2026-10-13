@@ -1,5 +1,5 @@
 // Security Management > Users view (source: Innovatum.Pages.SecurityManagement.MVC). Only an MB* user created by this run is
-// written; existing users are only read. Users can never be deleted (only deactivated), so each run leaves one `MBPWU<stamp>`
+// written; existing users are only read. Users can never be deleted (only deactivated), so each run leaves one `CLPWU<stamp>`
 // user behind (deactivated at the end). The new user's password is the seed password, so a negative-permission login is
 // possible (see Security_Effect_On_Login.spec.ts).
 //   * Users view: columns, filters (UserID / Full Name / Group), Active Users Only
@@ -16,7 +16,7 @@ import { PASSWORD } from '../support/robar';
 test('Security Management Users: filters, add/edit user, copy security, group inheritance and deactivation', async ({ page }) => {
   test.setTimeout(420_000);
   const stamp = Date.now().toString().slice(-6);
-  const user = `MBPWU${stamp}`;
+  const user = `CLPWU${stamp}`;
   const SOURCE_GROUP = 'MBSomeSecurity';
   let f: Frame = await sec.openSecurity(page);
 
@@ -73,6 +73,8 @@ test('Security Management Users: filters, add/edit user, copy security, group in
       'FullName can not be longer than 80 characters',
       'Email can not be longer than 255 characters',
       'TimeZone is required',
+      // since DIT #6512 was fixed (seen 2026-10-13) the password global settings are enforced on user creation: "abc" breaks MinLength and NeedsNumbers
+      'Password must be at least 5 characters\nPassword must contain numbers',
       'Password values do not match',
     ]);
 

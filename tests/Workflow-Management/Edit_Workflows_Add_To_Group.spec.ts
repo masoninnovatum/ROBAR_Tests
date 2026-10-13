@@ -16,7 +16,7 @@ test('Edit Workflows: Add User > Add to Group (inside a group vs insert a new gr
   test.setTimeout(1_200_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await wf.openWorkflowManagement(page);
 
@@ -85,7 +85,7 @@ test('Edit Workflows: Add User > Add to Group (inside a group vs insert a new gr
   try {
     await test.step('setup: preset [test user group 1, MBUser3 group 2] and workflows A and B', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPresetWithSteps(page, pf, preset, [{ user: `${USERNAME} (`, group: 1 }, { user: 'MBUser3 (', group: 2 }]);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

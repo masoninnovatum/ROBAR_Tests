@@ -19,7 +19,7 @@ test('Lot Management: Save Search (new / overwrite / duplicate / required) and L
 
   const open = async (): Promise<Frame> => {
     const f = await du.reopenDynamicUi(page, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await page.waitForTimeout(3000);
     return du.reopenDynamicUi(page, 'Lot Management');
   };

@@ -1,7 +1,7 @@
 // Lot Management re-check against the ValMaster requirements (2026-10-08; see .agents/valmaster-lot-management.md). Covers requirements the earlier script-based specs did not check:
 // LM.160210.F.1.6 (icon states), LM.160210.F.1.7 (row-level Actions), LM.150420.F.4.2 (date defaults), LM.150420.F.5.11 / F.5.15 / F.5.12 / F.5.8 / F.5.5 (Excel Import page rules)
 // PE.161004.F.7.1 (no Print Entity dropdown while PrintEntityRequired = N; the Y-state Edit-dialog lock F.7.9 is in Lot_Management_Edit_Entity_Lock.spec.ts). A requirement that the live system does not meet is recorded as a test annotation `deviation <id>` (not a failure) so the regression run stays green. Seed user Claude01 (`*`),
-// headless, TST703. Throw-away lots MBLRQ<stamp>* are imported / added and deleted again.
+// headless, TST703. Throw-away lots CLLRQ<stamp>* are imported / added and deleted again.
 
 import { test, expect } from '@playwright/test';
 import type { Frame, Page } from '@playwright/test';
@@ -27,12 +27,12 @@ test('Lot Management vs ValMaster: icon states, row Actions, date defaults, Exce
   const peSetting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   console.log(`PrintEntityRequired = ${peSetting}`);
   const stamp = Date.now().toString().slice(-6);
-  const mk = (s: string) => `MBLRQ${stamp}${s}`;
+  const mk = (s: string) => `CLLRQ${stamp}${s}`;
   const files: string[] = [];
   let g: Frame;
   const open = async (p: Page = page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };
@@ -77,12 +77,12 @@ test('Lot Management vs ValMaster: icon states, row Actions, date defaults, Exce
   const sheetInfo = (imp: Frame) => imp.locator('#sheetName, select[name*=sheet i]').first().evaluate((e: HTMLSelectElement) => ({ disabled: e.disabled, options: Array.from(e.options).map((o) => o.text) })).catch(() => null);
   const createdLots: string[] = [];
 
-  // leftovers of an earlier failed run (this spec's throw-away lots are MBLRQ<6 digits><letter>)
+  // leftovers of an earlier failed run (this spec's throw-away lots are CLLRQ<6 digits><letter>)
   for (let i = 0; i < 8; i++) {
     g = await open();
-    await du.retrieve(page, g, 'LotNum', 'Contains', 'MBLRQ', { expectRows: false });
+    await du.retrieve(page, g, 'LotNum', 'Contains', 'CLLRQ', { expectRows: false });
     await page.waitForTimeout(5000);
-    const left = (await du.rows(g)).map((r) => r.split(' ').find((t) => /^MBLRQ\d{6}[A-Z]$/.test(t))).filter(Boolean) as string[];
+    const left = (await du.rows(g)).map((r) => r.split(' ').find((t) => /^CLLRQ\d{6}[A-Z]$/.test(t))).filter(Boolean) as string[];
     if (!left.length) break;
     console.log(`removing leftover lot ${left[0]}`);
     await deleteLot(left[0]);

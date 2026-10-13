@@ -15,7 +15,7 @@ test('Assign GTIN with an Add Source DI Field row derives the GTIN from the reco
   test.setTimeout(480_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBGSD${stamp}`;
+  const prefix = `CLGSD${stamp}`;
   const items = [
     { n: prefix + 'A', primary: '00841646' + stamp },
     { n: prefix + 'B', primary: '00841647' + stamp },

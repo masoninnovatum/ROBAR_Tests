@@ -1,7 +1,7 @@
 // Multi Document Printing and Batch Quantity x Multiplier + Extra (live 2026-10-09, HEADED, Print to PDF only, ONE copy printed; seed user Claude01, TST703).
 // ValMaster MDP.180418.F.14.1: non-serialized Copies in the Labeling grid = Batch Quantity x Multiplier + Extra of the Item / Lot; F.14.2: no values -> Copies = 1; F.4.12: editing the Lot Batch Quantity via
 // "Override Lot Data" (+ Save) updates Copies; F.7.1: a reprint row shows "R" next to the checkbox (second print, or reprint by batch qty). Item A: Qty2 3 / u5 2 (copies = batch x 3 + 2).
-// Prerequisite: ReprintBasedOnBatchQty = N for MultiDocPrint (user flipped 2026-10-09) -> any second print is a reprint. The throw-away lots: MBBQM<stamp>L (printed, stays), MBBQM<stamp>XL (item MI080301, unprinted, deleted).
+// Prerequisite: ReprintBasedOnBatchQty = N for MultiDocPrint (user flipped 2026-10-09) -> any second print is a reprint. The throw-away lots: CLBQM<stamp>L (printed, stays), CLBQM<stamp>XL (item MI080301, unprinted, deleted).
 
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
@@ -23,9 +23,9 @@ test('Multi Document Printing: Copies = Batch Qty x Multiplier + Extra, Override
   await login(page);
   const A = JSON.parse(fs.readFileSync('test-data/batchqty-item-a.json', 'utf8')).item as string;
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBBQM${stamp}`;
-  const lot = `MBBQM${stamp}L`;
-  const lot2 = `MBBQM${stamp}XL`;
+  const order = `CLBQM${stamp}`;
+  const lot = `CLBQM${stamp}L`;
+  const lot2 = `CLBQM${stamp}XL`;
   let pid = 0;
   let f!: Frame;
   const frame = (): Frame => page.frames().filter((x) => x.url().includes('MultiDocPrinting/MultiDocumentPrinting')).pop()!;

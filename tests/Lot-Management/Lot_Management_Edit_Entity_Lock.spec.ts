@@ -1,6 +1,6 @@
 // PE.161004.F.7.9 (ValMaster, module "Print Entity - Lot Management"): with ONE Print Entity the Print Entity dropdown of the Lot Edit Record dialog is pre-populated and LOCKED. Live check with PrintEntityRequired = Y,
 // TST703: the seed user (`*`) adds an England lot, an MB user holding ONLY England (LE_View_Lots + LE_Chg_Lots, second browser context) opens the Edit dialog. A requirement the system does not meet is recorded as a
-// test annotation `deviation <id>` (not a failure). The lot (MBLEL<stamp>) is deleted at the end; the MB user ends without entities and the group without processes. Skips unless the setting is Y.
+// test annotation `deviation <id>` (not a failure). The lot (CLLEL<stamp>) is deleted at the end; the MB user ends without entities and the group without processes. Skips unless the setting is Y.
 
 import { test, expect } from '@playwright/test';
 import type { Browser, Frame, Page } from '@playwright/test';
@@ -22,10 +22,10 @@ test('Lot Management Edit dialog: one Print Entity -> the Print Entity dropdown 
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   test.skip(setting !== 'Y', `PrintEntityRequired is ${setting}`);
   const stamp = Date.now().toString().slice(-6);
-  const lot = `MBLEL${stamp}`;
+  const lot = `CLLEL${stamp}`;
   const openLots = async (p: Page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };
@@ -53,7 +53,7 @@ test('Lot Management Edit dialog: one Print Entity -> the Print Entity dropdown 
         await loginAs(p, MB, PASSWORD);
         await p.waitForTimeout(2000);
         const f = await openLots(p);
-        await du.retrieve(p, f, 'LotNum', 'Contains', 'MBLEL', { expectRows: false });
+        await du.retrieve(p, f, 'LotNum', 'Contains', 'CLLEL', { expectRows: false });
         await p.waitForTimeout(6000);
         const rows = (await du.rows(f)).filter((r) => r.includes(lot));
         expect(rows, 'the MB user sees the England lot').toHaveLength(1);

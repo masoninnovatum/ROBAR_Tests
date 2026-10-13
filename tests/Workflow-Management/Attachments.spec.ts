@@ -22,7 +22,7 @@ test('workflow attachments: add, duplicate refused, closed-workflow warning, dow
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await wf.openWorkflowManagement(page);
 
@@ -68,7 +68,7 @@ test('workflow attachments: add, duplicate refused, closed-workflow warning, dow
   try {
     await test.step('setup: preset (one step for the test user) and two workflows A and B', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`]);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

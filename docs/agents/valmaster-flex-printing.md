@@ -1,0 +1,12 @@
+# ValMaster requirements - Flex Printing (module "Flex Printing", 26 rows; Customer Specific blank, not Obsolete; pulled 2026-10-12). Grouped by the Test Cases column.
+## Flex_Printing-2.1 (FLX.190301.*)
+- **U.1** retrieve lot data when a single match is identified in Lots by some key fields; **U.2** user can enter the additional lot data needed to create a new lot.
+- **F.1.1** user without `BP_Add_Lot_Printtime` who tries to add a new lot at print time gets "user not authorized to add lot records".
+- **F.1.2** `DeleteLotIfExists` = N and an existing lot/order combination used for a different item -> "Cannot update item number of an existing lot/order combination".
+- **F.1.5** Item Number + Lot Number entered on the initial Flex screen -> query Lots (incl. selected entity); a single match shows the Order Number. **F.1.6** Order Number + Item Number -> shows the Lot Number. **F.2.3** Order + Lot -> shows the Item Number only if Item Number is configured 'Add Only', else error "Insufficient lot identifiers configured".
+- **F.2.1** Flex print config identifiers: `Flex_Identifier_1 = FlexLot_OrderNum, Order Number, AddOnly`; `_2 = FlexLot_LotNum, Lot Number, AddOnly`; `_3 = FlexLot_ItemNumber, Item Number, AddOnly`; with 'addonly' and unanswered identifier fields the field is provided on the screen.
+- **F.2.2** identifying info for a record that does not exist in Lots + user has `BP_Add_Lot_Printtime` -> the identifier field not yet on the screen is displayed so data can be added, or the record is submitted with a blank identifier.
+## DAKOPrinting-1.1 (FP.160323.*)
+- **U.1 / F.1.1** `LotDeBypass` enabled in PrintConfig -> the Lots grid is not displayed. **U.2 / F.2.1** `DeleteLotIfExists` enabled -> an existing Lot number can be reused. **U.3 / F.3.1** `TestPrintShow` enabled and template has S_Test -> Test print possible; **F.3.2** test print -> PrintStatus 'TestPrinted' in PrintHistory. **U.4 / F.4.1** Reset button clears entered flex entry fields. **U.5 / F.5.1** drop-down at print time: 'View Master', 'View Preview', 'View Compare'.
+## Flex_LHSPrinting-1.1 (FP.160601.*)
+- **U.1 / F.1.1** a date selector on the Flex Printing UI; **F.1.2** supports US and European date/time formats per the user's Windows settings; **F.1.3** PrintConfig ParamValue 'Date' appends a date picker to the field; **F.1.4** ParamValue 'Protect' = no manual input except via the date picker; **F.1.5** process `BP_FlexPriorDate` lets users manually enter an expiration date in the past.

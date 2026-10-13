@@ -38,7 +38,7 @@ test('Export to Excel: records what happens and validates the file if one arrive
   test.setTimeout(420_000);
   let frame: Frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDX${stamp}`;
+  const prefix = `CLMDX${stamp}`;
   const nums = ['A', 'B'].map((s) => prefix + s);
 
   await test.step('create two records', async () => {

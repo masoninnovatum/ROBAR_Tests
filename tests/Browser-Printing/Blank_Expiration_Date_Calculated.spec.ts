@@ -22,7 +22,7 @@ test('blank expiration date is calculated from manufacturing date + shelf life o
   await login(page);
   const frame = await openPrintByOrder(page);
 
-  const orderNumber = 'MBEXP' + Math.floor(Math.random() * 100000);
+  const orderNumber = 'CLEXP' + Math.floor(Math.random() * 100000);
   const itemNumber = 'MI080301'; // confirmed live, existing approved test item (see exploratory-session-log-robar-print.md)
 
   await test.step('enter a brand-new Order+Item combo', async () => {

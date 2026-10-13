@@ -38,7 +38,7 @@ test('Item Edit PDF and Insert Symbols buttons', async ({ page, context }) => {
   const cmFrame = await findFrame(page, 'campaignmanager');
   await page.waitForTimeout(1000);
 
-  const itemNumber = 'MBPSR' + Date.now().toString().slice(-6);
+  const itemNumber = 'CLPSR' + Date.now().toString().slice(-6);
   await cmFrame.click('#btnCreateNew');
   await cmFrame.waitForSelector('#txtItemNumber', { state: 'visible' });
   await cmFrame.fill('#txtItemNumber', itemNumber);

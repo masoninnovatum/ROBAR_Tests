@@ -31,8 +31,8 @@ test('Multi Document Printing: View Master and View Compare work for an item wit
       if (g && (await g.locator('input[name="FlexLot_OrderNum"]').count()) > 0) { f = g; break; }
       await page.waitForTimeout(1000);
     }
-    await f!.locator('input[name="FlexLot_OrderNum"]').fill(`MBMDMO${stamp}`);
-    await f!.locator('input[name="FlexLot_LotNum"]').fill(`MBMDML${stamp}`);
+    await f!.locator('input[name="FlexLot_OrderNum"]').fill(`CLMDMO${stamp}`);
+    await f!.locator('input[name="FlexLot_LotNum"]').fill(`CLMDML${stamp}`);
     await f!.locator('input[name="FlexLot_ItemNumber"]').fill(item);
     await f!.locator('input[name="FlexLot_ItemNumber"]').press('Tab');
     await f!.getByRole('button', { name: 'Next' }).click();

@@ -25,7 +25,7 @@ test('NeedsLetters N / NeedsNumbers N on every surface', async ({ page, browser 
   const hidden = await page.evaluate(() => ({ minLength: (document.getElementById('minLength') as HTMLInputElement)?.value, needsLetters: (document.getElementById('needsLetters') as HTMLInputElement)?.value, needsNumbers: (document.getElementById('needsNumbers') as HTMLInputElement)?.value }));
   record('N-settings', `GlobalSettings (LegacySettings): ${JSON.stringify(vals)}; Password Reset hidden fields: ${JSON.stringify(hidden)}`, String(hidden.needsLetters).toLowerCase() === 'false' && String(hidden.needsNumbers).toLowerCase() === 'false' ? 'Pass' : 'Blocked', 'confirms both rules are OFF in the page that reads them');
 
-  const mk = async (suffix: string, reset: boolean, pw = A) => { const u = `MBPWN${suffix}_${stamp}`; const r = await admin.addUser(u, pw, pw, reset); if (!r.added) throw new Error(`add ${u}: ${JSON.stringify(r.messages)}`); return u; };
+  const mk = async (suffix: string, reset: boolean, pw = A) => { const u = `CLPWN${suffix}_${stamp}`; const r = await admin.addUser(u, pw, pw, reset); if (!r.added) throw new Error(`add ${u}: ${JSON.stringify(r.messages)}`); return u; };
 
   // SM: add users with each weak password; then the user logs in with it (NL)
   for (const [label, pw] of PWS) {

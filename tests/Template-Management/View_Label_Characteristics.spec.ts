@@ -37,7 +37,7 @@ test('view label characteristics shows a newly created template\'s attributes', 
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBLabelCharsTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLLabelCharsTest' + Math.floor(Math.random() * 100000);
   const sharename = 'I_Num';
 
   await test.step('create a template with a text object bound to a real sharename', async () => {

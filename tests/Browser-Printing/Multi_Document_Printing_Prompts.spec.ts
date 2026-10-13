@@ -17,7 +17,7 @@ const QUESTION = 'What is your hair color?';
 test('Multi Document Printing: print-time prompts (required, Cancel) and Edit Prompt Data', async ({ page }) => {
   test.setTimeout(900_000);
   await login(page);
-  const item = await ensureItemWithMaster(page, { template: 'SIMPLEPROMPTS', store: 'prompts-item.json', master: false, prefix: 'MBMDPP' });
+  const item = await ensureItemWithMaster(page, { template: 'SIMPLEPROMPTS', store: 'prompts-item.json', master: false, prefix: 'CLMDPP' });
   const stamp = Date.now().toString().slice(-6);
   let f: Frame;
   let browserPid = 0;
@@ -65,8 +65,8 @@ test('Multi Document Printing: print-time prompts (required, Cancel) and Edit Pr
       if (g && (await g.locator('input[name="FlexLot_OrderNum"]').count()) > 0) { f = g; break; }
       await page.waitForTimeout(1000);
     }
-    await f!.locator('input[name="FlexLot_OrderNum"]').fill(`MBMDPQO${stamp}`);
-    await f!.locator('input[name="FlexLot_LotNum"]').fill(`MBMDPQL${stamp}`);
+    await f!.locator('input[name="FlexLot_OrderNum"]').fill(`CLMDPQO${stamp}`);
+    await f!.locator('input[name="FlexLot_LotNum"]').fill(`CLMDPQL${stamp}`);
     await f!.locator('input[name="FlexLot_ItemNumber"]').fill(item);
     await f!.locator('input[name="FlexLot_ItemNumber"]').press('Tab');
     await f!.getByRole('button', { name: 'Next' }).click();

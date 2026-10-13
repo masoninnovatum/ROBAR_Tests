@@ -1,6 +1,6 @@
 // Codes Management Excel Import (live 2026-10-08, headless, TST703, seed user): Actions > Excel Import = InnoPages/Codes/FileSubmission ("Codes Excel Data Upload"): Download Template (Codes_Template.xlsx),
 // #spreadsheetFile, #sheetName, #btnValidate, validation grid, signature block, Submit Job. Same widgets as Dictionary Management's import. Self-contained: builds its own workbooks with ExcelJS,
-// only touches the code type MBCodesTest and codes MBCX<stamp>* (codes cannot be deleted: two new codes per run).
+// only touches the code type MBCodesTest and codes CLCX<stamp>* (codes cannot be deleted: two new codes per run).
 // Signer rights (controller Authenticate): EI_Codes / EI_Codes_Upd are checked ONLY when the file contains rows that already exist (replace path) - see the last step.
 
 import { test, expect } from '@playwright/test';
@@ -92,8 +92,8 @@ async function testRows(page: Page, part: string): Promise<string[]> {
 test('Codes Management Excel Import: template, validation errors, new rows, overwrite prompt, signer rights', async ({ page, browser }) => {
   test.setTimeout(1_500_000);
   const stamp = Date.now().toString().slice(-6);
-  const A = `MBCX${stamp}a`;
-  const B = `MBCX${stamp}b`;
+  const A = `CLCX${stamp}a`;
+  const B = `CLCX${stamp}b`;
   const files: string[] = [];
   await login(page);
 
@@ -160,15 +160,15 @@ test('Codes Management Excel Import: template, validation errors, new rows, over
     expect(after).toContain('Upload Successful');
     await importFrame(page).locator('a').filter({ hasText: 'Previous Page' }).first().click();
     await page.waitForTimeout(4000);
-    const rows = await testRows(page, `MBCX${stamp}`);
-    console.log(`after import: ${JSON.stringify(rows.filter((x) => x.includes(`MBCX${stamp}`)))}`);
+    const rows = await testRows(page, `CLCX${stamp}`);
+    console.log(`after import: ${JSON.stringify(rows.filter((x) => x.includes(`CLCX${stamp}`)))}`);
     expect(rows).toContain(`${TYPE} ${A} Imported 1 Y`);
     expect(rows).toContain(`${TYPE} ${B} N`);
   });
 
   await test.step('Active = "Maybe" is NOT rejected by validation (defect candidate); what the upload then does', async () => {
     await openImport(page);
-    const M = `MBCX${stamp}m`;
+    const M = `CLCX${stamp}m`;
     const file = await makeXlsx(`codes_badactive_${stamp}`, [{ CodeType: TYPE, Code: M, Description: 'bad active', Active: 'Maybe' }]); files.push(file);
     const r = await validate(page, file);
     console.log(`Active=Maybe validation: ${r.body.slice(0, 200)}`);
@@ -183,7 +183,7 @@ test('Codes Management Excel Import: template, validation errors, new rows, over
     await openImport(page);
     await importFrame(page).locator('a').filter({ hasText: 'Previous Page' }).first().click();
     await page.waitForTimeout(4000);
-    const rows = await testRows(page, `MBCX${stamp}`);
+    const rows = await testRows(page, `CLCX${stamp}`);
     console.log(`Active=Maybe code in grid: ${JSON.stringify(rows.filter((x) => x.includes(M)))}`);
   });
 
@@ -213,7 +213,7 @@ test('Codes Management Excel Import: template, validation errors, new rows, over
     expect(await text(importFrame(page))).toContain('Upload Successful');
     await importFrame(page).locator('a').filter({ hasText: 'Previous Page' }).first().click();
     await page.waitForTimeout(4000);
-    const rows = await testRows(page, `MBCX${stamp}`);
+    const rows = await testRows(page, `CLCX${stamp}`);
     console.log(`after overwrite: ${JSON.stringify(rows.filter((x) => x.includes(A)))}`);
     expect(rows).toContain(`${TYPE} ${A} Imported 2 N`);
   });
@@ -250,13 +250,13 @@ test('Codes Management Excel Import: template, validation errors, new rows, over
       expect(insOnly).toMatch(/not authorized for this task.{0,6}EI_Codes_Upd/i);
       const updOnly = await attempt(['EI_Codes_Upd'], replaceRow, 'upd', true);
       console.log('replace, signer with EI_Codes_Upd only: ' + updOnly.slice(-260));
-      const fresh = await attempt([], [{ CodeType: TYPE, Code: `MBCX${stamp}c`, Description: 'no rights signer', Active: 'Y' }], 'new', false);
+      const fresh = await attempt([], [{ CodeType: TYPE, Code: `CLCX${stamp}c`, Description: 'no rights signer', Active: 'Y' }], 'new', false);
       console.log('NEW row only, signer with no EI_* rights: ' + fresh.slice(-260));
       if (!/not authorized for this task.{0,3}EI_Codes/i.test(fresh)) deviation('CM.160202.F.4.1', '"User not authorized for this task EI_Codes" for a signer without EI_Codes', 'an empty error dialog (no message); nothing is created');
       await openImport(page);
       await importFrame(page).locator('a').filter({ hasText: 'Previous Page' }).first().click();
       await page.waitForTimeout(4000);
-      console.log(`NEW row by a signer with no EI_* rights was created: ${JSON.stringify(await testRows(page, `MBCX${stamp}c`))}`);
+      console.log(`NEW row by a signer with no EI_* rights was created: ${JSON.stringify(await testRows(page, `CLCX${stamp}c`))}`);
     } finally {
       await sec.setGroupProcesses(admin, MBGROUP, ['Login_WebMenu']);
       await adminCtx.close();

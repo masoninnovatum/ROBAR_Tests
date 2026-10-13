@@ -82,7 +82,7 @@ test('create and approve a new template, create and approve an item using it, an
 
   await login(page);
 
-  const templateName = 'MBCombo' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLCombo' + Math.floor(Math.random() * 100000);
 
   await test.step('Part 1: create and approve the template (Template Management)', async () => {
     await openMenuItem(page, 'Template Management');
@@ -309,7 +309,7 @@ test('create and approve a new template, create and approve an item using it, an
     await page.locator('li.ui-tabs-tab:has-text("Template Management") .ui-icon-close').click();
   });
 
-  const itemNumber = 'MBComboItm' + Date.now().toString().slice(-6);
+  const itemNumber = 'CLComboItm' + Date.now().toString().slice(-6);
 
   await test.step('Part 2: create and approve a Campaign Manager item using that template', async () => {
     await openMenuItem(page, 'Campaign Manager');

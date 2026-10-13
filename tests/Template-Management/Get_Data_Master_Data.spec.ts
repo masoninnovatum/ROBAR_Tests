@@ -37,7 +37,7 @@ test('Get Data fills the template with the item\'s approved Master Data values (
   await openMenuItem(page, 'Template Management');
   let tmFrame = await findFrame(page, 'TemplateManagement');
   const stamp = Date.now().toString().slice(-6);
-  const templateName = 'MBGDMD' + stamp;
+  const templateName = 'CLGDMD' + stamp;
   const brand = 'GDBrand' + stamp;
   let itemNumber = '';
 
