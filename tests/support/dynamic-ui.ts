@@ -104,3 +104,18 @@ export async function cancelForm(f: Frame): Promise<void> {
   await delay(600);
   await expect(f.locator('.ui-jqdialog:visible')).toHaveCount(0, { timeout: 5000 });
 }
+
+/**
+ * Removes every saved criteria row of a Dynamic UI page by hand. Use this INSTEAD of clicking `#btnReset`: since 2026-10-12 the Reset button of Dynamic UI pages that
+ * hold saved criteria crashes the browser renderer ("Page crashed") on this environment. The page restores the previous criteria on every open, so the next
+ * `retrieve()` (which adds / sets row 0) works from a clean slate.
+ */
+export async function clearCriteria(page: Page, f: Frame): Promise<void> {
+  for (let i = 0; i < 10; i++) {
+    const remove = f.getByText('Remove', { exact: true });
+    if (!(await remove.count())) break;
+    await remove.first().click({ timeout: 3000 }).catch(() => {});
+    await delay(300);
+  }
+  void page;
+}

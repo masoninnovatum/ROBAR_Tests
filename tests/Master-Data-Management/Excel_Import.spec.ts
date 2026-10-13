@@ -21,7 +21,7 @@ const DUNS = '118117576'; // the one real Labeler Duns record ("Innovatum") on T
 test('Excel Import: template, valid import, failure modes, override and the overwrite prompt', async ({ page }) => {
   test.setTimeout(900_000);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBXLI${stamp}`;
+  const prefix = `CLXLI${stamp}`;
   await mdm.openMasterData(page);
 
   /** Opens the Master Data grid for the prefix and returns the version rows' texts ("<item> <version>"). */

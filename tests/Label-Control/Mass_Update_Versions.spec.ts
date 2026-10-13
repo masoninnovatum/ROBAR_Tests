@@ -31,7 +31,7 @@ test('mass-update a freshly-assigned Label Control record, keeping all versions'
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCMU' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCMU' + Date.now().toString().slice(-7);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');

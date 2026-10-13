@@ -45,8 +45,8 @@ test('Link Attachments uploads a new file and links it to a Label Control record
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCLA' + Date.now().toString().slice(-7);
-  const uploadedFileName = `MBAttach${Date.now().toString().slice(-7)}.txt`;
+  const itemNumber = 'CLLCLA' + Date.now().toString().slice(-7);
+  const uploadedFileName = `CLAttach${Date.now().toString().slice(-7)}.txt`;
   const uploadFilePath = path.join(os.tmpdir(), uploadedFileName);
   fs.writeFileSync(uploadFilePath, 'Playwright Link Attachments test fixture file.');
 

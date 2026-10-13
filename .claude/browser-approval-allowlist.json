@@ -1,0 +1,6 @@
+{
+  "_comment": "Hostnames that mcp__Claude_Browser__navigate may auto-approve to (http/https only, never a custom protocol). See .agents/browser-automation-approval-policy.md before adding an entry.",
+  "allowedHostnames": [
+    "vmsrvtst703"
+  ]
+}

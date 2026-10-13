@@ -19,7 +19,7 @@ test('UAT 6614 execution', async ({ page }) => {
   fs.mkdirSync(SHOTS, { recursive: true });
   const jsErrors: string[] = [];
   page.on('pageerror', (e) => { jsErrors.push(e.message); console.log('PAGEERROR ' + e.message); });
-  const name = `MBPW6614${Date.now().toString().slice(-6)}`;
+  const name = `CLPW6614${Date.now().toString().slice(-6)}`;
   const log: Record<string, unknown> = { name };
 
   await login(page);

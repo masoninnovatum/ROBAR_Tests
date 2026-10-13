@@ -32,7 +32,7 @@ test('Recreate Master creates a Label Master for a freshly-assigned Label Contro
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCRM' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCRM' + Date.now().toString().slice(-7);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');

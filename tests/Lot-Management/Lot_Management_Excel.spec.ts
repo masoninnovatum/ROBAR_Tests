@@ -1,7 +1,7 @@
 // Lot Management Excel Export / Import (live 2026-10-06, Claude01, headless). Export: Actions > Excel Export opens an in-page dialog (`#fileName`, radios `#limitResults` / `#unlimitedResults`,
 // `#submitBtn`, then the `#downloadLnk` link) that exports the retrieved lots. Import: Actions > Excel Import -> `DynamicUI/ExcelImport?pageID=` (Download Template link, file input
 // `#spreadsheetFile`, sheet select, `#btnValidate`, then `#btnSubmit`), job result `ExcelImportJobDetail?jobID=YYYYMMDD-NNNN`. The Lots template is one sheet "Sheet1" with the headers
-// OrderNum, LotNum, ItemNumber, PrintEntity, Expires, Manufactured, Reassay, U1-U5; blank date cells are invalid. Throw-away lots MBLIMP<stamp> are imported and deleted again.
+// OrderNum, LotNum, ItemNumber, PrintEntity, Expires, Manufactured, Reassay, U1-U5; blank date cells are invalid. Throw-away lots CLLIMP<stamp> are imported and deleted again.
 
 import { test, expect } from '@playwright/test';
 import type { Download, Frame } from '@playwright/test';
@@ -20,14 +20,14 @@ test('Lot Management Excel: template, export (name validation, limited / unlimit
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const lotA = `MBLIMPA${stamp}`;
-  const lotB = `MBLIMPB${stamp}`;
+  const lotA = `CLLIMPA${stamp}`;
+  const lotB = `CLLIMPB${stamp}`;
   const today = new Date();
   let g: Frame;
 
   const openLots = async (): Promise<Frame> => {
     const f = await du.reopenDynamicUi(page, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await page.waitForTimeout(3000);
     return du.reopenDynamicUi(page, 'Lot Management');
   };
@@ -160,7 +160,7 @@ test('Lot Management Excel: template, export (name validation, limited / unlimit
     ]);
     expect(job).toMatch(/Completed/);
     g = await openLots();
-    const rows = await search('LotNum', 'Contains', `MBLIMP`);
+    const rows = await search('LotNum', 'Contains', `CLLIMP`);
     const mine = rows.filter((r) => r.includes(stamp));
     console.log(`imported lots: ${JSON.stringify(mine)}`);
     expect(mine).toHaveLength(2);
@@ -176,12 +176,12 @@ test('Lot Management Excel: template, export (name validation, limited / unlimit
     expect(rows[0]).not.toContain('imp-u2-updated');
   });
   } finally {
-    await test.step('cleanup: delete every imported MBLIMP lot (also leftovers of an interrupted earlier run)', async () => {
+    await test.step('cleanup: delete every imported CLLIMP lot (also leftovers of an interrupted earlier run)', async () => {
       for (let i = 0; i < 6; i++) {
         try {
           g = await openLots();
-          const rows = await search('LotNum', 'Contains', 'MBLIMP', false);
-          const lot = (rows[0]?.match(/MBLIMP[AB]\d+(?!O)/) ?? [])[0];
+          const rows = await search('LotNum', 'Contains', 'CLLIMP', false);
+          const lot = (rows[0]?.match(/CLLIMP[AB]\d+(?!O)/) ?? [])[0];
           if (!lot) break;
           await du.selectGridRow(g, lot);
           await g.click('#del_grdJqGrid');

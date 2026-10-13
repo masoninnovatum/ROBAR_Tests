@@ -34,7 +34,7 @@ test('Dictionary Management: each DM_* process switches on its own control; the 
   await sec.openSecurity(page);
   // an UNAPPROVED record of our own: approved records open read-only in View/Edit whatever the security (the seeded prompt phrases are approved)
   const stamp = Date.now().toString().slice(-6);
-  const PHR = `MBDMS${stamp}`;
+  const PHR = `CLDMS${stamp}`;
   {
     const ctx = await (browser as Browser).newContext();
     const ap = await ctx.newPage();

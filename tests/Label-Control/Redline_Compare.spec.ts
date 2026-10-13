@@ -42,8 +42,8 @@ test('Redline Compare triggers the Create Temporary Master dialog then shows a r
   await login(page);
 
   const stamp = Date.now().toString().slice(-6);
-  const itemA = 'MBLCRC' + stamp + 'A';
-  const itemB = 'MBLCRC' + stamp + 'B';
+  const itemA = 'CLLCRC' + stamp + 'A';
+  const itemB = 'CLLCRC' + stamp + 'B';
 
   async function createApproveItem(itemNumber: string): Promise<void> {
     await openMenuItem(page, 'Campaign Manager');
@@ -121,7 +121,7 @@ test('Redline Compare triggers the Create Temporary Master dialog then shows a r
     } else {
       await frame.locator("select[name$='Column']").first().selectOption('LCV_ItemNumber');
       await frame.locator("select[name$='Operator']").first().selectOption('Contains');
-      await frame.locator("input[name$='Value']").first().fill('MBLCRC' + stamp);
+      await frame.locator("input[name$='Value']").first().fill('CLLCRC' + stamp);
     }
 
     await frame.click('#btnRetrieveData');

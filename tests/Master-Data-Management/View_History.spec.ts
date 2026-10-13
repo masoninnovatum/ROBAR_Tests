@@ -13,7 +13,7 @@ import { findFrame, USERNAME } from '../support/robar';
 test('View History lists the per-version field changes, filters by field and opens a record snapshot', async ({ page }) => {
   test.setTimeout(420_000);
   let frame: Frame = await mdm.openMasterData(page);
-  const item = 'MBMDH' + Date.now().toString().slice(-6);
+  const item = 'CLMDH' + Date.now().toString().slice(-6);
 
   await test.step('build a record with a known history (v0: create, edit, approve; v1: new version + edit)', async () => {
     await mdm.createValidRecord(page, frame, { itemNumber: item, brandName: 'History Brand 1' });

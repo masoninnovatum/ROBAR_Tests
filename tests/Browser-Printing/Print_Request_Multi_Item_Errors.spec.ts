@@ -23,15 +23,15 @@ test('Print by Order / Print by Lot: a number assigned to multiple items shows a
   const A = item('test-data/batchqty-item-a.json');
   const B = item('test-data/batchqty-item-b.json');
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBPRO${stamp}`;
-  const order2 = `MBPRO${stamp}B`;
-  const lot1 = `MBPRL${stamp}A`;
-  const lot2 = `MBPRL${stamp}B`;
+  const order = `CLPRO${stamp}`;
+  const order2 = `CLPRO${stamp}B`;
+  const lot1 = `CLPRL${stamp}A`;
+  const lot2 = `CLPRL${stamp}B`;
   const created: string[] = [];
 
   const addLot = async (o: string, l: string, i: string) => {
     const g = await du.reopenDynamicUi(page, 'Lot Management');
-    await du.retrieve(page, g, 'LotNum', 'Contains', 'MBPRL', { expectRows: false });
+    await du.retrieve(page, g, 'LotNum', 'Contains', 'CLPRL', { expectRows: false });
     await page.waitForTimeout(3000);
     const dlg = await du.openFormDialog(g, 'add');
     for (const [name, value] of Object.entries({ OrderNum: o, LotNum: l, ItemNumber: i })) await dlg.locator(`[name="${name}"]`).fill(value);

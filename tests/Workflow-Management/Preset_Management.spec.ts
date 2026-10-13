@@ -1,5 +1,5 @@
 // Workflow Management > Actions > Preset Management (InnoPages/WorkflowManagement/PresetManagement), live 2026-10-05 as Claude01.
-// Only throw-away MB presets (`MBPWPreset<stamp>`) are created and they are DELETED again (presets, unlike groups/schemas/label
+// Only throw-away MB presets (`CLPWPreset<stamp>`) are created and they are DELETED again (presets, unlike groups/schemas/label
 // types, can be removed), including leftovers from an interrupted run. Page anatomy: preset `#ddlSelectPreset` + "Create New"
 // button; per-preset controls `Save As`, `#btDeletePreset`, `#chkActive`, `#txtPresetDescription` + "Submit Changes", "Add Step"
 // (opens `#dvMainEdit`: `#drpUser`, `#txtDepartment`, `#chkVoteForGroup`, `#drpVoteVeto`, `#txtApprovalGroup`,
@@ -26,7 +26,7 @@ test('Preset Management: create, add and edit steps, Save As, deactivate and del
   await f.locator('#ddlSelectPreset').waitFor({ timeout: 15_000 });
 
   const stamp = Date.now().toString().slice(-6);
-  const name = `MBPWPreset${stamp}`;
+  const name = `CLPWPreset${stamp}`;
   const saveAs = `${name}SA`;
 
   const presets = async () => (await f.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim());
@@ -51,7 +51,7 @@ test('Preset Management: create, add and edit steps, Save As, deactivate and del
   };
 
   // leftovers from an interrupted earlier run
-  for (const p of (await presets()).filter((p) => /^MBPWPreset/.test(p))) await deletePreset(p);
+  for (const p of (await presets()).filter((p) => /^(MB|CL)PWPreset/.test(p))) await deletePreset(p);
 
   try {
     await test.step('page: preset list and the Create New Preset dialog validation', async () => {
@@ -227,8 +227,8 @@ test('Preset Management: create, add and edit steps, Save As, deactivate and del
       f = await findFrame(page, 'PresetManagement');
       await deletePreset(saveAs);
       await deletePreset(name);
-      for (const p of (await presets()).filter((p) => /^MBPWPreset/.test(p))) await deletePreset(p);
-      expect((await presets()).filter((p) => /^MBPWPreset/.test(p))).toEqual([]);
+      for (const p of (await presets()).filter((p) => /^(MB|CL)PWPreset/.test(p))) await deletePreset(p);
+      expect((await presets()).filter((p) => /^(MB|CL)PWPreset/.test(p))).toEqual([]);
     });
   }
 });

@@ -19,7 +19,7 @@
 // - Failed records report job Status "CompletedWithErrors" with per-record message "Could not
 //   complete comparison. Prior LCN record not found." (matches the formal script).
 // - Test-data gotcha: the Label Control grid pages at 10 rows. Filtering on a bare "Contains
-//   MBLCRC" prefix eventually matched more than 10 leftover items from earlier runs and pushed
+//   CLLCRC" prefix eventually matched more than 10 leftover items from earlier runs and pushed
 //   this run's items onto page 2, so rows "vanished". Filter on a per-run stamp instead.
 
 import { test, expect } from '@playwright/test';
@@ -34,8 +34,8 @@ test('Compare With Prior reports a clean per-record error for items with no prio
   await login(page);
 
   const stamp = Date.now().toString().slice(-6);
-  const itemA = 'MBLCRC' + stamp + 'A';
-  const itemB = 'MBLCRC' + stamp + 'B';
+  const itemA = 'CLLCRC' + stamp + 'A';
+  const itemB = 'CLLCRC' + stamp + 'B';
 
   async function createApproveItem(itemNumber: string): Promise<void> {
     await openMenuItem(page, 'Campaign Manager');
@@ -113,7 +113,7 @@ test('Compare With Prior reports a clean per-record error for items with no prio
     } else {
       await frame.locator("select[name$='Column']").first().selectOption('LCV_ItemNumber');
       await frame.locator("select[name$='Operator']").first().selectOption('Contains');
-      await frame.locator("input[name$='Value']").first().fill('MBLCRC' + stamp);
+      await frame.locator("input[name$='Value']").first().fill('CLLCRC' + stamp);
     }
 
     await frame.click('#btnRetrieveData');

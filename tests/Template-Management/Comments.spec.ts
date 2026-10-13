@@ -37,7 +37,7 @@ test('view/edit comments supports adding, canceling an edit, editing, and deleti
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBCommentsTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLCommentsTest' + Math.floor(Math.random() * 100000);
 
   await test.step('create a throwaway template to comment on', async () => {
     await frame.click('#drpMainActions');

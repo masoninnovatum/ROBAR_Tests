@@ -97,7 +97,7 @@ type Options = { template?: Dimension; templateAllow?: boolean; masterData?: Dim
 test('Mass Update Versions: Use Latest for the Template and Master Data dimensions, incl. a partial success', async ({ page }) => {
   test.setTimeout(900_000);
 
-  const itemNumber = 'MBLCMD' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCMD' + Date.now().toString().slice(-7);
   let lcn = '';
 
   await test.step('unapproved Master Data record, approved item, then an LCN', async () => {

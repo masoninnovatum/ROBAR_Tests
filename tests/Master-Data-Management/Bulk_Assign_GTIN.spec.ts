@@ -10,7 +10,7 @@ test('Assign GTIN generates GTINs, warns before overwriting, and refuses approve
   test.setTimeout(480_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDT${stamp}`;
+  const prefix = `CLMDT${stamp}`;
   const [a, b, c] = ['A', 'B', 'C'].map((s) => prefix + s);
 
   await test.step('create A, B, C; approve C', async () => {

@@ -25,13 +25,13 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   test.skip(setting !== 'Y', `PrintEntityRequired is ${setting}; the scoping behavior below only exists when it is Y (UNVERIFIED branch: written from the formal script PE_LotManagment and the stored procedures)`);
   const stamp = Date.now().toString().slice(-6);
-  const lpr = `MBLPR${stamp}`;
-  const lpe = `MBLPE${stamp}`;
+  const lpr = `CLLPR${stamp}`;
+  const lpe = `CLLPE${stamp}`;
   let g: Frame;
 
   const openLots = async (p: Page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };
@@ -61,7 +61,7 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
       await ctx.close();
     }
   };
-  /** What the MB user sees: the rows for MBLP lots, the nav icon state, and the Add dialog's Print Entity field. */
+  /** What the MB user sees: the rows for CLLP lots, the nav icon state, and the Add dialog's Print Entity field. */
   const mbView = async () => {
     const ctx = await (browser as Browser).newContext();
     const p = await ctx.newPage();
@@ -69,7 +69,7 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
       await loginAs(p, MB, PASSWORD);
       await p.waitForTimeout(2000);
       const f = await openLots(p);
-      await du.retrieve(p, f, 'LotNum', 'Contains', `MBLP`, { expectRows: false });
+      await du.retrieve(p, f, 'LotNum', 'Contains', `CLLP`, { expectRows: false });
       await p.waitForTimeout(6000);
       const rows = (await du.rows(f)).filter((r) => r.includes(stamp));
       const body = (await f.locator('body').innerText()).replace(/\s+/g, ' ');
@@ -98,7 +98,7 @@ test('Lot Management: the rows and the Add dialog follow the user\'s Print Entit
       await setUserPrintEntities(page, MB, ['ROBAR', 'England']);
       await mbAdd(lpe, 'England');
       g = await openLots(page);
-      await du.retrieve(page, g, 'LotNum', 'Contains', 'MBLP', { expectRows: false });
+      await du.retrieve(page, g, 'LotNum', 'Contains', 'CLLP', { expectRows: false });
       await page.waitForTimeout(5000);
       const mine = (await du.rows(g)).filter((r) => r.includes(stamp));
       console.log(`lots added by the test user: ${JSON.stringify(mine)}`);

@@ -33,7 +33,7 @@ test('submit to workflow submits a template into a workflow preset', async ({ pa
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBWorkflowTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLWorkflowTest' + Math.floor(Math.random() * 100000);
 
   await test.step('create a throwaway template', async () => {
     await frame.click('#drpMainActions');

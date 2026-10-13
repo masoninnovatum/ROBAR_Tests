@@ -4,7 +4,7 @@
 //   + LE_Chg_Lots       : Edit icon enabled AND double-clicking a row opens "Edit Record" (otherwise "View Record")
 //   + LE_Del_Lots       : Delete icon enabled
 //   + EI_Lots           : "Excel Import" menu item visible
-// The MB user needs a Print Entity (ROBAR) to see any lot. One throw-away lot MBLICO<stamp> is added by the test user and deleted again; the group ends without processes and the user
+// The MB user needs a Print Entity (ROBAR) to see any lot. One throw-away lot CLLICO<stamp> is added by the test user and deleted again; the group ends without processes and the user
 // without entities.
 
 import { test, expect } from '@playwright/test';
@@ -24,12 +24,12 @@ test('Lot Management: each process (Add / Change / Delete / Excel Import) switch
   test.setTimeout(1_200_000);
   sec.assertMb(GROUP);
   const stamp = Date.now().toString().slice(-6);
-  const lot = `MBLICO${stamp}`;
+  const lot = `CLLICO${stamp}`;
   let g: Frame;
 
   const openLots = async (p: Page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };

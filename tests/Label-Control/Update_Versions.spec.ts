@@ -186,8 +186,8 @@ test('Update Versions: shows current versions, blocks Submit until a change, and
   await login(page);
 
   const stamp = Date.now().toString().slice(-6);
-  const itemNoMd = 'MBLCUV' + stamp + 'A';
-  const itemWithMd = 'MBLCUV' + stamp + 'B';
+  const itemNoMd = 'CLLCUV' + stamp + 'A';
+  const itemWithMd = 'CLLCUV' + stamp + 'B';
 
   await test.step('set up two approved items with control numbers (the second with an unapproved Master Data record)', async () => {
     await createApprovedItem(page, itemNoMd);

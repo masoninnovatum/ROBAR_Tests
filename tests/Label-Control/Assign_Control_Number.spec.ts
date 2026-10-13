@@ -37,7 +37,7 @@ test('create a fresh item and assign it a Label Control Number', async ({ page }
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLC' + Date.now().toString().slice(-8);
+  const itemNumber = 'CLLC' + Date.now().toString().slice(-8);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');

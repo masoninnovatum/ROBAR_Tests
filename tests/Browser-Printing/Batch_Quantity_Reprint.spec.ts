@@ -23,8 +23,8 @@ test('Batch Quantity reprint threshold: Reprint box forced on when printed + abo
   await login(page);
   const A = item('test-data/batchqty-item-a.json');
   const stamp = process.env.RESUME_STAMP ?? Date.now().toString().slice(-6);
-  const order = `MBBQR${stamp}`;
-  const lot = `MBBQR${stamp}L`;
+  const order = `CLBQR${stamp}`;
+  const lot = `CLBQR${stamp}L`;
   const pb = new PrintByLot(page, 'Print by order');
   console.log(`ORDER ${order} LOT ${lot}`);
   const states: Record<string, unknown> = {};

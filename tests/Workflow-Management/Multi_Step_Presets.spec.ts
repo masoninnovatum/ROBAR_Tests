@@ -30,7 +30,7 @@ test('multi-step presets: sequential groups, parallel group, Vote For Entire Gro
   const mb = MB + ' (';
   /** Creates a preset with `steps` and ONE workflow from it; returns the workflow id. */
   const scenario = async (name: string, steps: PresetStep[]): Promise<string> => {
-    const preset = `MBPWFlow${stamp}${name}`;
+    const preset = `CLPWFlow${stamp}${name}`;
     presets.push(preset);
     f = await wf.openWorkflowManagement(page);
     const pf = await wf.openPresetManagement(page, f);
@@ -90,12 +90,12 @@ test('multi-step presets: sequential groups, parallel group, Vote For Entire Gro
   };
 
   try {
-    await test.step('setup: MBPWLoginGrp can vote; leftover MBPW presets are removed', async () => {
+    await test.step('setup: MBPWLoginGrp can vote; leftover CLPW presets are removed', async () => {
       await login(page);
       await sec.setGroupProcesses(page, GROUP, VOTER_PROCESSES);
       f = await wf.openWorkflowManagement(page);
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPWFlow/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PWFlow/.test(t))) await wf.deletePreset(pf, old);
     });
 
     await test.step('S1 sequential groups [test user (group 1), MB user (group 2)]: after the first approval the workflow stays Open and moves to the MB user; the MB approval completes it', async () => {

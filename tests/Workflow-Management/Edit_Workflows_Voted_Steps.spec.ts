@@ -13,7 +13,7 @@ test('Edit Workflows with an already voted step: observe warning, per-workflow m
   test.setTimeout(1_200_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await wf.openWorkflowManagement(page);
 
@@ -55,7 +55,7 @@ test('Edit Workflows with an already voted step: observe warning, per-workflow m
   try {
     await test.step('setup: preset [test user g1, MBUser3 g2], W1 (test user already approved) and W2 (untouched)', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPresetWithSteps(page, pf, preset, [{ user: `${USERNAME} (`, group: 1 }, { user: 'MBUser3 (', group: 2 }]);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

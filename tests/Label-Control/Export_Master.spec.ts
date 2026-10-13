@@ -35,7 +35,7 @@ test('Export Master writes the master PDF to the export folder and offers a down
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCEM' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCEM' + Date.now().toString().slice(-7);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');
@@ -261,10 +261,18 @@ test('Export Master writes the master PDF to the export folder and offers a down
       detailFrame = await findFrame(page, 'ExportMaster/JobDetail');
     }
     expect(detailText, `Job never reported Completed: ${detailText}`).toMatch(/Status:?\s*Completed/);
-    expect(detailText, 'Job Detail should show the resolved export path').toContain(exportFolder);
+    // LCREM.240108.F.5.11: below MaxSizeForDownload the Job Detail offers the Download link; the storage path is presented only when the PDFs are larger than the limit
+    console.log(`JOB DETAIL TEXT: ${detailText.replace(/\s+/g, ' ').slice(0, 300)}`);
 
     const downloadLink = detailFrame.locator('a[href*="ExportMaster/DownloadFile/"]');
     await expect(downloadLink).toHaveCount(1);
+    // LCREM.240108.F.5.11: below MaxSizeForDownload (10000000 since 2026-10-12; it was 1 on 2026-10-02 and the link answered an empty 200) the Download link serves the exported file
+    const href = new URL((await downloadLink.getAttribute('href', { timeout: 5000 }))!, detailFrame.url()).toString();
+    const download = await page.request.get(href, { timeout: 30_000 });
+    const bytes = await download.body();
+    console.log(`download: status=${download.status()} type=${download.headers()['content-type']} disposition=${download.headers()['content-disposition']} bytes=${bytes.length}`);
+    expect(download.status()).toBe(200);
+    expect(bytes.length, 'download is not empty').toBeGreaterThan(1000);
 
     // The real proof: the exported PDF is on the share (a job can report Completed without it).
     const exportDir = path.join(EXPORT_ROOT, exportFolder);

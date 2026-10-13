@@ -10,6 +10,7 @@
 import { test, expect } from '@playwright/test';
 import type { Frame, Page } from '@playwright/test';
 import * as fs from 'fs';
+import JSZip from 'jszip';
 import * as path from 'path';
 import { openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as cm from '../support/campaign-manager';
@@ -92,10 +93,8 @@ async function queryAndCheckRows(page: Page, itemNumber: string, labelMasterLabe
 
 test('Export Master with two records: per-record PDFs without Merge, one merged PDF with Merge', async ({ page }) => {
   test.setTimeout(900_000);
-  // Observed 2026-10-02 on TST703: the job's Download link answers 200 with an EMPTY body (no content-type, no
-  // disposition) for both the ZIP and the merged-PDF job, and a real click produces no browser download. The files on
-  // the share are correct, so this spec asserts those and only records the download behaviour.
-  test.info().annotations.push({ type: 'known-issue', description: 'Export Master Download link returns an empty response (TST703, 2026-10-02)' });
+  // LCREM.240108.F.5.10 / F.5.11: the Download link is offered when the total size of the PDFs is below the global setting MaxSizeForDownload. On 2026-10-02 the setting was 1 and the link answered 200 with an EMPTY
+  // body; with MaxSizeForDownload = 10000000 (set by the user 2026-10-12) it serves the ZIP (no Merge) / the merged PDF (Merge), named after the Path entered on the Job Submission page (F.5.12).
   // No login() here: cm.openCampaignManager logs in itself.
 
   let itemNumber = '';
@@ -238,7 +237,15 @@ test('Export Master with two records: per-record PDFs without Merge, one merged 
       singleSizes = files.map((f) => fs.statSync(path.join(EXPORT_ROOT, plainFolder, f)).size);
       for (const size of singleSizes) expect(size).toBeGreaterThan(1000);
 
-      console.log(`OBSERVED no-merge download: status=${result.status} bytes=${result.bytes.length} disposition="${result.disposition}"`);
+      console.log(`no-merge download: status=${result.status} bytes=${result.bytes.length} disposition="${result.disposition}"`);
+      expect(result.status, 'download answers 200').toBe(200);
+      expect(result.bytes.length, 'download is not empty').toBeGreaterThan(1000);
+      expect(result.disposition).toContain(`filename=${plainFolder}.zip`);
+      expect(result.bytes.subarray(0, 2).toString(), 'ZIP signature').toBe('PK');
+      const zip = await JSZip.loadAsync(result.bytes);
+      // the ZIP holds the PDFs under a GUID sub-folder
+      const zipped = Object.values(zip.files).filter((e) => !e.dir).map((e) => e.name.split('/').pop()!).sort();
+      expect(zipped, 'the ZIP holds the same per-record PDFs as the folder').toEqual(files);
     });
 
     await test.step('Merge: one ExportedMasters_<timestamp>.pdf, larger than either single master, and the download is a PDF', async () => {
@@ -250,7 +257,11 @@ test('Export Master with two records: per-record PDFs without Merge, one merged 
       console.log(`merged size=${mergedSize} single sizes=${singleSizes.join(',')}`);
       for (const size of singleSizes) expect(mergedSize, 'merged PDF should be larger than each single master').toBeGreaterThan(size);
 
-      console.log(`OBSERVED merge download: status=${result.status} bytes=${result.bytes.length} disposition="${result.disposition}"`);
+      console.log(`merge download: status=${result.status} bytes=${result.bytes.length} disposition="${result.disposition}"`);
+      expect(result.status, 'download answers 200').toBe(200);
+      expect(result.disposition).toContain(`filename=${mergeFolder}.pdf`); // F.5.12: named equal to the Path entered by the user
+      expect(result.bytes.subarray(0, 4).toString(), 'PDF signature').toBe('%PDF');
+      expect(result.bytes.length, 'the download is the merged master as stored on the share').toBe(mergedSize);
     });
   } finally {
     // Delete only the two unique folders this run created.

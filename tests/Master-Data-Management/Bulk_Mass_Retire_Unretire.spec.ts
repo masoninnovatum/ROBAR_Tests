@@ -11,7 +11,7 @@ test('Mass Retire - Unretire: retire, mixed-selection warning, unretire', async 
   test.setTimeout(480_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDR${stamp}`;
+  const prefix = `CLMDR${stamp}`;
   const [a, b, c] = ['A', 'B', 'C'].map((s) => prefix + s);
 
   const reopenGrid = async () => {

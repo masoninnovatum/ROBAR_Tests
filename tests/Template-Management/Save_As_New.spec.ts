@@ -31,8 +31,8 @@ test('save as new creates an independent copy of the template under a new name',
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const sourceTemplateName = 'MBSaveAsNewSrc' + Math.floor(Math.random() * 100000);
-  const newTemplateName = 'MBSaveAsNewCopy' + Math.floor(Math.random() * 100000);
+  const sourceTemplateName = 'CLSaveAsNewSrc' + Math.floor(Math.random() * 100000);
+  const newTemplateName = 'CLSaveAsNewCopy' + Math.floor(Math.random() * 100000);
   const sharename = 'I_Num';
 
   await test.step('create a throwaway source template with a known sharename', async () => {

@@ -155,10 +155,10 @@ test('UAT_6356 on VAL703', async ({ browser }) => {
   try {
     if (round === 'prep') {
       await setSecurity({ chg: true, set: true, ov: true });
-      state.printedLot ??= `MBUATP${stamp}`;
-      state.printedOrder ??= `MBUATPO${stamp}`;
-      state.newLot ??= `MBUATN${stamp}`;
-      state.newOrder ??= `MBUATNO${stamp}`;
+      state.printedLot ??= `CLUATP${stamp}`;
+      state.printedOrder ??= `CLUATPO${stamp}`;
+      state.newLot ??= `CLUATN${stamp}`;
+      state.newOrder ??= `CLUATNO${stamp}`;
       if (process.env.PREP_PRINT) {
       const { ctx, pb } = await openTestUser();
       try {

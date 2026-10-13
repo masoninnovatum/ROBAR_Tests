@@ -1,6 +1,6 @@
 // Security Management > Groups view (source: Innovatum.Pages.SecurityManagement.MVC). Everything that is WRITTEN is done on a
 // group created by this run whose name starts with "MB" (standing rule: only MB* users/groups may be changed); existing groups
-// are only read. Groups can never be deleted, so each run leaves one `MBPWG<stamp>` group behind (accepted).
+// are only read. Groups can never be deleted, so each run leaves one `CLPWG<stamp>` group behind (accepted).
 //   * layout, Group filter, process filter and the Authorized / Unauthorized / Both radios
 //   * Add Group: validation (blank, too long, duplicate), Copy Security Settings From
 //   * Edit Group: Group name is locked, Description editable
@@ -13,7 +13,7 @@ import * as sec from '../support/security';
 test('Security Management Groups: filters, add/edit group, copy security, toggle processes and Select All', async ({ page }) => {
   test.setTimeout(420_000);
   const stamp = Date.now().toString().slice(-6);
-  const group = `MBPWG${stamp}`;
+  const group = `CLPWG${stamp}`;
   const SOURCE = 'MBSomeSecurity';
   let f: Frame = await sec.openSecurity(page);
 

@@ -13,7 +13,7 @@ test('Mass Approve approves three unapproved records in one job', async ({ page 
   test.setTimeout(420_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDA${stamp}`;
+  const prefix = `CLMDA${stamp}`;
   const nums = ['A', 'B', 'C'].map((s) => prefix + s);
 
   await test.step('create three unapproved records', async () => {

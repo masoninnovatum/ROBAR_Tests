@@ -98,7 +98,7 @@ test('Label Type Management: layout, filters, View/Edit/Add dialogs (validation 
     expect(purposes).toEqual(expect.arrayContaining(['Approvals', 'Change Report', 'IFU', 'Label Requests', 'Redline', 'Training Certificate', 'Vision Inspection']));
 
     // every field except FilePurpose is required on the client: "Description: Field is required"
-    await d.locator('#LabelType').fill(`MBNoCreate${stamp}`);
+    await d.locator('#LabelType').fill(`CLNoCreate${stamp}`);
     await d.locator('#FileExtension').selectOption('.btw');
     await dui.submitForm(f);
     expect(await dui.formError(f), 'Description is required').toContain('Description: Field is required');
@@ -106,7 +106,7 @@ test('Label Type Management: layout, filters, View/Edit/Add dialogs (validation 
     await d.locator('#Description').fill('MB no create');
     await dui.submitForm(f);
     expect(await dui.formError(f), 'LabelType is required').toContain('LabelType: Field is required');
-    await d.locator('#LabelType').fill(`MBNoCreate${stamp}`);
+    await d.locator('#LabelType').fill(`CLNoCreate${stamp}`);
 
     // .btw + a purpose is refused
     await d.locator('#FileExtension').selectOption('.btw');
@@ -129,7 +129,7 @@ test('Label Type Management: layout, filters, View/Edit/Add dialogs (validation 
     expect(await dui.formError(f)).toBe('Record already exists');
     await dui.cancelForm(f);
     // nothing was created
-    expect(await dui.retrieve(page, f, 'LabelType', 'Contains', `MBNoCreate${stamp}`, { expectRows: false })).toEqual([]);
+    expect(await dui.retrieve(page, f, 'LabelType', 'Contains', `CLNoCreate${stamp}`, { expectRows: false })).toEqual([]);
   });
 
   await test.step('Audit page', async () => {

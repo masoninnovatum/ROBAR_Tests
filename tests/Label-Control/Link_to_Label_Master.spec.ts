@@ -29,7 +29,7 @@ test('Link to Label Master reports a clean "not found" error for a brand-new ite
   test.setTimeout(420_000);
   await login(page);
 
-  const itemNumber = 'MBLCLM' + Date.now().toString().slice(-7);
+  const itemNumber = 'CLLCLM' + Date.now().toString().slice(-7);
 
   await test.step('create and approve a Campaign Manager item (no BarTender needed)', async () => {
     await openMenuItem(page, 'Campaign Manager');

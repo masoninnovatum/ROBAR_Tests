@@ -1,5 +1,5 @@
 // Dictionary Management core (live 2026-10-07, headless, TST703, seed user). Page: InnoPages/DictionaryManagement/Management (CriteriaFilter `dvFilters[n]`, jqGrid #grdJqGrid, Actions = Excel Import / New Entry,
-// row Actions = View/Edit / New Version, Bulk Actions = Export to Excel / Mass Approve / Mass Retire/Unretire). Dictionary records cannot be deleted: this spec creates ONE phrase family MBDM<stamp>
+// row Actions = View/Edit / New Version, Bulk Actions = Export to Excel / Mass Approve / Mass Retire/Unretire). Dictionary records cannot be deleted: this spec creates ONE phrase family CLDM<stamp>
 // (PHR1 approved + new version, PHR2 custom dates + HTML, PHR3 future begin date) and retires nothing here (see Dictionary_Management_Bulk.spec.ts). Formal scripts: DM_NewEntry-1.4, DM_ViewEdit-1.8.
 
 import { test, expect } from '@playwright/test';
@@ -10,10 +10,10 @@ test.use({ actionTimeout: 20_000 });
 test('Dictionary Management: anatomy, search, New Entry, View/Edit, HTML editor and New Version rules', async ({ page }) => {
   test.setTimeout(900_000);
   const stamp = Date.now().toString().slice(-6);
-  const LANG1 = `MBLang${stamp}`;
-  const PHR1 = `MBDM${stamp}A`;
-  const PHR2 = `MBDM${stamp}B`;
-  const PHR3 = `MBDM${stamp}C`;
+  const LANG1 = `CLLang${stamp}`;
+  const PHR1 = `CLDM${stamp}A`;
+  const PHR2 = `CLDM${stamp}B`;
+  const PHR3 = `CLDM${stamp}C`;
   const longText = 'Playwright translation text that is deliberately longer than one hundred characters so the grid tooltip has something to show: '.padEnd(140, 'x');
   const f0 = await dm.openDictionary(page);
 
@@ -104,10 +104,10 @@ test('Dictionary Management: anatomy, search, New Entry, View/Edit, HTML editor 
     expect(r.rows).toHaveLength(1);
     expect(r.rows[0]).toContain('1/1/2030');
     // Effective Only hides the future-dated record, Latest Only keeps it
-    const eff = await dm.search(page, `MBDM${stamp}`, { effective: true });
+    const eff = await dm.search(page, `CLDM${stamp}`, { effective: true });
     expect(eff.rows.some((x) => x.includes(PHR3)), 'Effective Only hides a future Effective Begin').toBe(false);
     expect(eff.rows.some((x) => x.includes(PHR1))).toBe(true);
-    const lat = await dm.search(page, `MBDM${stamp}`, { latest: true });
+    const lat = await dm.search(page, `CLDM${stamp}`, { latest: true });
     expect(lat.rows).toHaveLength(3);
   });
 

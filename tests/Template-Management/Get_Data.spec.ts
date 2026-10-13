@@ -47,7 +47,7 @@ test('get data loads the associated item\'s data into the template, then restore
   await openMenuItem(page, 'Template Management');
   const tmFrame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBGetDataTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLGetDataTest' + Math.floor(Math.random() * 100000);
 
   await test.step('create a template with real Item-level sharenames (A1SuperTemplate content)', async () => {
     await tmFrame.click('#drpMainActions');

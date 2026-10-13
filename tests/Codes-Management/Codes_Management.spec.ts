@@ -1,7 +1,7 @@
 // Codes Management (live 2026-10-08, headless, TST703, seed user). InnoPages/Codes/Management ("Codes Management"): CriteriaFilter `dvFilters[n]` (columns CodeType / Code / Description / Active),
 // "Retrieve Data" button, jqGrid #grdJqGrid (Code Type, Code, Description, Active; pager 10 / 20 / 30), Add / Edit icons in the grid footer (no delete), Actions menu = Excel Import only.
 // The Add / Edit dialog (#editmodgrdJqGrid) has a select2 "tags" Code Type box, Code, Description and an Active checkbox (Y / N).
-// Codes CANNOT be deleted: this spec only creates codes of the type MBCodesTest (one new MBCT<stamp> per run) and only edits those; it never edits seeded codes.
+// Codes CANNOT be deleted: this spec only creates codes of the type MBCodesTest (one new CLCT<stamp> per run) and only edits those; it never edits seeded codes.
 // Gotcha (cost an accidental edit of SendAllWFEmails/Workflow during exploration): for CodeType / Active the "Exactly Matches" Value box is a <select>, other operators use a text input;
 // `.fill()` on the wrong kind times out and the grid silently stays unfiltered, so always assert the filtered count before editing the first row.
 
@@ -80,7 +80,7 @@ async function pickType(page: Page, type: string): Promise<void> {
 test('Codes Management: anatomy, filters, sort / paging, Add validations and create, Edit rules', async ({ page }) => {
   test.setTimeout(900_000);
   const stamp = Date.now().toString().slice(-6);
-  const CODE = `MBCT${stamp}`;
+  const CODE = `CLCT${stamp}`;
   await login(page);
   await openMenuItem(page, 'Codes Management');
   await findFrame(page, 'InnoPages/Codes/Management');

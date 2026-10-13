@@ -34,8 +34,8 @@ test('Batch Quantity x Multiplier + Extra: the Copy field on Print by Order / Pr
   /** New order / lot for `itemNumber`, optional Override + Batch Qty, returns the label-screen Copy value. */
   const copyFor = async (tile: 'Print by order' | 'Print by lot', itemNumber: string, batch: string | null): Promise<string> => {
     n += 1;
-    const order = `MBBQO${stamp}${n}`;
-    const lot = `MBBQL${stamp}${n}`;
+    const order = `CLBQO${stamp}${n}`;
+    const lot = `CLBQL${stamp}${n}`;
     lots.push(lot);
     const pb = new PrintByLot(page, tile);
     await pb.open();
@@ -92,7 +92,7 @@ test('Batch Quantity x Multiplier + Extra: the Copy field on Print by Order / Pr
       for (const lot of lots) {
         try {
           const f = await du.reopenDynamicUi(page, 'Lot Management');
-          await f.click('#btnReset').catch(() => {});
+          await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
           await page.waitForTimeout(2500);
           const g = await du.reopenDynamicUi(page, 'Lot Management');
           await du.retrieve(page, g, 'LotNum', 'Exactly Matches', lot, { expectRows: false });

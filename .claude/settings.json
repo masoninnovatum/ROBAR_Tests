@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__Claude_Browser__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/robar-browser-approval.js",
+            "timeout": 10,
+            "statusMessage": "Checking ROBAR browser-automation approval policy..."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,10 +5,14 @@ import type { Page } from '@playwright/test';
 import * as du from './dynamic-ui';
 
 export async function readGlobalSetting(page: Page, name: string, owner?: string): Promise<string | undefined> {
-  const g = await du.reopenDynamicUi(page, 'Global Settings Management');
-  await g.click('#btnReset').catch(() => {});
-  await page.waitForTimeout(3000);
+  // no Reset click: on 2026-10-12 Reset crashed the renderer ("Page crashed") on Dynamic UI pages that had saved criteria; the restored criteria rows are removed by hand instead
   const f = await du.reopenDynamicUi(page, 'Global Settings Management');
+  for (let i = 0; i < 10; i++) {
+    const rm = f.getByText('Remove', { exact: true });
+    if (!(await rm.count())) break;
+    await rm.first().click({ timeout: 3000 }).catch(() => {});
+    await page.waitForTimeout(300);
+  }
   await du.retrieve(page, f, 'SettingName', 'Exactly Matches', name, { expectRows: false });
   await page.waitForTimeout(5000);
   const rows = await du.rows(f);

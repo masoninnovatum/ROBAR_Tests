@@ -1,7 +1,7 @@
 // Lot Management security (headless; MB fixtures MBPWLoginGrp / MBPWLogin01 only). Processes: LE_View_Lots (module), LE_Add_Lots (Add), LE_Chg_Lots (Edit; also decides Edit vs View window on
 // double-click), LE_Del_Lots (Delete), EI_Lots (Excel Import). The MB user also needs a Print Entity (ROBAR) to see any lot (user absent from UserPrintEntity = no records).
 // Part 1: icon / menu state per process. Part 2 (documented gap, see the DIT tracker): the Add / Edit / Delete actions are NOT re-checked on the server -- a user with ONLY LE_View_Lots posts
-// AddRecord (oper add / edit) and calls DeleteRecord from his own page and the changes happen. Throw-away lots MBLSEC<n><stamp> are created by the test user and deleted again.
+// AddRecord (oper add / edit) and calls DeleteRecord from his own page and the changes happen. Throw-away lots CLLSEC<n><stamp> are created by the test user and deleted again.
 
 import { test, expect } from '@playwright/test';
 import type { Browser, Frame, Locator, Page } from '@playwright/test';
@@ -21,7 +21,7 @@ test('Lot Management security: icons per process, view-only window, and the miss
   test.setTimeout(1_500_000);
   sec.assertMb(GROUP);
   const stamp = Date.now().toString().slice(-6);
-  const lots = { L1: `MBLSEC1${stamp}`, L2: `MBLSEC2${stamp}`, L3: `MBLSEC3${stamp}`, L4: `MBLSEC4${stamp}` };
+  const lots = { L1: `CLLSEC1${stamp}`, L2: `CLLSEC2${stamp}`, L3: `CLLSEC3${stamp}`, L4: `CLLSEC4${stamp}` };
   let g: Frame;
 
   const fill = async (dlg: Locator, values: Record<string, string>) => {
@@ -36,7 +36,7 @@ test('Lot Management security: icons per process, view-only window, and the miss
   const openLots = async (p: Page, reset = true): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
     if (!reset) return f;
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     return du.reopenDynamicUi(p, 'Lot Management');
   };
@@ -102,14 +102,14 @@ test('Lot Management security: icons per process, view-only window, and the miss
       g = await openLots(page);
       await search(g, page, 'LotNum', 'Contains', 'MBMDPL');
       for (const lot of [lots.L1, lots.L2, lots.L3]) await adminAdd(lot);
-      const rows = await search(g, page, 'LotNum', 'Contains', `MBLSEC`);
+      const rows = await search(g, page, 'LotNum', 'Contains', `CLLSEC`);
       expect(rows.filter((r) => r.includes(stamp))).toHaveLength(3);
     });
 
     await test.step('LE_View_Lots only: the user sees the lots (Print Entity ROBAR), Add / Edit / Delete icons are disabled, double-click opens the read-only View window, Excel Import is hidden', async () => {
       const u = await asMb();
       try {
-        const rows = await search(u.f, u.p, 'LotNum', 'Contains', 'MBLSEC');
+        const rows = await search(u.f, u.p, 'LotNum', 'Contains', 'CLLSEC');
         expect(rows.filter((r) => r.includes(stamp))).toHaveLength(3);
         const nav = await navState(u.f);
         console.log(`S0 nav icons enabled: ${JSON.stringify(nav)}`);
@@ -131,7 +131,7 @@ test('Lot Management security: icons per process, view-only window, and the miss
     await test.step('SERVER-SIDE (documented gap): with ONLY LE_View_Lots the user can still edit L2, add L4 and delete L1 by calling the endpoints from his page', async () => {
       const u = await asMb();
       try {
-        await search(u.f, u.p, 'LotNum', 'Contains', 'MBLSEC');
+        await search(u.f, u.p, 'LotNum', 'Contains', 'CLLSEC');
         const pageID = u.getPageID();
         console.log(`captured pageID: ${pageID}`);
         expect(pageID).toBeTruthy();
@@ -172,7 +172,7 @@ test('Lot Management security: icons per process, view-only window, and the miss
       }
       // what happened, seen by the test user
       g = await openLots(page);
-      const rows = await search(g, page, 'LotNum', 'Contains', 'MBLSEC');
+      const rows = await search(g, page, 'LotNum', 'Contains', 'CLLSEC');
       const mine = rows.filter((r) => r.includes(stamp));
       console.log(`lots after the server-side attempts: ${JSON.stringify(mine)}`);
       // CURRENT behaviour (documented gap, DIT tracker): with ONLY LE_View_Lots all three server calls took effect. If these assertions start failing the server-side checks were added.

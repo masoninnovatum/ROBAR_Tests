@@ -18,9 +18,9 @@ import { login, openMenuItem, findFrame, PASSWORD } from './robar';
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Throws unless `name` starts with "MB" (case-insensitive): the standing guard for every write in this module. */
+/** Throws unless `name` starts with "MB" (legacy test data) or "CL" (test data since 2026-10-13), case-insensitive: the standing guard for every write in this module. Name kept for history. */
 export function assertMb(name: string): void {
-  if (!/^mb/i.test(name)) throw new Error(`Refusing to change security for "${name}": only users/groups starting with "MB" may be edited.`);
+  if (!/^(mb|cl)/i.test(name)) throw new Error(`Refusing to change security for "${name}": only users/groups starting with "MB" or "CL" may be edited.`);
 }
 
 export async function openSecurity(page: Page): Promise<Frame> {

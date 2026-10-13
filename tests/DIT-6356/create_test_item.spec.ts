@@ -42,7 +42,7 @@ test('create and verify a fresh RobarMasterData item for UAT_6356', async ({ pag
   test.setTimeout(2 * 60 * 1000);
   await login(page);
 
-  const itemNumber = `MBUAT6356E_${Date.now()}`;
+  const itemNumber = `CLUAT6356E_${Date.now()}`;
   // Primary DI Number must be unique across the whole schema (confirmed live: reusing the same
   // literal across repeated test-item creations throws a validation error) -- derive a fresh one
   // from the same timestamp instead of a fixed literal, keeping it 14 digits like a real DI.

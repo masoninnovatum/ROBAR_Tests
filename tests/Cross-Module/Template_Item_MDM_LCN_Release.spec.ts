@@ -112,7 +112,7 @@ test('new template -> approved item -> Master Data record -> assign LCN -> relea
 
   await login(page);
 
-  const templateName = 'MBSide' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLSide' + Math.floor(Math.random() * 100000);
 
   await test.step('Part 1: create and approve the template (Template Management)', async () => {
     await openMenuItem(page, 'Template Management');
@@ -350,7 +350,7 @@ test('new template -> approved item -> Master Data record -> assign LCN -> relea
     await page.locator('li.ui-tabs-tab:has-text("Template Management") .ui-icon-close').click();
   });
 
-  const itemNumber = 'MBSideItm' + Date.now().toString().slice(-6);
+  const itemNumber = 'CLSideItm' + Date.now().toString().slice(-6);
 
   await test.step('Part 2: create and approve a Campaign Manager item using that template', async () => {
     await openMenuItem(page, 'Campaign Manager');

@@ -8,7 +8,7 @@ test('Mass Update sets a field on every selected record', async ({ page }) => {
   test.setTimeout(420_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDU${stamp}`;
+  const prefix = `CLMDU${stamp}`;
   const nums = ['A', 'B'].map((s) => prefix + s);
   const newBrand = `MassUpdated${stamp}`;
 

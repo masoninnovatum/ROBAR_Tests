@@ -8,7 +8,7 @@ test('bulk Save as New Version refuses unapproved records and versions approved 
   test.setTimeout(480_000);
   let frame = await mdm.openMasterData(page);
   const stamp = Date.now().toString().slice(-6);
-  const prefix = `MBMDV${stamp}`;
+  const prefix = `CLMDV${stamp}`;
   const [a, b, c] = ['A', 'B', 'C'].map((s) => prefix + s);
 
   await test.step('create A, B, C; approve B and C with a Mass Approve job', async () => {

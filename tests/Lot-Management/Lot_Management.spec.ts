@@ -1,6 +1,6 @@
 // Lot Management (live 2026-10-06, Claude01, headless): DynamicUI page `DynamicUI?Heading=Lot_Management&Definition=Lots`. Grid columns Actions, ID, OrderNum, LotNum, ItemNumber, PrintEntity, Expires,
 // Manufactured, Reassay, U1-U5, LastTouch; Actions menu: Excel Import, Excel Export, Audit, Save Search, Load Search, Adjust Page Size; jqGrid nav icons add / edit / view / del.
-// Edit dialog: ItemNumber, PrintEntity and LastTouch are disabled. One throw-away lot (MBLMO<stamp>/MBLML<stamp>, item MI080301) is added, searched, edited, viewed and deleted again.
+// Edit dialog: ItemNumber, PrintEntity and LastTouch are disabled. One throw-away lot (CLLMO<stamp>/CLLML<stamp>, item MI080301) is added, searched, edited, viewed and deleted again.
 
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
@@ -13,14 +13,14 @@ test('Lot Management: grid, search, add (validation), edit, view, delete, audit'
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const order = `MBLMO${stamp}`;
-  const lot = `MBLML${stamp}`;
+  const order = `CLLMO${stamp}`;
+  const lot = `CLLML${stamp}`;
   const ITEM = 'MI080301';
   let g: Frame;
 
   const open = async (): Promise<Frame> => {
     const f = await du.reopenDynamicUi(page, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await page.waitForTimeout(3000);
     return du.reopenDynamicUi(page, 'Lot Management');
   };
@@ -130,7 +130,7 @@ test('Lot Management: grid, search, add (validation), edit, view, delete, audit'
   await test.step('search operators: Contains, Exactly Matches on Order / Item / Print Entity, and no results', async () => {
     g = await open();
     expect((await search('OrderNum', 'Exactly Matches', order)).length).toBe(1);
-    expect((await search('LotNum', 'Contains', `MBLML${stamp.slice(0, 4)}`)).some((r) => r.includes(lot))).toBe(true);
+    expect((await search('LotNum', 'Contains', `CLLML${stamp.slice(0, 4)}`)).some((r) => r.includes(lot))).toBe(true);
     const byItem = await search('ItemNumber', 'Exactly Matches', ITEM);
     expect(byItem.every((r) => r.includes(ITEM))).toBe(true);
     const byEntity = await search('PrintEntity', 'Exactly Matches', 'ROBAR');

@@ -30,7 +30,7 @@ test('download supports both row-level (single file) and bulk (zip) downloads', 
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBDownloadTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLDownloadTest' + Math.floor(Math.random() * 100000);
 
   await test.step('create a throwaway template to download', async () => {
     await frame.click('#drpMainActions');

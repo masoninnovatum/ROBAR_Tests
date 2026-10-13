@@ -18,7 +18,7 @@ test('item workflow: Send to Workflow locks the item; approving closes it Approv
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const items: Record<string, string> = {};
   const workflowIds: Record<string, string> = {};
   let f: Frame;
@@ -55,7 +55,7 @@ test('item workflow: Send to Workflow locks the item; approving closes it Approv
     await test.step('setup: a throw-away preset (one step for the test user)', async () => {
       f = await wf.openWorkflowManagement(page);
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`]);
     });
 

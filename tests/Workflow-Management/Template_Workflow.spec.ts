@@ -24,8 +24,8 @@ test('template workflow: Submit to Workflow for two templates, then approve one 
     }).catch(() => {});
   }, 60_000);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
-  const newTemplate = `MBWFTpl${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
+  const newTemplate = `CLWFTpl${stamp}`;
   let fixture = '';
   const ids: Record<string, string> = {};
   let f: Frame;
@@ -34,7 +34,7 @@ test('template workflow: Submit to Workflow for two templates, then approve one 
     await test.step('setup: a throw-away preset (one step for the test user)', async () => {
       f = await wf.openWorkflowManagement(page);
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`]);
     });
 

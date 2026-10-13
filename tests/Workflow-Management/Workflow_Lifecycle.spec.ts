@@ -17,7 +17,7 @@ test('create two workflows from a preset, find and inspect them, vote one approv
   await login(page);
   let f: Frame = await wf.openWorkflowManagement(page);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const descA = `PW workflow A ${stamp}`;
   const descB = `PW workflow B ${stamp}`;
   const ids: Record<string, string> = {};
@@ -100,7 +100,7 @@ test('create two workflows from a preset, find and inspect them, vote one approv
   try {
     await test.step('setup: a throw-away preset with one step for the test user', async () => {
       const pf = await wf.openPresetManagement(page, f);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USERNAME} (`]);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

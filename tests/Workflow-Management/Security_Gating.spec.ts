@@ -26,7 +26,7 @@ test('Workflow Management security: menu gating per process and the comment-requ
   sec.assertMb(GROUP);
   sec.assertMb(USER);
   const stamp = Date.now().toString().slice(-6);
-  const preset = `MBPWFlow${stamp}`;
+  const preset = `CLPWFlow${stamp}`;
   const ids: Record<string, string> = {};
   let f: Frame = await sec.openSecurity(page); // logs in as the test user
 
@@ -149,7 +149,7 @@ test('Workflow Management security: menu gating per process and the comment-requ
       await setGroupSet([...BASE, 'WM_ViewAndVote']);
       const g = await wf.openWorkflowManagement(page);
       const pf = await wf.openPresetManagement(page, g);
-      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^MBPW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
+      for (const old of (await pf.locator('#ddlSelectPreset option').allInnerTexts()).map((t) => t.trim()).filter((t) => /^(MB|CL)PW(Flow|Preset)/.test(t))) await wf.deletePreset(pf, old);
       await wf.createPreset(page, pf, preset, [`${USER} (`]);
       await pf.getByText('Workflow Management').first().click();
       await page.waitForTimeout(3500);

@@ -38,7 +38,7 @@ test('replace template rejects a mismatched file type and replaces the template 
   await openMenuItem(page, 'Template Management');
   const frame = await findFrame(page, 'TemplateManagement');
 
-  const templateName = 'MBReplaceTest' + Math.floor(Math.random() * 100000);
+  const templateName = 'CLReplaceTest' + Math.floor(Math.random() * 100000);
   const sharename = 'I_Num';
   const wrongTypeFile = path.join(__dirname, '..', '..', 'package.json');
   const replacementBtwFile = resolveBtwFile();

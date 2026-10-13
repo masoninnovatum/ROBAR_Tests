@@ -1,6 +1,6 @@
 // Dictionary Management re-check against the ValMaster requirements (2026-10-09; .agents/valmaster-dictionary-management.md, module "Dictionary Management", 202 rows). Seed user, headless, TST703.
 // Covers what the script-based specs did not check: grid / filter UI facts (F.1.11, F.1.14, F.1.25-F.1.35), "Please select one or more records." (F.6.4 / F.7.4 / F.8.4), Mass Approve page rules (F.7.7-F.7.17),
-// Mass Retire / Unretire page rules (F.8.6-F.8.31). A requirement the system does not meet is recorded as a test annotation `deviation <id>` (not a failure). Own records MBDMQ<stamp>a/b (undeletable).
+// Mass Retire / Unretire page rules (F.8.6-F.8.31). A requirement the system does not meet is recorded as a test annotation `deviation <id>` (not a failure). Own records CLDMQ<stamp>a/b (undeletable).
 // NOTE: the first run of this spec is exploratory (many console.log lines); asserts are tightened as the facts are confirmed.
 
 import { test, expect } from '@playwright/test';
@@ -58,9 +58,9 @@ async function dismissModal(page: Page): Promise<string> {
 test('Dictionary Management vs ValMaster: grid UI facts, empty-selection dialogs, Mass Approve and Mass Retire / Unretire page rules', async ({ page }) => {
   test.setTimeout(1_500_000);
   const stamp = Date.now().toString().slice(-6);
-  const LANG = `MBLangQ${stamp}`;
-  const PA = `MBDMQ${stamp}a`;
-  const PB = `MBDMQ${stamp}b`;
+  const LANG = `CLLangQ${stamp}`;
+  const PA = `CLDMQ${stamp}a`;
+  const PB = `CLDMQ${stamp}b`;
   let f = await dm.openDictionary(page);
 
   await test.step('grid / filter UI facts: Column list (F.1.11), Version Filters (F.1.14), Latest Only / Effective Only (F.1.18 / F.1.19), grid columns (F.1.25), counters (F.1.30-F.1.33), menus (F.1.13 / F.1.35 / F.1.29)', async () => {
@@ -72,7 +72,7 @@ test('Dictionary Management vs ValMaster: grid UI facts, empty-selection dialogs
     expect(await f.locator('#drpApproved option').allInnerTexts()).toEqual(['Any', 'Approved', 'Last Version Is Approved', 'Unapproved']);
     await expect(f.locator('#chkLatest')).toBeAttached();
     await expect(f.locator('#chkEffective')).toBeAttached();
-    const r = await dm.search(page, 'MBDM', { version: 'Any', latest: false, effective: false });
+    const r = await dm.search(page, 'CLDM', { version: 'Any', latest: false, effective: false });
     f = r.frame;
     const headers = (await f.locator('.ui-jqgrid-htable th').allInnerTexts()).map((t) => t.trim()).filter(Boolean);
     console.log(`grid headers: ${JSON.stringify(headers)}`);
@@ -122,7 +122,7 @@ test('Dictionary Management vs ValMaster: grid UI facts, empty-selection dialogs
       await dm.fillNewEntry(page, { phrase: p, language: LANG, translation: t });
       await page.waitForTimeout(2500);
     }
-    const r = await dm.search(page, `MBDMQ${stamp}`);
+    const r = await dm.search(page, `CLDMQ${stamp}`);
     expect(r.rows).toHaveLength(2);
     f = r.frame;
   });
@@ -171,7 +171,7 @@ test('Dictionary Management vs ValMaster: grid UI facts, empty-selection dialogs
   /** Retire / Unretire page of the CURRENT selection: returns the job frame and logs its controls. */
   const retirePage = async (phrases: string[]): Promise<Frame> => {
     await dm.reopenDictionary(page);
-    const r = await dm.search(page, `MBDMQ${stamp}`);
+    const r = await dm.search(page, `CLDMQ${stamp}`);
     await tick(page, r.frame, phrases);
     await bulk(page, r.frame, 'Mass Retire/Unretire');
     const jf = await waitJob(page);
@@ -228,7 +228,7 @@ test('Dictionary Management vs ValMaster: grid UI facts, empty-selection dialogs
 
   await test.step('Mass Retire with BOTH retired and unretired records: warning with Cancel / Continue (F.8.12 / F.8.13 / F.8.14), Retire selected by default (F.8.9)', async () => {
     await dm.reopenDictionary(page);
-    const r = await dm.search(page, `MBDMQ${stamp}`);
+    const r = await dm.search(page, `CLDMQ${stamp}`);
     await tick(page, r.frame, [PA, PB]);
     await bulk(page, r.frame, 'Mass Retire/Unretire');
     const modal = await dm.modalText(page).catch(() => '');

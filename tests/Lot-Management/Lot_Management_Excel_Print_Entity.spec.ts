@@ -1,6 +1,6 @@
 // Lot Management Excel Import with PrintEntityRequired = Y (live 2026-10-08, headless, TST703). Formal script PE_LotManagment_Import: the PrintEntity column is validated against the IMPORTING user's
 // entities: a blank cell -> "This column does not allow null values."; a real entity the user is not assigned to -> "Print Entity is not linked to the UserID: <user>". MB fixtures only
-// (MBPWLoginGrp / MBPWLogin01 with LE_View_Lots + EI_Lots and the single entity England); one throw-away lot MBLPI<stamp> is imported with England and deleted by the seed user. Skips unless the setting is Y.
+// (MBPWLoginGrp / MBPWLogin01 with LE_View_Lots + EI_Lots and the single entity England); one throw-away lot CLLPI<stamp> is imported with England and deleted by the seed user. Skips unless the setting is Y.
 
 import { test, expect } from '@playwright/test';
 import type { Browser, Frame, Page } from '@playwright/test';
@@ -26,7 +26,7 @@ test('Lot Management Excel Import with PrintEntityRequired = Y: the PrintEntity 
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   test.skip(setting !== 'Y', `PrintEntityRequired is ${setting}; the column rules below are the Y behavior`);
   const stamp = Date.now().toString().slice(-6);
-  const lot = `MBLPI${stamp}`;
+  const lot = `CLLPI${stamp}`;
   const today = new Date();
   const files: string[] = [];
 
@@ -42,7 +42,7 @@ test('Lot Management Excel Import with PrintEntityRequired = Y: the PrintEntity 
   };
   const openImport = async (p: Page): Promise<Frame> => {
     const f = await du.reopenDynamicUi(p, 'Lot Management');
-    await f.click('#btnReset').catch(() => {});
+    await du.clearCriteria(page, f); // not #btnReset (renderer crash on Dynamic UI pages with saved criteria)
     await p.waitForTimeout(3000);
     const g = await du.reopenDynamicUi(p, 'Lot Management');
     await g.locator('a:has-text("Actions")').first().click();
