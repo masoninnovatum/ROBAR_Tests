@@ -76,7 +76,7 @@ export class PrintByLot {
       await bartender.confirmSentinelLaunchPrompt(this.page, this.pid).catch(() => {});
       this.f = await this.frame();
       const text = await this.body().catch(() => '');
-      if (/Printed PID_\w+\.prn|Timeout waiting for Sentinel|Print Failed/i.test(text)) {
+      if (/Printed PID_\w+(\.prn)?|Timeout waiting for Sentinel|Print Failed/i.test(text)) {
         await this.f.locator('.ui-dialog:visible button, input[value=Ok]').filter({ hasText: /Ok/ }).first().click({ timeout: 3000 }).catch(() => {});
         return text;
       }
