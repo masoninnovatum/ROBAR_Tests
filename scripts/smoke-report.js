@@ -45,7 +45,7 @@ for (const stage of ORDER) {
       shots: (last.attachments ?? []).filter((a) => a.path).map((a) => path.basename(path.dirname(a.path)) + '__' + path.basename(a.path)),
     });
   }
-  stages.push({ stage, rows, wall: j.stats?.duration ?? 0 });
+  stages.push({ stage, rows, wall: j.stats?.duration ?? 0, start: j.stats?.startTime });
 }
 
 const all = stages.flatMap((s) => s.rows);
@@ -65,6 +65,10 @@ L.push('');
 L.push('| Stage | Tests | Passed | Failed | Minutes |');
 L.push('|---|---|---|---|---|');
 for (const s of stages) L.push(`| ${LABEL[s.stage]} | ${s.rows.length} | ${s.rows.filter((r) => r.status === 'passed').length} | ${s.rows.filter((r) => r.status === 'failed').length} | ${mins(s.wall)} |`);
+const totalMs = stages.reduce((a, s) => a + s.wall, 0);
+const startedAt = stages.map((s) => s.start).filter(Boolean).sort()[0];
+L.push(`| **Total** | **${all.length}** | **${all.filter((r) => r.status === 'passed').length}** | **${failed.length}** | **${mins(totalMs)}** |`);
+if (startedAt) L.push('', `Started ${new Date(startedAt).toLocaleString()}; total test time ${mins(totalMs)} minutes (the few seconds of start-up between stages are not counted).`);
 const ran = new Set(stages.map((s) => s.stage));
 const notRun = ORDER.filter((s) => !ran.has(s));
 if (notRun.length) L.push(``, `Not run: ${notRun.join(', ')}${ran.has('preflight') && preflight.rows.some((r) => r.status === 'failed') ? ' (preflight failed: the environment is not ready)' : ''}.`);
