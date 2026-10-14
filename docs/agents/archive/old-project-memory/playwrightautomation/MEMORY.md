@@ -1,0 +1,1 @@
+- [ROBAR module reference bridge](robar-module-reference-bridge.md) — shared reference doc lives in the MsBuild repo; read/update it from here too

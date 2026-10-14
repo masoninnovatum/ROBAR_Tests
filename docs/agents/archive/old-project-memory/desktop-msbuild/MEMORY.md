@@ -1,0 +1,16 @@
+- [Browser screenshot limitation](feedback_browser_screenshot_limitation.md) — Claude in Chrome save_to_disk doesn't reach local file tools; verify before promising a screenshot doc
+- [WM_Preset_Management step 1.1 deviation](project_wm_preset_management_deviation.md) — trial run found Preset Management not disabled for a user lacking a permission; later resolved as bad test data, not a defect
+- [Screenshot doc reference format](reference_screenshot_doc_format.md) — canonical completed screenshot-doc examples live under `Executed_MSWord+_Docs` on the QA network share
+- [Desktop automation window scoping](feedback_desktop_automation_window_scoping.md) — native UI automation (FlaUI etc.) must scope to a process ID, never a bare title match, or it can leak an unrelated window's content
+- [Automation credential boundary](feedback_automation_credential_boundary.md) — never drive password/e-signature fields via automation, even with explicit authorization; hand off to the human
+- [FlaUI for Template Management](project_flaui_template_management.md) — FlaUI implemented + confirmed for BarTenderEdit's wrapper chrome (Save/Approve/etc.); canvas/e-signature out of scope
+- [ROBAR QA reference doc convention](robar-qa-reference-doc-convention.md) — always update `.agents/robar-module-reference.md` after formal scripts or exploratory sessions
+- [Multi-product QA automation layout](project_qa_automation_multi_product_layout.md) — ROBAR half done (`ROBAR_Tests` repo, live); RONOVA sibling repo still pending
+- [DIT tracker convention](dit-tracker-convention.md) — log confirmed defects to `.agents/dit-tracker.md` as found, even before filed as a ticket
+- [Harini UAT batch (complete, 20 UATs)](project_harini_uat_batch.md) — output folder, agreed rules, full done list, all 17 modules delivered
+- [Harini UAT trim pass](project_harini_uat_batch_trim_pass.md) — removed 15 steps redundant with already-checked scripts; removed-items list + process for future re-runs
+- [Harini UAT feature-removal pass](project_harini_uat_feature_removal_pass.md) — 11 UATs trimmed of not-applicable/redundant features; UAT_Summary.xlsx restructured to 5 columns w/ Original vs New step counts
+- [Harini UAT prereq reformat](project_harini_uat_prereq_reformat.md) — type-grouped/bold prerequisites format + step-text alias bolding, applied to all 19 UATs (complete)
+- [Harini UAT verification pass](project_harini_uat_verification_pass.md) — all 19 UATs checked against code/formal scripts/flow; ~13 real bugs found & fixed (incl. CM doc renamed), 2 intentional scope cuts confirmed not-bugs, 2 unresolved items flagged
+- [No customer name in Harini's UATs](feedback_no_customer_name_in_uats.md) — new UATs for Harini must not mention "AdTech" (filename, Test #, footer, Purpose); existing AdTech batch stays as-is
+- [Browser approval hook](browser-approval-hook-convention.md) — deterministic PreToolUse hook auto-approves narrow, low-risk browser calls; live suppression of the site-permission dialog unconfirmed as of 2026-09-17

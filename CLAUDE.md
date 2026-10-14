@@ -2,7 +2,7 @@
 
 Playwright-based browser automation for QA work against Innovatum Suite 7 (ROBAR) — driving the
 live UI to execute formal test scripts, capture screenshots, and fill out forms. Sibling to the
-Suite 7 source (read-only reference snapshots under `C:\DB_Copies\703_<build>\`, e.g. `703_20198`).
+Suite 7 source (read-only reference snapshots under `C:\DB_Copies\703_<build>\`, newest is `703_20285`, code at the folder root; `703_20198\MsBuild` is the previous one).
 Knowledge files (module reference, DIT tracker, ValMaster notes) live in `docs/agents/` in this repo;
 the old `Desktop\MsBuild` copy was retired 2026-10-13.
 
