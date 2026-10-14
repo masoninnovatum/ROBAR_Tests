@@ -17,7 +17,7 @@ const ITEM = 'MI080301';
 const PDF = 'Microsoft Print to PDF';
 const P = 'ctl00_printContentHolder_';
 
-test('Print by Lot, PrintEntityRequired = N: no Print Entity dropdown, new lot flow, lot panel, label screen, real Print to PDF', async ({ page }) => {
+test('@smoke @tier2 Print by Lot, PrintEntityRequired = N: no Print Entity dropdown, new lot flow, lot panel, label screen, real Print to PDF', async ({ page }) => {
   test.setTimeout(600_000);
   await login(page);
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');

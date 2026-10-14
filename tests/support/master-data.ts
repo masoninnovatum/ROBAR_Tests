@@ -421,3 +421,22 @@ export async function setEffectiveEnd(frame: Frame, date: Date): Promise<void> {
     vm.itemHeader().effectiveEnd(new Date(dateMs));
   }, date.getTime());
 }
+
+/**
+ * `retrieve`, then verify the Value box still holds what was typed, and retry otherwise. The Master Data grid restores the account's LAST saved criteria shortly after it loads
+ * (seen 2026-10-14 in the smoke specs: a previous test's value overwrote the one just typed, so the Retrieve ran with someone else's criteria). Returns the grid rows of the
+ * attempt whose criteria were ours.
+ */
+export async function retrieveVerified(page: Page, frame: Frame, opts: Parameters<typeof retrieve>[2], attempts = 5) {
+  let rows = await retrieve(page, frame, opts);
+  for (let i = 0; i < attempts; i++) {
+    await delay(2500);
+    rows = await retrieve(page, frame, opts);
+    const typed = await frame.locator('input[name="dvFilters[0].Value"]').inputValue().catch(() => '');
+    const forItems = (await frame.locator('#drpApproved option:checked').innerText().catch(() => '')).trim();
+    const wantForItems = opts.forItems ?? 'Any';
+    if (typed === opts.value && forItems === wantForItems) return rows;
+    console.log(`retrieveVerified attempt ${i + 1}: the page held value "${typed}" / For Items "${forItems}", not "${opts.value}" / "${wantForItems}"; retrying`);
+  }
+  return rows;
+}

@@ -46,6 +46,8 @@ export interface FixtureOptions {
   /** false = stop after the LCN is assigned (no Recreate Master) */
   master?: boolean;
   prefix?: string;
+  /** true = always create a NEW item and do not read or write the json store (smoke tests: the creation path is what is being tested) */
+  fresh?: boolean;
   /** item fields to set on the Item Edit page before Save, by field name (e.g. { Qty2: '3', u5: '2' }); a field on another tab is reached through that tab's link */
   itemFields?: Record<string, string>;
 }
@@ -54,7 +56,7 @@ export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}
   const TEMPLATE = opts.template ?? DEFAULT_TEMPLATE;
   const STORE = path.join(__dirname, '..', '..', 'test-data', opts.store ?? 'label-master-item.json');
   const withMaster = opts.master !== false;
-  if (fs.existsSync(STORE)) {
+  if (!opts.fresh && fs.existsSync(STORE)) {
     const saved = JSON.parse(fs.readFileSync(STORE, 'utf8')).item as string;
     const f = await openLabelControlAndQuery(page, saved, withMaster ? 'With Label Master' : 'Any (Label Masters)');
     const found = (await f.locator('#grdLabelControl tr').filter({ hasText: saved }).count()) > 0;
@@ -141,7 +143,7 @@ export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}
   await closeLc(page);
 
   if (!withMaster) {
-    fs.writeFileSync(STORE, JSON.stringify({ item: itemNumber, lcn, template: TEMPLATE, labelType: LABEL_TYPE, created: new Date().toISOString() }, null, 2));
+    if (!opts.fresh) fs.writeFileSync(STORE, JSON.stringify({ item: itemNumber, lcn, template: TEMPLATE, labelType: LABEL_TYPE, created: new Date().toISOString() }, null, 2));
     return itemNumber;
   }
   // Recreate Master
@@ -181,6 +183,6 @@ export async function ensureItemWithMaster(page: Page, opts: FixtureOptions = {}
   const check = await openLabelControlAndQuery(page, itemNumber, 'With Label Master');
   await expect(check.locator('#grdLabelControl tr').filter({ hasText: itemNumber })).toHaveCount(1, { timeout: 10_000 });
   await closeLc(page);
-  fs.writeFileSync(STORE, JSON.stringify({ item: itemNumber, lcn, template: TEMPLATE, labelType: LABEL_TYPE, created: new Date().toISOString() }, null, 2));
+  if (!opts.fresh) fs.writeFileSync(STORE, JSON.stringify({ item: itemNumber, lcn, template: TEMPLATE, labelType: LABEL_TYPE, created: new Date().toISOString() }, null, 2));
   return itemNumber;
 }
