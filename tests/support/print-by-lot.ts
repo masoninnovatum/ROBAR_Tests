@@ -54,6 +54,22 @@ export class PrintByLot {
     await bartender.confirmSentinelLaunchPrompt(page, this.pid).catch(() => {}); // the prompt is not always shown when opening the screen
     this.f = await this.frame();
     await page.waitForTimeout(3000);
+    if (this.entity) await this.selectEntity(this.entity);
+  }
+
+  /** Print Entity to select after open() (only meaningful with PrintEntityRequired = Y, where the screen pre-selects the user's first entity, England for Claude01). */
+  entity = '';
+
+  /** Picks a Print Entity in the drop-down; always fires a change (selects another entry first when it is already shown). */
+  async selectEntity(label: string): Promise<void> {
+    const entity = this.f.locator(`#${printing.printEntityId}`);
+    if (!(await entity.count()) || !(await entity.isEnabled())) return;
+    const options = await entity.locator('option').allInnerTexts();
+    const other = options.find((o) => o.trim() !== label);
+    if (other && (await entity.inputValue()) === label) { await entity.selectOption({ label: other }); await this.page.waitForTimeout(2000); this.f = await this.frame(); }
+    await entity.selectOption({ label });
+    await this.page.waitForTimeout(2500);
+    this.f = await this.frame();
   }
 
   async next(): Promise<void> {
@@ -66,6 +82,14 @@ export class PrintByLot {
     await this.f.locator(`#${printing.lotNumberId}`).fill(lot);
     await this.next();
     if (item) {
+      // AddLotReasonRequired = Y: a brand-new lot first asks for a Reason Code (dialog); pick one and continue
+      const d = this.f.locator('.ui-dialog:visible', { hasText: 'Reason Code' });
+      if (await d.count()) {
+        await d.locator('#reasonSel').selectOption({ label: 'On Demand' });
+        await d.getByRole('button', { name: 'Submit' }).click();
+        await this.page.waitForTimeout(6000);
+        this.f = await this.frame();
+      }
       await this.f.locator(`#${printing.itemNumberId}`).fill(item);
       await this.f.locator(`#${printing.orderNumberId}`).fill(order ?? `${lot}O`);
       await this.next();

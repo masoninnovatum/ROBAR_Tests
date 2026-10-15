@@ -52,8 +52,10 @@ test('Multi Document Printing security: tile and page need BP_MultiDocumentPrint
       expect(tiles).toContain('Multi Document Printing');
       await u.p.goto(URL);
       await u.p.waitForTimeout(4000);
-      await expect(u.p.locator('input[name="FlexLot_OrderNum"]')).toBeVisible();
-      expect((await u.p.locator('body').innerText()).replace(/\s+/g, ' ')).toContain('Multi Document Printing');
+      // with PrintEntityRequired = Y a user without an active Print Entity gets "No active Print Entities associated with this user. Cannot proceed." instead of the panel: the page was still reached (authorized)
+      const text = (await u.p.locator('body').innerText()).replace(/\s+/g, ' ');
+      if (!text.includes('No active Print Entities')) await expect(u.p.locator('input[name="FlexLot_OrderNum"]')).toBeVisible();
+      expect(text).toContain('Multi Document Printing');
     } finally {
       await u.close();
     }

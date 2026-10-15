@@ -35,6 +35,8 @@ test('Print by Order / Print by Lot: a number assigned to multiple items shows a
     await page.waitForTimeout(3000);
     const dlg = await du.openFormDialog(g, 'add');
     for (const [name, value] of Object.entries({ OrderNum: o, LotNum: l, ItemNumber: i })) await dlg.locator(`[name="${name}"]`).fill(value);
+    const pe = dlg.locator('[name="PrintEntity"]');
+    if (await pe.count()) console.log(`add dialog PrintEntity = ${JSON.stringify(await pe.evaluate((e: HTMLSelectElement) => ({ value: e.value, options: [...e.options].map((x) => x.text) })).catch(() => 'n/a'))}`);
     await du.submitForm(g);
     await page.waitForTimeout(2000);
     const open = (await g.locator('.ui-jqdialog:visible').count()) > 0;
@@ -54,6 +56,7 @@ test('Print by Order / Print by Lot: a number assigned to multiple items shows a
 
     await test.step('Print by Order with an order assigned to two items: an error (FRS-8.1.3.13)', async () => {
       const pb = new PrintByLot(page, 'Print by order');
+      pb.entity = 'England'; // the lots above were added under the Add dialog's default entity
       await pb.open();
       await pb.f.locator(`#${printing.orderNumberId}`).fill(order);
       await pb.next();
@@ -69,6 +72,7 @@ test('Print by Order / Print by Lot: a number assigned to multiple items shows a
 
     await test.step('Print by Lot with a lot number assigned to two items: an error (FRS-8.1.3.12)', async () => {
       const pb = new PrintByLot(page);
+      pb.entity = 'England';
       await pb.open();
       await pb.f.locator(`#${printing.lotNumberId}`).fill(lot1);
       await pb.next();
