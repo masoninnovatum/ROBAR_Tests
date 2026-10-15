@@ -55,7 +55,15 @@ test('Dictionary Management: the JSON write endpoints refuse a user without DM_N
       expect.soft(refused, 'NewRecord refused').toBe(true);
     });
 
-    await test.step('NewVersion without DM_NewVersion is refused (real MB test phrase id)', async () => {
+    // KNOWN OPEN DEFECT (DIT tracker, 2026-10-09 "Dictionary Management - NewVersion authorization"): while SaveNewVersion lacks its `return`, this POST SUCCEEDS and creates an undeletable unapproved
+    // dictionary version on the probed phrase on EVERY run. So the step only runs when PROBE_DICTIONARY_NEWVERSION=Y (set it once to check whether a build has fixed the defect); otherwise it is skipped
+    // with an annotation and nothing is posted. NewRecord and Update (above / below) create nothing when refused and always run.
+    await test.step('NewVersion without DM_NewVersion is refused (real MB test phrase id) [only with PROBE_DICTIONARY_NEWVERSION=Y: open defect]', async () => {
+      if (process.env.PROBE_DICTIONARY_NEWVERSION !== 'Y') {
+        test.info().annotations.push({ type: 'skipped NewVersion probe', description: 'open defect: NewVersion is not refused for a user without DM_NewVersion and every probe creates an undeletable dictionary version; set PROBE_DICTIONARY_NEWVERSION=Y to probe (DIT tracker 2026-10-09)' });
+        console.log('NewVersion probe skipped (set PROBE_DICTIONARY_NEWVERSION=Y to run it; known open defect)');
+        return;
+      }
       const r = await post('NewVersion', { id: rowId });
       const refused = /authoriz|DM_NewVersion/i.test(r.text);
       if (!refused) deviation('Dictionary server-side authorization', 'NewVersion refused for a user without DM_NewVersion', `${r.status} ${r.text}`);

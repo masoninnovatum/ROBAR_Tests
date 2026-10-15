@@ -375,3 +375,6 @@ control printing eligibility) also gate simple selectability elsewhere in the ap
 
 ---
 
+
+### Serialized data source (S_Ser): Transforms > Serialization > Increment (user, 2026-10-14)
+A text object bound to the sharename `S_Ser` only prints Serial copies if its data source is serialized in BarTender. In the same Text Properties dialog where the data source name is set: open the **Transforms** tab, click the button at the right of **Serialization:**, in the Serialization dialog choose **Increment** (not "Don't Serialize"), Method "Alphabetic and/or Numeric" (letters Uppercase A-Z), Increment by 1, Event "Standard", Print Quantity Serial Numbers 1 / Copies per Serial Number 1, OK. Check later: Template Editor > File > Print should enable "Number of serialized labels". The sharename S_USerial does NOT need this (ROBAR prints one job per serial number it collects in the Serial Number Management dialog). Automating this in `addTextObjectBoundToSharename` is not done yet (the Transforms tab ids/names were not captured).

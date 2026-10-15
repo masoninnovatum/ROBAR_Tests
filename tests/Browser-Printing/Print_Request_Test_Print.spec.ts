@@ -51,6 +51,8 @@ test('Test Print: red Test Print button, repeatable, excluded from reprint; defa
 
   await test.step('click Test Print twice (F103.1.1: indefinitely) - 1 copy each', async () => {
     for (const n of [1, 2]) {
+      // the Test checkbox post-back reset this drop-down to the first printer (a live Zebra) in the 2026-10-14 run: choose the PDF printer again right before every print (PrintByLot.print() also refuses to click otherwise)
+      await pb.opt('drpPrinters').selectOption({ label: PDF });
       const result = await pb.print();
       console.log(`TEST PRINT ${n}: ${result.slice(-220)}`);
       expect.soft(result, `test print ${n}`).toMatch(/Printed PID_\w+\.prn to Microsoft Print to PDF/);

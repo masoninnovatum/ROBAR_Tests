@@ -31,7 +31,7 @@ const TEMPLATE = 'A1SuperTemplate';
 // backslash-escaping pitfalls that mangled this path twice while authoring the spec.
 const EXPORT_ROOT = '//VMSRVTST703/Network/ExportMaster';
 
-test('Export Master writes the master PDF to the export folder and offers a download', async ({ page }) => {
+test('@smoke @tier1 Export Master writes the master PDF to the export folder and offers a download', async ({ page }) => {
   test.setTimeout(420_000);
   await login(page);
 

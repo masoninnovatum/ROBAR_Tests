@@ -67,13 +67,19 @@ test('Assign Labels creates unapproved Campaign Manager items for the selected r
     await openMenuItem(page, 'Campaign Manager');
     const cmFrame = await findFrame(page, 'campaignmanager');
     await page.waitForTimeout(1500);
+    const templateNotInGrid: string[] = [];
     for (const n of [a, b]) {
       await cm.retrieveAndSelectItem(page, cmFrame, n);
       const row = cmFrame.locator('#gridResults tr').filter({ hasText: n });
       const rowText = (await row.first().innerText({ timeout: 5000 })).replace(/\s+/g, ' ');
       console.log(`campaign manager row for ${n}: ${rowText}`);
       expect(rowText).toContain('Carton Label');
-      expect(rowText).toContain('A1SuperTemplate');
+      // the grid shows only the columns saved for the account (the Template column is not there by default, 2026-10-14): check the template on the item's Edit page instead
+      if (!rowText.includes('A1SuperTemplate')) templateNotInGrid.push(n);
+    }
+    for (const n of templateNotInGrid) {
+      await cm.goToItem(page, n);
+      expect(await page.locator('select[name="txtTemplateName"]').inputValue({ timeout: 10_000 }), `template of ${n} on its Edit page`).toBe('A1SuperTemplate');
     }
   });
 });

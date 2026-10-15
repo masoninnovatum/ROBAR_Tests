@@ -6,6 +6,7 @@
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import { login } from '../support/robar';
+import { assertPdfPrinters } from '../support/print-by-lot';
 import { readGlobalSetting } from '../support/global-settings';
 import * as printing from '../support/printing';
 import * as bartender from '../support/bartender';
@@ -17,7 +18,7 @@ const ITEM = 'MI080301';
 const PDF = 'Microsoft Print to PDF';
 const P = 'ctl00_printContentHolder_';
 
-test('Print by Lot, PrintEntityRequired = N: no Print Entity dropdown, new lot flow, lot panel, label screen, real Print to PDF', async ({ page }) => {
+test('@smoke @tier2 Print by Lot, PrintEntityRequired = N: no Print Entity dropdown, new lot flow, lot panel, label screen, real Print to PDF', async ({ page }) => {
   test.setTimeout(600_000);
   await login(page);
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
@@ -108,6 +109,7 @@ test('Print by Lot, PrintEntityRequired = N: no Print Entity dropdown, new lot f
    * confirms the Sentinel prompt and waits for the result dialog ("Printed <PID>.prn to <printer>" / "Test Printed ...").
    */
   const printNow = async (): Promise<string> => {
+    await assertPdfPrinters(f);
     await btn('btnDoPrint').click();
     for (let i = 0; i < 20; i++) {
       await page.waitForTimeout(2000);

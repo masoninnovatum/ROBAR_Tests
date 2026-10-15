@@ -180,7 +180,7 @@ export async function findBartenderProcess(page: Page, beforeLaunch: Array<{ pid
  * CreateNewTemplate/GetFileToken responses have resolved) -- it takes its own process snapshot
  * first, at the same point in the sequence Create_and_Approve_Template.spec.ts does.
  */
-export async function launchTemplateEditor(page: Page): Promise<number> {
+export async function launchTemplateEditor(page: Page, readySeconds = 90): Promise<number> {
   // Snapshot processes BEFORE confirming the launch prompt -- taking this "before" picture any
   // later risks the Sentinel/BarTender process already existing in BOTH snapshots by the time you
   // diff, since launching happens fast, which makes diffNewProcesses find nothing and the next
@@ -208,7 +208,7 @@ export async function launchTemplateEditor(page: Page): Promise<number> {
         name: 'Text',
         property: 'IsEnabled',
         controlType: 'MenuItem',
-        retrySeconds: 90,
+        retrySeconds: readySeconds, // BarTender start-up was seen to take longer than 90 s on 2026-10-14 (smoke run): the smoke spec passes more
         expectValue: 'True',
       }),
     { attempts: 1 }

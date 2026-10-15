@@ -1,0 +1,6 @@
+{
+  "_note": "Real prints made on TST703 on 2026-10-14/15 (print history cannot be deleted) used by Print-History-Inquiry specs",
+  "normal": { "printId": "PID_13F1726FDCD34E47B7954CD808B653BF", "lot": "CLPTP560850L", "order": "CLPTP560850", "item": "MBBQA8457561", "copies": 1, "printer": "Microsoft Print to PDF" },
+  "usrSerial": { "printId": "PID_9F2A5C6B9437490B91BEEB7C97DB02D5", "item": "CLSerItm8455875", "serials": ["001", "002", "003"], "note": "S_USerial print: Serial Num 3" },
+  "serCounter": { "printId": "PID_0952CBC7564C4821928204A02D0E49DC", "item": "CLSerSItm9785379", "note": "S_Ser print, Serial 3 typed, one label printed" }
+}

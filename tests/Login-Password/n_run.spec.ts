@@ -20,6 +20,8 @@ test('NeedsLetters N / NeedsNumbers N on every surface', async ({ page, browser 
   // exact stored values (owner LegacySettings)
   const vals: Record<string, string | undefined> = {};
   for (const n of ['PasswordNeedsLetters', 'PasswordNeedsNumbers', 'PasswordMinLength']) vals[n] = await readGlobalSetting(page, n, 'LegacySettings');
+  // precondition (user-applied setting + restart): both rules N; skip with a clear message instead of failing when they are Y
+  test.skip(vals.PasswordNeedsLetters !== 'N' || vals.PasswordNeedsNumbers !== 'N', `precondition not met: PasswordNeedsLetters=${vals.PasswordNeedsLetters}, PasswordNeedsNumbers=${vals.PasswordNeedsNumbers} (both must be N; the user flips them and restarts)`);
   await page.goto(PRURL);
   await page.waitForSelector('#btnSubmit', { timeout: 90_000 });
   const hidden = await page.evaluate(() => ({ minLength: (document.getElementById('minLength') as HTMLInputElement)?.value, needsLetters: (document.getElementById('needsLetters') as HTMLInputElement)?.value, needsNumbers: (document.getElementById('needsNumbers') as HTMLInputElement)?.value }));

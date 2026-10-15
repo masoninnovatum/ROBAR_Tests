@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import { login, PASSWORD, USERNAME } from '../support/robar';
 import { viewPrintHistory } from '../support/print-history';
 import * as printing from '../support/printing';
-import { PrintByLot, PDF } from '../support/print-by-lot';
+import { PrintByLot, PDF, assertPdfPrinters } from '../support/print-by-lot';
 
 test.use({ headless: false, actionTimeout: 20_000 });
 
@@ -56,18 +56,21 @@ test('Print by Lot reprint: Reprint box locked on, reason + password required, w
   });
 
   await test.step('Print without a reason: "Please select a reprint reason."', async () => {
+    await assertPdfPrinters(p.f);
     await p.opt('btnDoPrint').click();
     expect(await msg()).toContain('Please select a reprint reason.');
   });
 
   await test.step('a reason but no password: "Invalid Username/Password. UserID:<user>"', async () => {
     await p.opt('selSignature_ctl09').selectOption({ label: 'Damaged Labels' });
+    await assertPdfPrinters(p.f);
     await p.opt('btnDoPrint').click();
     expect(await msg()).toContain(`Invalid Username/Password. UserID:${USERNAME}`);
   });
 
   await test.step('a wrong password: the same message', async () => {
     await typePassword('definitely-not-the-password');
+    await assertPdfPrinters(p.f);
     await p.opt('btnDoPrint').click();
     expect(await msg()).toContain(`Invalid Username/Password. UserID:${USERNAME}`);
   });

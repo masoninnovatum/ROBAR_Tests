@@ -8,7 +8,8 @@ import * as fs from 'fs';
 import { login, PASSWORD } from '../support/robar';
 import * as printing from '../support/printing';
 import * as bartender from '../support/bartender';
-import { PrintByLot, PDF } from '../support/print-by-lot';
+import { readParam } from '../support/print-config';
+import { PrintByLot, PDF, assertPdfPrinters } from '../support/print-by-lot';
 
 test.use({ headless: false, actionTimeout: 20_000 });
 
@@ -21,6 +22,9 @@ function deviation(requirement: string, expected: string, actual: string): void 
 test('Batch Quantity reprint threshold: Reprint box forced on when printed + about to print exceeds the allowed quantity (Print by Order, Print to PDF)', async ({ page }) => {
   test.setTimeout(1_200_000);
   await login(page);
+  // precondition (the user's setting): ReprintBasedOnBatchQty = Y for Print by Order (config Print1); skip with a clear message instead of failing when it is N
+  const rbq = await readParam(page, 'Print1', 'ReprintBasedOnBatchQty').catch(() => '?');
+  test.skip(rbq !== 'Y', `precondition not met: Print Config Print1 ReprintBasedOnBatchQty is ${rbq}, needs Y (the user flips it)`);
   const A = item('test-data/batchqty-item-a.json');
   const stamp = process.env.RESUME_STAMP ?? Date.now().toString().slice(-6);
   const order = `CLBQR${stamp}`;
@@ -112,6 +116,7 @@ test('Batch Quantity reprint threshold: Reprint box forced on when printed + abo
     if (!s.reprintChecked) deviation('FRS-8.1.9.2', 'Reprint box checked (printed 5 + 1 > batch 5)', 'Reprint box not checked');
     if (!s.reprintDisabled) console.log('NOTE: Reprint box is checked but not locked (forced = disabled?)');
     // a forced reprint needs the Reprint Options (reason + password); without them: "Please select a reprint reason."
+    await assertPdfPrinters(pb.f);
     await pb.opt('btnDoPrint').click();
     await page.waitForTimeout(3000);
     pb.f = await pb.frame();

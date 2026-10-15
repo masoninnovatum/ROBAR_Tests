@@ -8,6 +8,24 @@ import * as bartender from './bartender';
 export const P = 'ctl00_printContentHolder_';
 export const PDF = 'Microsoft Print to PDF';
 
+/**
+ * SAFETY GUARD (added 2026-10-14 after a headed run sent two test prints to the real "Zebra 220XiIII Plus" queue: a post-back had reset the printer drop-down to the first printer):
+ * throws, WITHOUT clicking anything, unless every visible printer drop-down that offers "Microsoft Print to PDF" currently has it selected. Call it right before ANY click on a Print button.
+ */
+export async function assertPdfPrinters(f: Frame): Promise<void> {
+  const bad = await f.locator('select:visible').evaluateAll(
+    (els, pdf) =>
+      els
+        .filter((e) => {
+          const s = e as HTMLSelectElement;
+          return Array.from(s.options).some((o) => o.text.trim() === pdf) && (s.selectedOptions[0]?.text.trim() ?? '') !== pdf;
+        })
+        .map((e) => `${(e as HTMLSelectElement).id || (e as HTMLSelectElement).name} = "${(e as HTMLSelectElement).selectedOptions[0]?.text.trim() ?? ''}"`),
+    PDF
+  );
+  if (bad.length) throw new Error(`REFUSING TO PRINT: a printer drop-down is not set to "${PDF}" (never print to a live printer): ${bad.join('; ')}`);
+}
+
 export class PrintByLot {
   f!: Frame;
   pid = 0;
@@ -36,6 +54,22 @@ export class PrintByLot {
     await bartender.confirmSentinelLaunchPrompt(page, this.pid).catch(() => {}); // the prompt is not always shown when opening the screen
     this.f = await this.frame();
     await page.waitForTimeout(3000);
+    if (this.entity) await this.selectEntity(this.entity);
+  }
+
+  /** Print Entity to select after open() (only meaningful with PrintEntityRequired = Y, where the screen pre-selects the user's first entity, England for Claude01). */
+  entity = '';
+
+  /** Picks a Print Entity in the drop-down; always fires a change (selects another entry first when it is already shown). */
+  async selectEntity(label: string): Promise<void> {
+    const entity = this.f.locator(`#${printing.printEntityId}`);
+    if (!(await entity.count()) || !(await entity.isEnabled())) return;
+    const options = await entity.locator('option').allInnerTexts();
+    const other = options.find((o) => o.trim() !== label);
+    if (other && (await entity.inputValue()) === label) { await entity.selectOption({ label: other }); await this.page.waitForTimeout(2000); this.f = await this.frame(); }
+    await entity.selectOption({ label });
+    await this.page.waitForTimeout(2500);
+    this.f = await this.frame();
   }
 
   async next(): Promise<void> {
@@ -48,6 +82,14 @@ export class PrintByLot {
     await this.f.locator(`#${printing.lotNumberId}`).fill(lot);
     await this.next();
     if (item) {
+      // AddLotReasonRequired = Y: a brand-new lot first asks for a Reason Code (dialog); pick one and continue
+      const d = this.f.locator('.ui-dialog:visible', { hasText: 'Reason Code' });
+      if (await d.count()) {
+        await d.locator('#reasonSel').selectOption({ label: 'On Demand' });
+        await d.getByRole('button', { name: 'Submit' }).click();
+        await this.page.waitForTimeout(6000);
+        this.f = await this.frame();
+      }
       await this.f.locator(`#${printing.itemNumberId}`).fill(item);
       await this.f.locator(`#${printing.orderNumberId}`).fill(order ?? `${lot}O`);
       await this.next();
@@ -70,13 +112,14 @@ export class PrintByLot {
 
   /** Real click on Print, confirm the Sentinel prompt, wait for the result text; returns the page text. */
   async print(): Promise<string> {
+    await assertPdfPrinters(this.f);
     await this.opt('btnDoPrint').click();
     for (let i = 0; i < 20; i++) {
       await this.page.waitForTimeout(2000);
       await bartender.confirmSentinelLaunchPrompt(this.page, this.pid).catch(() => {});
       this.f = await this.frame();
       const text = await this.body().catch(() => '');
-      if (/Printed PID_\w+\.prn|Timeout waiting for Sentinel|Print Failed/i.test(text)) {
+      if (/Printed PID_\w+(\.prn)?|Timeout waiting for Sentinel|Print Failed/i.test(text)) {
         await this.f.locator('.ui-dialog:visible button, input[value=Ok]').filter({ hasText: /Ok/ }).first().click({ timeout: 3000 }).catch(() => {});
         return text;
       }

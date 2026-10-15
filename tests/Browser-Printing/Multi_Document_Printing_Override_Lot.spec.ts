@@ -5,6 +5,7 @@
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import { login } from '../support/robar';
+import { assertPdfPrinters } from '../support/print-by-lot';
 import { viewPrintHistory } from '../support/print-history';
 import * as bartender from '../support/bartender';
 
@@ -125,6 +126,7 @@ test('Multi Document Printing: Override Lot Data (editable fields, validation, S
       if (r.url().includes('/MultiDocPrinting/GetPrinterStatus')) responses.push(await r.text().catch(() => ''));
     };
     page.on('response', onResponse);
+    await assertPdfPrinters(f);
     await f.getByRole('button', { name: /^Print$/ }).click();
     await page.waitForTimeout(1500);
     await bartender.confirmSentinelLaunchPrompt(page, browserPid);
