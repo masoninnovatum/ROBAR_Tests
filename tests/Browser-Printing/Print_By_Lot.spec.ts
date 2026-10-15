@@ -6,6 +6,7 @@
 import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import { login } from '../support/robar';
+import { assertPdfPrinters } from '../support/print-by-lot';
 import { readGlobalSetting } from '../support/global-settings';
 import * as printing from '../support/printing';
 import * as bartender from '../support/bartender';
@@ -108,6 +109,7 @@ test('@smoke @tier2 Print by Lot, PrintEntityRequired = N: no Print Entity dropd
    * confirms the Sentinel prompt and waits for the result dialog ("Printed <PID>.prn to <printer>" / "Test Printed ...").
    */
   const printNow = async (): Promise<string> => {
+    await assertPdfPrinters(f);
     await btn('btnDoPrint').click();
     for (let i = 0; i < 20; i++) {
       await page.waitForTimeout(2000);

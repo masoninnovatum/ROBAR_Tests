@@ -7,6 +7,7 @@ import { test, expect } from '@playwright/test';
 import type { Frame } from '@playwright/test';
 import * as fs from 'fs';
 import { login } from '../support/robar';
+import { assertPdfPrinters } from '../support/print-by-lot';
 import * as bartender from '../support/bartender';
 import * as du from '../support/dynamic-ui';
 
@@ -109,6 +110,7 @@ test('Multi Document Printing: Copies = Batch Qty x Multiplier + Extra, Override
       if (r.url().includes('/MultiDocPrinting/GetPrinterStatus')) responses.push(await r.text().catch(() => ''));
     };
     page.on('response', onResponse);
+    await assertPdfPrinters(f);
     await f.getByRole('button', { name: /^Print$/ }).click();
     await page.waitForTimeout(1500);
     await bartender.confirmSentinelLaunchPrompt(page, pid);

@@ -8,6 +8,24 @@ import * as bartender from './bartender';
 export const P = 'ctl00_printContentHolder_';
 export const PDF = 'Microsoft Print to PDF';
 
+/**
+ * SAFETY GUARD (added 2026-10-14 after a headed run sent two test prints to the real "Zebra 220XiIII Plus" queue: a post-back had reset the printer drop-down to the first printer):
+ * throws, WITHOUT clicking anything, unless every visible printer drop-down that offers "Microsoft Print to PDF" currently has it selected. Call it right before ANY click on a Print button.
+ */
+export async function assertPdfPrinters(f: Frame): Promise<void> {
+  const bad = await f.locator('select:visible').evaluateAll(
+    (els, pdf) =>
+      els
+        .filter((e) => {
+          const s = e as HTMLSelectElement;
+          return Array.from(s.options).some((o) => o.text.trim() === pdf) && (s.selectedOptions[0]?.text.trim() ?? '') !== pdf;
+        })
+        .map((e) => `${(e as HTMLSelectElement).id || (e as HTMLSelectElement).name} = "${(e as HTMLSelectElement).selectedOptions[0]?.text.trim() ?? ''}"`),
+    PDF
+  );
+  if (bad.length) throw new Error(`REFUSING TO PRINT: a printer drop-down is not set to "${PDF}" (never print to a live printer): ${bad.join('; ')}`);
+}
+
 export class PrintByLot {
   f!: Frame;
   pid = 0;
@@ -70,6 +88,7 @@ export class PrintByLot {
 
   /** Real click on Print, confirm the Sentinel prompt, wait for the result text; returns the page text. */
   async print(): Promise<string> {
+    await assertPdfPrinters(this.f);
     await this.opt('btnDoPrint').click();
     for (let i = 0; i < 20; i++) {
       await this.page.waitForTimeout(2000);

@@ -15,6 +15,11 @@ export async function selectSchema(frame: Frame, schemaName: string): Promise<vo
   await frame.selectOption('#ddlSchemas', { label: schemaName });
 }
 
+/** Text of the schema currently shown in the drop-down ('' when none): see the note in `retrieve` about the empty option values. */
+export async function currentSchema(frame: Frame): Promise<string> {
+  return frame.locator('#ddlSchemas').evaluate((s) => (s as HTMLSelectElement).selectedOptions[0]?.text?.trim() ?? '', undefined, { timeout: 5000 }).catch(() => '');
+}
+
 /**
  * Opens the Master Data Management page's top "Actions" drop-down and clicks "New Record".
  * `{ force: true }` on the action item click matches the same jQuery dropmenu-toggle pattern
@@ -265,9 +270,12 @@ export async function retrieve(
     limit = 500,
   }: { column?: string; operator?: string; value: string; forItems?: string; schema?: string; expectRows?: number; latestOnly?: boolean; effectiveOnly?: boolean; limit?: number }
 ) {
+  // `#ddlSchemas` is a Knockout `options: schemas, optionsText: 'name'` select: its option VALUES are empty (build 7.0.3.20260), so inputValue() is always '' and cannot say whether a schema is picked;
+  // use the selected option's text. Selecting the schema that is already shown would re-render the filter area and RESET the Selected Fields, so it is skipped.
+  const shownSchema = await currentSchema(frame);
   if (schema) {
-    await selectSchema(frame, schema);
-  } else if (!(await frame.locator('#ddlSchemas').inputValue({ timeout: 5000 }))) {
+    if (shownSchema !== schema) await selectSchema(frame, schema);
+  } else if (!shownSchema) {
     // A user who has never opened the grid has NO schema selected, and the whole filter area stays hidden until one is picked
     // (the previous seed user always had one persisted). Default to the standard item schema.
     await selectSchema(frame, 'RobarMasterData');
@@ -398,6 +406,12 @@ export async function gotoMasterData(page: Page): Promise<Frame> {
  * accordion open. Returns the Selected Fields afterwards.
  */
 export async function resetSelectedColumns(frame: Frame): Promise<string[]> {
+  // An account whose persisted schema is blank (seen 2026-10-14) gets RobarMasterData selected by `retrieve`, and selecting a schema re-renders the filter area and RESETS Selected Fields:
+  // pick the schema FIRST so that fields added after this call survive the Retrieve.
+  if (!(await currentSchema(frame))) {
+    await selectSchema(frame, 'RobarMasterData');
+    await delay(1500);
+  }
   const panel = frame.locator('#selectedLimitColumns');
   if (!(await panel.isVisible().catch(() => false))) {
     await frame.locator('#advancedOptions h3 a').click({ timeout: 5000 });

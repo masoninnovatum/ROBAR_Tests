@@ -10,6 +10,7 @@ import type { Frame, Page } from '@playwright/test';
 import { login, openMenuItem } from '../support/robar';
 import { nativeClick, lotNumberId, itemNumberId, orderNumberId, nextButtonId } from '../support/printing';
 import * as du from '../support/dynamic-ui';
+import { readParam } from '../support/print-config';
 
 test.use({ actionTimeout: 20_000 });
 
@@ -34,6 +35,10 @@ async function enterNew(page: Page, order: string | null, lot: string | null): P
 test('AddLotReasonRequired: the Reason Code dialog on the print screens', async ({ page }) => {
   test.setTimeout(900_000);
   await login(page);
+  // precondition (the user's setting, docs/agents/settings-change-requests.md #6): AddLotReasonRequired = Y on the four screens; skip with a clear message instead of failing when it is N
+  const notY: string[] = [];
+  for (const cfg of ['Print1', 'LotNumber', 'OrderNumberMultiple', 'LotNumberMultiple']) if ((await readParam(page, cfg, 'AddLotReasonRequired').catch(() => '?')) !== 'Y') notY.push(cfg);
+  test.skip(notY.length > 0, `precondition not met: Print Config AddLotReasonRequired is not Y for ${notY.join(', ')} (the user flips it; see settings-change-requests.md #6)`);
   const stamp = Date.now().toString().slice(-6);
   const lot = (n: string) => `CLRL${stamp}${n}`;
 
