@@ -107,3 +107,6 @@ Direct POSTs to `InnoPages/DictionaryManagement/<action>` as MB user MBPWLogin01
 
 ### NOTE 2026-10-09: read the ValMaster re-check first
 Findings in the older sections that the requirements later SETTLED as by design (Unretire resets Effective Begin, Retire works on unapproved, template headers, no signature on Export) are listed in the block "Requirements re-check (ValMaster first) - Dictionary Management" and are NOT defects. The one real server-side defect found afterwards is NewVersion authorization (block "Dictionary Management SERVER-SIDE authorization").
+
+### Server-side authorization spec: NewVersion probe gated (2026-10-15, user decision)
+`Dictionary_Management_Server_Side_Authorization.spec.ts` keeps the NewRecord (`DM_NewEntry`) and Update (`DM_Edit`) checks, which refuse correctly and create nothing. The NewVersion (`DM_NewVersion`) POST only runs when the environment variable `PROBE_DICTIONARY_NEWVERSION=Y` is set: while the open defect exists (SaveNewVersion has no `return` after the permission check, still present in 7.0.3.20260) every probe succeeds and creates an undeletable unapproved dictionary version. Without the flag the step is skipped with an annotation. Run it once with the flag on a new build to see whether the defect was fixed; when fixed, make the step unconditional.
