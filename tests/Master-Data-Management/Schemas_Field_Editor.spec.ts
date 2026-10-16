@@ -15,7 +15,7 @@ import * as mdm from '../support/master-data';
 import * as sch from '../support/schemas';
 
 // candidate no-data ITEM schemas, first one that exists on the server (schemas cannot be deleted by the tests; MBExploreSchema vanished from TST703 by 2026-10-16)
-const CANDIDATES = ['MBExploreSchema']; // MBSchema-New was tried 2026-10-16: its single unconfigured "New Field" blocks Save (no save request is sent)
+const CANDIDATES = ['MBExploreSchema', 'MBExploreSchema1']; // MBExploreSchema1 (renamed copy) is what TST703 holds; it only shows for a user whose group has SCH_MBExploreSchema1 (MBSchema-New cannot be used: its single unconfigured field blocks Save)
 let FIXTURE = CANDIDATES[0];
 
 test('Schemas editor: add fields with settings, persist, validate, delete (no-data fixture schema)', async ({ page }) => {
