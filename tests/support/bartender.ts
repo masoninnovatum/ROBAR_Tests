@@ -320,6 +320,13 @@ export interface AddTextObjectOptions {
    * Workspace's raw top-left corner by a large fraction of its full size.
    */
   placeAtOffset?: { x: number; y: number };
+  /**
+   * Also set Transforms > Serialization > Increment on the object's data source (Text Properties, same dialog right after the data source name). Without it BarTender reports
+   * SupportsSerializedLabels = false and the print server drops the Serial count (the customer's "Copy 1 / Serial 3 prints 1 label", 2026-10-14). Live 2026-10-16: the tab strip of that dialog is
+   * not exposed to UI Automation, so the Transforms tab is clicked by pixel offset inside the 711x577 'Text Properties' dialog (384,50 from its UIA top-left); the Serialization button
+   * (AutomationId 6857) and the dialog's radioButtonIncrement / buttonOK ARE exposed.
+   */
+  serializeIncrement?: boolean;
 }
 
 /**
@@ -372,7 +379,7 @@ export async function addTextObjectBoundToSharename(
   page: Page,
   bartenderPid: number,
   sharename: string,
-  { center = true, placeAtOffset }: AddTextObjectOptions = {}
+  { center = true, placeAtOffset, serializeIncrement = false }: AddTextObjectOptions = {}
 ): Promise<void> {
   // -- Add a Text object --
   await until(
@@ -466,6 +473,34 @@ export async function addTextObjectBoundToSharename(
     () => flaui.click({ processId: bartenderPid, elementName: 'Change Data Source Name Wizard', name: 'OK', automationId: '1', retrySeconds: 30 }),
     { attempts: 1 }
   );
+  if (serializeIncrement) {
+    await until(
+      page,
+      'click the Transforms tab of Text Properties (by offset: the tab strip is not in the UIA tree)',
+      () => flaui.clickAt({ processId: bartenderPid, name: 'Text Properties', offsetX: 384, offsetY: 50, retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+    await page.waitForTimeout(1200);
+    await until(
+      page,
+      'open the Serialization dialog (button at the right of the Serialization field)',
+      () => flaui.click({ processId: bartenderPid, elementName: 'Text Properties', name: '<None>', automationId: '6857', retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+    await until(
+      page,
+      'select Increment in the Serialization dialog',
+      () => flaui.click({ processId: bartenderPid, elementName: 'Serialization', name: 'Increment', automationId: 'radioButtonIncrement', retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+    await until(
+      page,
+      'confirm the Serialization dialog with OK',
+      () => flaui.click({ processId: bartenderPid, elementName: 'Serialization', name: 'OK', automationId: 'buttonOK', retrySeconds: 30 }),
+      { attempts: 1 }
+    );
+    await page.waitForTimeout(800);
+  }
   await until(
     page,
     'close the Text Properties dialog',

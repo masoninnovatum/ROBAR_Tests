@@ -12,6 +12,7 @@ import { login } from '../support/robar';
 import * as du from '../support/dynamic-ui';
 import { PrintByLot, PDF } from '../support/print-by-lot';
 import { viewPrintHistory } from '../support/print-history';
+import { labelsInPdf } from '../support/pdf-labels';
 import { VARIANTS, fixturePath } from '../support/serial-variants';
 import type { SerialVariant } from '../support/serial-variants';
 
@@ -67,6 +68,7 @@ async function panelBoxes(pbl: PrintByLot): Promise<string> {
 
 for (const v of VARIANTS) {
   test(`${v.key === 'usr' ? '@smoke @tier2 ' : ''}[${v.key}] Print by Lot: ${v.sharename} template, Print to PDF`, async ({ page }, testInfo) => {
+    test.skip(!!v.skip, v.skip);
     test.setTimeout(900_000);
     const fx = JSON.parse(fs.readFileSync(fixturePath(v), 'utf8')) as { template: string; item: string; labelType: string };
     expect(fx.item, 'run Serial_Template_Setup.spec.ts first').toBeTruthy();
@@ -117,13 +119,13 @@ for (const v of VARIANTS) {
         await test.step('S_Ser: Serial = 3 (Copy 1), Starting Serial and Of as shown', async () => {
           const ser = pbl.opt('txtSerialized');
           expect(await ser.isVisible(), 'the Serial box is shown for an S_Ser template').toBe(true);
-          await ser.fill('3');
+          await ser.fill(process.env.SER_COUNT ?? '3');
           await ser.press('Tab');
           await page.waitForTimeout(800);
           console.log(`[${v.key}] BOXES after typing Serial 3: ${await panelBoxes(pbl)}`);
           await testInfo.attach('print options, Serial 3', { body: await page.screenshot(), contentType: 'image/png' });
         });
-        expectedLabels = 3; // Copy 1 x Serial 3 (client script: totalLabels = Copy * Serial)
+        expectedLabels = Number(process.env.SER_COUNT ?? '3'); // Copy 1 x Serial 3 (client script: totalLabels = Copy * Serial)
       }
 
       let pid = '';
@@ -147,7 +149,19 @@ for (const v of VARIANTS) {
         console.log(`[${v.key}] PDF files for ${pid}: ${mine.map((p) => path.basename(p)).join(', ') || '(none)'} -> ${mine.length} (expected ${expectedLabels})`);
         test.info().annotations.push({ type: `PDFs ${v.key}`, description: `${mine.length} file(s) for ${pid}, expected ${expectedLabels}` });
         if (v.key === 'usr') expect(mine.length, 'one PDF per selected serial number').toBe(expectedLabels);
-        else expect.soft(mine.length, 'S_Ser: Copy x Serial labels (annotated, not a hard failure: this is the behaviour under investigation)').toBe(expectedLabels);
+        else {
+          // S_Ser: ONE print job whatever the Serial count, so the number of PDFs says nothing, and PAGES are not labels either (2 labels fit on a Letter page: Serial 3 = 2 pages, Serial 5 = 3 pages).
+          // The label count = occurrences of the item number in the job's .prn on the server (a real PDF): \\vmsrvtst703\c$\Innovatum\Network\PrintedImages\<yyyymm>\<PID>.prn
+          const now = new Date();
+          const prn = path.join(String.raw`\\vmsrvtst703\c$\Innovatum\Network\PrintedImages`, `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`, `${pid}.prn`);
+          for (let i = 0; i < 20 && !(fs.existsSync(prn) && fs.statSync(prn).size > 0); i++) await page.waitForTimeout(3000);
+          const { pages, labels } = await labelsInPdf(prn, fx.item);
+          // Increment set in BarTender (Transforms > Serialization): Copy x Serial labels; without it only Copy (1 label) is printed even though ROBAR sends Serial 3 as "ser=0"
+          const want = v.serializeIncrement ? expectedLabels : 1;
+          console.log(`[${v.key}] SERVER .prn ${prn}: ${labels} label(s) on ${pages} page(s), expected ${want} labels (Serialization Increment ${v.serializeIncrement ? 'SET' : 'NOT set'})`);
+          test.info().annotations.push({ type: `labels ${v.key}`, description: `${labels} label(s) on ${pages} page(s) in ${pid}.prn, expected ${want}` });
+          expect(labels, `S_Ser template ${v.serializeIncrement ? 'with' : 'without'} Increment: labels in the job's .prn`).toBe(want);
+        }
       });
 
       await test.step('InnoView > View Print History lists the print (PDF printer, serial count, copies)', async () => {

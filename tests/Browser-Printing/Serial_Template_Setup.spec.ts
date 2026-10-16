@@ -18,6 +18,7 @@ test.use({ headless: false });
 
 
 for (const v of VARIANTS.filter((x) => !x.existing)) test(`[${v.key}] create an ${v.sharename} template, approve it, and an approved item with LCN and Label Master on it`, async ({ page }, testInfo) => {
+  test.skip(!!v.skip, v.skip);
   const FIXTURE = fixturePath(v);
   const SHARENAME = v.sharename;
   test.setTimeout(1_500_000);
@@ -52,7 +53,7 @@ for (const v of VARIANTS.filter((x) => !x.existing)) test(`[${v.key}] create an 
         ]);
         expect((await createResponse.json()).Success).toBe(true);
         const pid = await bartender.launchTemplateEditor(page, 240);
-        await bartender.addTextObjectBoundToSharename(page, pid, SHARENAME);
+        await bartender.addTextObjectBoundToSharename(page, pid, SHARENAME, { serializeIncrement: v.serializeIncrement });
         const rect = await flaui.getProperty({ processId: pid, name: 'Workspace', property: 'BoundingRectangle' });
         for (const extra of v.extraSharenames ?? []) {
           await bartender.addTextObjectBoundToSharename(page, pid, extra, { center: false, placeAtOffset: bartender.secondTextObjectOffset(rect.value) });
