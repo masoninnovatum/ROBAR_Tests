@@ -14,12 +14,22 @@ import type { Frame } from '@playwright/test';
 import * as mdm from '../support/master-data';
 import * as sch from '../support/schemas';
 
-const FIXTURE = 'MBExploreSchema';
+// candidate no-data ITEM schemas, first one that exists on the server (schemas cannot be deleted by the tests; MBExploreSchema vanished from TST703 by 2026-10-16)
+const CANDIDATES = ['MBExploreSchema']; // MBSchema-New was tried 2026-10-16: its single unconfigured "New Field" blocks Save (no save request is sent)
+let FIXTURE = CANDIDATES[0];
 
 test('Schemas editor: add fields with settings, persist, validate, delete (no-data fixture schema)', async ({ page }) => {
   test.setTimeout(420_000);
   const mdFrame = await mdm.openMasterData(page);
+  const offered = (await mdFrame.locator('#ddlSchemas option').allInnerTexts()).map((t) => t.trim());
+  const found = CANDIDATES.find((c) => offered.includes(c));
+  test.skip(!found, `precondition not met: none of the no-data fixture schemas ${CANDIDATES.join(', ')} exists on this server (schemas cannot be deleted by the tests; ask the user)`);
+  FIXTURE = found!;
   let f: Frame = await sch.openSchemaEditor(page, mdFrame, FIXTURE);
+  {
+    const ok = await f.evaluate(() => Array.from(document.querySelectorAll('input[type="checkbox"][disabled]')).slice(0, 2).map((c) => (c as HTMLInputElement).checked));
+    test.skip(JSON.stringify(ok) !== JSON.stringify([true, false]), `precondition not met: fixture schema ${FIXTURE} is not a no-data item schema (Item Schema / Has Data = ${JSON.stringify(ok)})`);
+  }
   const stamp = Date.now().toString().slice(-6);
   const cap = { text: `PW Text ${stamp}`, int: `PW Int ${stamp}`, bool: `PW Bool ${stamp}`, drop: `PW Drop ${stamp}` };
   const dup = { a: `PW DupA ${stamp}`, b: `PW DupB ${stamp}`, shareName: `m_pwdup${stamp}` };

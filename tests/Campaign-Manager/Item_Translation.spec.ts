@@ -33,9 +33,23 @@ test('item translation populates a translated phrase into the selected item', as
   await cm.retrieveAndSelectItem(page, gridFrame, itemNumber);
   await cm.startBulkAction(page, gridFrame, 'ItemTranslation');
 
-  // Wait for the default Get Translations call (auto-fired on load) to populate #dictGrid.
-  await gridFrame.locator('#dictGrid tr.jqgrow').first().waitFor({ timeout: 15_000 });
+  // The page is meant to auto-fire Get Translations with Phrase / Contains / "a" / Include Unapproved on load; on 2026-10-16 it opened with a blank Column, no rows and no pre-selected field,
+  // so the filter and the "Description 2" field are set explicitly when the defaults are not there.
+  const gotRows = await gridFrame.locator('#dictGrid tr.jqgrow').first().waitFor({ timeout: 15_000 }).then(() => true, () => false);
+  if (!gotRows) {
+    console.log('Item Translation opened without its default filter / rows: setting Phrase Contains "a" + Include Unapproved and clicking Get Translations');
+    await gridFrame.selectOption('#drpColumn', { label: 'Phrase' });
+    await gridFrame.selectOption('#drpOperation', { label: 'Contains' });
+    await gridFrame.fill('#txtValue', 'a');
+    await gridFrame.locator('#chkUnapproved').check();
+    await gridFrame.click('#btnRetrieve');
+    await gridFrame.locator('#dictGrid tr.jqgrow').first().waitFor({ timeout: 30_000 });
+  }
   await gridFrame.click('text=Select Fields to Translate');
+  if ((await gridFrame.locator('#selectedLimitColumns option').count()) === 0) {
+    await gridFrame.selectOption('#availableLimitColumns', { label: 'Description 2' });
+    await gridFrame.click('#moveAvailToSelected');
+  }
 
   const firstDictRow = gridFrame.locator('#dictGrid tr.jqgrow').first();
   const expectedPhrase = ((await firstDictRow.locator('td[aria-describedby="dictGrid_Phrase"]').textContent()) ?? '').trim();

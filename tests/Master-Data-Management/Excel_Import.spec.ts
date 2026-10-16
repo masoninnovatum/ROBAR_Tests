@@ -32,7 +32,7 @@ test('Excel Import: template, valid import, failure modes, override and the over
     const frame = await mdm.reopenMasterData(page);
     const rows = await mdm.retrieve(page, frame, { value, expectRows });
     await page.waitForTimeout(2500);
-    return { frame, rows, texts: (await rows.allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').replace('Actions', '').trim()).sort() };
+    return { frame, rows, texts: (await rows.allInnerTexts()).map((t) => t.replace(/\s+/g, ' ').replace('Actions', '').trim().split(' ').slice(0, 2).join(' ')).sort() }; // item + version only: the grid may also show saved extra columns (Brand Name ...)
   };
   /** Opens View/Edit on one version row and returns [edit frame, Brand Name, approval text]. */
   const openVersion = async (frame: Frame, rows: ReturnType<Frame['locator']>, index: number) => {
