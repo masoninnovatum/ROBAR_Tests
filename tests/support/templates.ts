@@ -32,3 +32,12 @@ export function resolveBtwFile(): string {
     .sort((a, b) => b.mtime - a.mtime)[0];
   return path.join(dir, newest.f);
 }
+
+/** Template Management keeps its Approved Only / Unapproved Only / Both filter (#drpApprove) between sessions; a just-created template is unapproved, so a spec that looks for it must select an option that lists it. */
+export async function selectAnyApproval(frame: import('@playwright/test').Frame): Promise<void> {
+  const sel = frame.locator('#drpApprove');
+  const opts = await sel.locator('option').evaluateAll((os) => os.map((o: any) => ({ v: o.value as string, t: (o.textContent ?? '').trim() })));
+  const hit = opts.find((o) => /approved and unapproved|both|all/i.test(o.t)) ?? opts.find((o) => /unapproved/i.test(o.t));
+  if (hit) await sel.selectOption({ label: hit.t }); // by label: the knockout options carry no value attribute
+  console.log(`approval filter -> ${hit ? hit.t : 'no matching option'} (options ${JSON.stringify(opts.map((o) => o.t))})`);
+}

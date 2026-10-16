@@ -19,6 +19,7 @@
 import { test, expect } from '@playwright/test';
 import { login, openMenuItem, findFrame } from '../support/robar';
 import * as bartender from '../support/bartender';
+import { selectAnyApproval } from '../support/templates';
 
 // Confirmed live (2026-09-11): playwright.config.ts's project-wide `headless: true` now launches
 // Playwright's dedicated "headless shell" binary (a separate, stripped-down Chromium build under
@@ -79,6 +80,7 @@ test('view label characteristics shows a newly created template\'s attributes', 
     await frame.selectOption('select[name="dvFilters[0].Column"]', 'LabelName');
     await frame.selectOption('select[name="dvFilters[0].Operator"]', 'ExactlyMatches');
     await frame.fill('input[name="dvFilters[0].Value"]', templateName);
+    await selectAnyApproval(frame);
 
     await Promise.all([
       page.waitForResponse(

@@ -27,6 +27,7 @@
 import { test, expect } from '@playwright/test';
 import { login, openMenuItem, findFrame } from '../support/robar';
 import * as bartender from '../support/bartender';
+import { selectAnyApproval } from '../support/templates';
 
 // See View_Label_Characteristics.spec.ts's comment: headless:true now uses a dedicated headless-
 // shell Chromium build with no real OS window, which FlaUI can never find.
@@ -80,6 +81,7 @@ test('view/edit template opens an existing template and persists a change made t
     await frame.selectOption('select[name="dvFilters[0].Column"]', 'LabelName');
     await frame.selectOption('select[name="dvFilters[0].Operator"]', 'ExactlyMatches');
     await frame.fill('input[name="dvFilters[0].Value"]', templateName);
+    await selectAnyApproval(frame);
 
     await Promise.all([
       page.waitForResponse(
