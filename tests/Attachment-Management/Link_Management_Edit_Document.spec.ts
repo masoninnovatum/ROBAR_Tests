@@ -57,7 +57,7 @@ const localCopies = (name: string): string[] => {
 };
 
 test('Link Management Edit on a PDF: Sentinel opens it for editing', async ({ page }) => {
-  test.setTimeout(900_000);
+  test.setTimeout(1_500_000);
   await login(page);
   const item = JSON.parse(fs.readFileSync('test-data/link-actions-item.json', 'utf8')).item as string;
   const stamp = Date.now().toString().slice(-7);
@@ -102,18 +102,26 @@ test('Link Management Edit on a PDF: Sentinel opens it for editing', async ({ pa
   const editedText = `Edited text ${stamp}`;
   const edited = makePdf(editedText);
   // the manual edit the QA script describes: pen (Draw Freehand) stroke, Save (the toolbar Save icon, NOT Save As), then Exit. Acrobat Reader needs Protected Mode and Enhanced Security OFF
-  // (Preferences > Security (Enhanced)), otherwise Save turns into Save As and nothing reaches the server.
+  // (Preferences > Security (Enhanced)), otherwise Save turns into Save As and nothing reaches the server. The script finds the pen by pixel scan and saves with Menu > Save.
   const reader = fresh.filter((p) => /acro/i.test(p.name) && /Reader/.test(p.mainWindowTitle))[0] ?? fresh.filter((p) => /acro/i.test(p.name))[0];
   expect(reader, 'an Acrobat process started by the Edit click').toBeTruthy();
   const pen = (args: string[]): string => execFileSync('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', 'scripts/acrobat-pen-edit.ps1', '-ProcessId', String(reader.pid), ...args]).toString().trim();
-  console.log(pen([]).split(String.fromCharCode(10)).join(' | '));
-  await page.waitForTimeout(3000);
-  const sizeAfterSave = fs.existsSync(copies[0]) ? fs.statSync(copies[0]).size : -1;
-  console.log(`local copy after Save: ${sizeAfterSave} bytes (was ${originalSize})`);
-  console.log(pen(['-ClickOnly', '35,15;65,730']).split(String.fromCharCode(10)).join(' | ')); // Menu > Exit application
-  await page.waitForTimeout(3000);
-  const stillOpen = (await flaui.listProcesses('acro')).some((p: { pid: number }) => p.pid === reader.pid);
-  console.log(`Acrobat still running after Exit: ${stillOpen}`);
+  // MANUAL_SAVE=1: the test draws the stroke, then a PERSON does Menu > Save and Menu > Exit application (waits up to 10 minutes for Acrobat to close). Default: the test does both itself.
+  const manualSave = process.env.MANUAL_SAVE === '1';
+  console.log(pen(manualSave ? ['-NoSave'] : []).split(String.fromCharCode(10)).join(' | '));
+  if (manualSave) {
+    console.log('MANUAL STEP: the pen stroke is drawn. Please click Menu > Save (not Save As) and then Menu > Exit application in Acrobat. Waiting up to 10 minutes for Acrobat to close...');
+    for (let i = 0; i < 120 && (await flaui.listProcesses('acro')).some((p: { pid: number }) => p.pid === reader.pid); i++) await page.waitForTimeout(5000);
+    console.log(`Acrobat closed by hand: ${!(await flaui.listProcesses('acro')).some((p: { pid: number }) => p.pid === reader.pid)}`);
+  } else {
+    await page.waitForTimeout(3000);
+    const sizeAfterSave = fs.existsSync(copies[0]) ? fs.statSync(copies[0]).size : -1;
+    console.log(`local copy after Save: ${sizeAfterSave} bytes (was ${originalSize})`);
+    console.log(pen(['-ClickOnly', '35,15;65,730']).split(String.fromCharCode(10)).join(' | ')); // Menu > Exit application
+    await page.waitForTimeout(3000);
+    const stillOpen = (await flaui.listProcesses('acro')).some((p: { pid: number }) => p.pid === reader.pid);
+    console.log(`Acrobat still running after Exit: ${stillOpen}`);
+  }
 
   // the plugin posts the saved file back (about 10 s in a manual run, up to 30 s); then View must show the edit (AttachEditIncrementSeqNum = N: version 0 is overwritten)
   let viewed = '';
