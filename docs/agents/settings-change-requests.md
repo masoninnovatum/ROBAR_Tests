@@ -57,7 +57,8 @@ Each skips with "precondition not met" while the setting has the other value (te
 | Setting (TST703 now) | Needed by | Specs |
 |---|---|---|
 | Print Config Print1 / ReprintBasedOnBatchQty (Y now) | N | Batch_Quantity_Reprint_Off |
-| Print Config Print1 / AddLotReasonRequired (Y now) | N | Blank_Expiration_Date_Calculated, Invalid_Combination_Blocked |
+| Print Config Print1 / AddLotReasonRequired (set to N on 2026-10-16) | N | Blank_Expiration_Date_Calculated, Invalid_Combination_Blocked |
+| Print Config LotNumber / AddLotReasonRequired (set to N on 2026-10-16) | N | Print_By_Lot (smoke tier 2 too; its "No lot found." check fails with Y) |
 | Global Setting PrintEntityRequired (Y now) | N | Lot_Management, Print_History_Inquiry_Requirements, Print_History_Inquiry_Security, Print_By_Lot (+ Lot_Management_Print_Entity_Off) |
 | Global Settings PasswordNeedsLetters / PasswordNeedsNumbers (N / N now) | Y / Y | Security_Users |
 The opposite mode (Y for the first three, N for passwords) is what Add_Lot_Reason_Required, Batch_Quantity_Reprint, Lot_Management_Print_Entity, the Print-Entity specs and Login-Password/n_run need. After flipping a Global Setting the user restarts ServiceHost + IIS. Lot_Management_Process_Icons / _Security now pick the ROBAR entity in the Add dialog and pass in both modes.

@@ -8,6 +8,7 @@ import type { Frame } from '@playwright/test';
 import { login } from '../support/robar';
 import { assertPdfPrinters } from '../support/print-by-lot';
 import { readGlobalSetting } from '../support/global-settings';
+import { readParam } from '../support/print-config';
 import * as printing from '../support/printing';
 import * as bartender from '../support/bartender';
 import { viewPrintHistory } from '../support/print-history';
@@ -23,7 +24,10 @@ test('@smoke @tier2 Print by Lot, PrintEntityRequired = N: no Print Entity dropd
   await login(page);
   const setting = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   console.log(`PrintEntityRequired = ${setting}`);
-  test.skip(setting !== 'N', `PrintEntityRequired is ${setting}; this spec covers N`);
+  test.skip(setting !== 'N', `precondition not met: Global Setting PrintEntityRequired is ${setting}, needs N (this spec covers N; the user flips it)`);
+  // with AddLotReasonRequired = Y an unknown lot opens the Reason Code dialog instead of the "No lot found." message this spec expects
+  const reason = await readParam(page, 'LotNumber', 'AddLotReasonRequired').catch(() => '?');
+  test.skip(reason !== 'N', `precondition not met: Print Config LotNumber/AddLotReasonRequired is ${reason}, needs N (the "No lot found." message; the user flips it)`);
   const stamp = Date.now().toString().slice(-6);
   const lot = `CLPBL${stamp}`;
   const order = `CLPBO${stamp}`;
