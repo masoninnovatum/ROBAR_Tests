@@ -69,6 +69,7 @@ test('Link Management Edit on a PDF: Sentinel opens it for editing', async ({ pa
   await LM.uploadAttachment(page, filePath, `Playwright Link Management edit -- ${stamp}`);
   fs.unlinkSync(filePath);
   await LM.linkBy(page, fileName, 'By Item', 'LinkItemAttachments', [/item.?number/i], item);
+  try {
 
   const f = await LM.showFileInLinkManagement(page, fileName);
   const row = f.locator('tr.jqgrow').first();
@@ -140,5 +141,8 @@ test('Link Management Edit on a PDF: Sentinel opens it for editing', async ({ pa
   }
   expect(viewed, 'View shows the edit made in Acrobat (ink annotation present)').toMatch(EDITED);
   expect(viewBytes, 'the viewed file is larger than the original upload').toBeGreaterThan(originalSize);
-  await LM.detachAll(page, fileName, 'cleanup');
+  } finally {
+    // the test link is detached even when the edit part failed (uploads stay; nothing may stay linked to the shared fixture item)
+    await LM.detachAll(page, fileName, "cleanup").catch((e) => console.log(`cleanup detach failed: ${String(e).slice(0, 120)}`));
+  }
 });

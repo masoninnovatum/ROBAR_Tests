@@ -9,11 +9,13 @@
 //   * Edit User: User Id locked; deactivate -> greyed row, hidden by Active Users Only
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessGlobal } from '../support/preconditions';
 import type { Frame } from '@playwright/test';
 import * as sec from '../support/security';
 import { PASSWORD } from '../support/robar';
 
-test('Security Management Users: filters, add/edit user, copy security, group inheritance and deactivation', async ({ page }) => {
+test('Security Management Users: filters, add/edit user, copy security, group inheritance and deactivation', async ({ page, browser }) => {
+  await skipUnlessGlobal(browser, 'PasswordNeedsLetters', 'LegacySettings', 'Y', 'the password-rule messages expected here need letters and numbers required (Y/Y)'); await skipUnlessGlobal(browser, 'PasswordNeedsNumbers', 'LegacySettings', 'Y', 'the password-rule messages expected here need letters and numbers required (Y/Y)');
   test.setTimeout(420_000);
   const stamp = Date.now().toString().slice(-6);
   const user = `CLPWU${stamp}`;

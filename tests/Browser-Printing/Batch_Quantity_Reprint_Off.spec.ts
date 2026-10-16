@@ -3,6 +3,7 @@
 // Item A, Override Batch Qty 1 (allowed 5): print 1 copy; the next visit on Print by Order AND on Print by Lot (same lot) must have Reprint ticked + disabled (with Y it would still be an original: 1 < 5).
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessPrintConfig } from '../support/preconditions';
 import * as fs from 'fs';
 import { login } from '../support/robar';
 import * as printing from '../support/printing';
@@ -17,7 +18,8 @@ function deviation(requirement: string, expected: string, actual: string): void 
   test.info().annotations.push({ type: `deviation ${requirement}`, description: `expected ${expected}; actual ${actual}` });
 }
 
-test('ReprintBasedOnBatchQty = N: after ONE printed copy every further print is a reprint (Print by Order and Print by Lot)', async ({ page }) => {
+test('ReprintBasedOnBatchQty = N: after ONE printed copy every further print is a reprint (Print by Order and Print by Lot)', async ({ page, browser }) => {
+  await skipUnlessPrintConfig(browser, 'Print1', 'ReprintBasedOnBatchQty', 'N', 'this spec covers the N behavior');
   test.setTimeout(900_000);
   await login(page);
   const A = item('test-data/batchqty-item-a.json');

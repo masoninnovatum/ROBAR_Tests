@@ -78,7 +78,7 @@ test('Lot Management security: icons per process, view-only window, and the miss
     return visible;
   };
   const adminAdd = async (lot: string) => {
-    const dlg = await du.openFormDialog(g, 'add');
+    const dlg = await du.openFormDialog(g, 'add', { entity: 'ROBAR' });
     await fill(dlg, { OrderNum: `${lot}O`, LotNum: lot, ItemNumber: ITEM });
     await du.submitForm(g);
     await page.waitForTimeout(1500);

@@ -14,10 +14,12 @@
 // this screen before that submit, which is all REQ-9's oracle needs.
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessPrintConfig } from '../support/preconditions';
 import { login } from '../support/robar';
 import { openPrintByOrder, nativeClick, orderNumberId, itemNumberId, nextButtonId } from '../support/printing';
 
-test('blank expiration date is calculated from manufacturing date + shelf life on the Lot Panel', async ({ page }) => {
+test('blank expiration date is calculated from manufacturing date + shelf life on the Lot Panel', async ({ page, browser }) => {
+  await skipUnlessPrintConfig(browser, 'Print1', 'AddLotReasonRequired', 'N', 'with Y a new order opens the Reason Code dialog instead of the No Lot found message');
   test.setTimeout(120_000);
   await login(page);
   const frame = await openPrintByOrder(page);

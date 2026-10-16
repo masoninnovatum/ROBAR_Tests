@@ -80,11 +80,16 @@ export async function navEnabled(f: Frame, icon: 'add' | 'edit' | 'view' | 'del'
 }
 
 /** Opens a jqGrid form dialog via its nav icon and returns the visible `.ui-jqdialog`. */
-export async function openFormDialog(f: Frame, icon: 'add' | 'edit' | 'view'): Promise<Locator> {
+/** `opts.entity`: with PrintEntityRequired = Y the Lot Management Add dialog offers the user's entities and pre-selects the first (England for Claude01); pass the entity the lot must belong to (for example 'ROBAR'). */
+export async function openFormDialog(f: Frame, icon: 'add' | 'edit' | 'view', opts: { entity?: string } = {}): Promise<Locator> {
   await f.click(`#${icon}_grdJqGrid`, { timeout: 5000 });
   const dialog = f.locator('.ui-jqdialog:visible').last();
   await dialog.waitFor({ timeout: 10_000 });
   await delay(800);
+  if (opts.entity) {
+    const pe = dialog.locator('[name="PrintEntity"]');
+    if ((await pe.count()) && (await pe.isEnabled())) await pe.selectOption({ label: opts.entity }).catch(() => {});
+  }
   return dialog;
 }
 

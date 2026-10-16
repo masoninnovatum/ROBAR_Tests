@@ -7,6 +7,7 @@
 // Differences from a requirement are annotated `deviation <id>` (the spec stays green).
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessGlobal } from '../support/preconditions';
 import type { Browser, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -42,6 +43,7 @@ async function rowActions(p: Page): Promise<string[]> {
 }
 
 test('Print History Inquiry security: PrintHist_Login gates the tile; BP_Reprint_Label / BP_Exact_Reprint_Print / BP_SerializationDetail gate the actions', async ({ page, browser }) => {
+  await skipUnlessGlobal(browser, 'PrintEntityRequired', 'Innovatum', 'N', 'this spec covers the PrintEntityRequired = N behavior (entity-scoped lists and the default entity differ with Y)');
   test.setTimeout(900_000);
   sec.assertMb(GROUP);
   await login(page);

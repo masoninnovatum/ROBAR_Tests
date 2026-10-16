@@ -4,6 +4,7 @@
 // most FRS-15.x rows describe the old page (Select Action drop-down + Do Action button, radio buttons, Reset All), so wording differences are expected.
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessGlobal } from '../support/preconditions';
 import type { Frame, Page, BrowserContext } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -47,6 +48,7 @@ async function rowAction(page: Page, context: BrowserContext, f: Frame, rowText:
 }
 
 test('Print History Inquiry vs ValMaster: security entry, search criteria, results, row actions, serialization (read-only)', async ({ page, context, browser }) => {
+  await skipUnlessGlobal(browser, 'PrintEntityRequired', 'Innovatum', 'N', 'this spec covers the PrintEntityRequired = N behavior (entity-scoped lists and the default entity differ with Y)');
   test.setTimeout(900_000);
   await login(page);
   let f = await openPhi(page);

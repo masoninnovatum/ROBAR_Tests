@@ -17,7 +17,14 @@ test('mass print submits a print job for the selected item', async ({ page }) =>
   await cm.startBulkAction(page, gridFrame, 'MassPrint');
 
   await gridFrame.fill('#txtDescription', 'Playwright mass print job');
-  await gridFrame.selectOption('#drpPrinters', { label: 'Zebra 220XiIII Plus (203 dpi)' });
+  // HARD RULE: never print to a live printer. Mass Print prints from the SERVER (BarTender spooler), so a physical label printer queue gets the job (the module's old fixed choice,
+  // Zebra 220XiIII Plus, received a job during the 2026-10-15 full run). Only a PDF printer is acceptable; without one the spec stops before submitting.
+  const printerOptions = (await gridFrame.locator('#drpPrinters option').allInnerTexts()).map((t) => t.trim());
+  const pdfPrinter = printerOptions.find((t) => /Microsoft Print to PDF/i.test(t));
+  console.log(`MASS PRINT printers offered: ${JSON.stringify(printerOptions)} -> ${pdfPrinter ?? 'no PDF printer'}`);
+  test.skip(!pdfPrinter, `no "Microsoft Print to PDF" in the Mass Print printer list (${printerOptions.join(', ')}); a job is never sent to a live printer`);
+  await gridFrame.selectOption('#drpPrinters', { label: pdfPrinter! });
+  expect((await gridFrame.locator('#drpPrinters option:checked').innerText()).trim(), 'the selected printer is the PDF printer').toMatch(/Microsoft Print to PDF/i);
 
   const [response] = await Promise.all([
     page.waitForResponse((r) => r.url().includes('/MassPrint/SubmitJob'), { timeout: 15_000 }),

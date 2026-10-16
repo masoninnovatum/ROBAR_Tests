@@ -3,13 +3,15 @@
 // Edit dialog: ItemNumber, PrintEntity and LastTouch are disabled. One throw-away lot (CLLMO<stamp>/CLLML<stamp>, item MI080301) is added, searched, edited, viewed and deleted again.
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessGlobal } from '../support/preconditions';
 import type { Frame } from '@playwright/test';
 import { login } from '../support/robar';
 import * as du from '../support/dynamic-ui';
 
 test.use({ actionTimeout: 20_000 });
 
-test('Lot Management: grid, search, add (validation), edit, view, delete, audit', async ({ page }) => {
+test('Lot Management: grid, search, add (validation), edit, view, delete, audit', async ({ page, browser }) => {
+  await skipUnlessGlobal(browser, 'PrintEntityRequired', 'Innovatum', 'N', 'this spec covers the PrintEntityRequired = N behavior (entity-scoped lists and the default entity differ with Y)');
   test.setTimeout(900_000);
   await login(page);
   const stamp = Date.now().toString().slice(-6);

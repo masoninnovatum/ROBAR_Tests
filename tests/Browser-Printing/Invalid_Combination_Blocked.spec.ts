@@ -16,10 +16,12 @@
 // Panel's own submit, which is a separate, currently-blocked transition (see printing.ts).
 
 import { test, expect } from '@playwright/test';
+import { skipUnlessPrintConfig } from '../support/preconditions';
 import { login } from '../support/robar';
 import { openPrintByOrder, nativeClick, orderNumberId, itemNumberId, lotNumberId, nextButtonId } from '../support/printing';
 
-test('invalid order/lot/item combination is blocked on every retry, never reaches the Lot Panel', async ({ page }) => {
+test('invalid order/lot/item combination is blocked on every retry, never reaches the Lot Panel', async ({ page, browser }) => {
+  await skipUnlessPrintConfig(browser, 'Print1', 'AddLotReasonRequired', 'N', 'with Y an unknown order opens the Reason Code dialog instead of the No Lot found message');
   test.setTimeout(120_000);
   await login(page);
   const frame = await openPrintByOrder(page);

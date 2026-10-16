@@ -51,3 +51,13 @@ Not needed now: LotDeBypass, TestPrintShow (already Y), DeleteLotIfExists (N), A
 
 ## 2026-10-15 - user let Claude apply the values ("You update the global setting values, and tell me when to restart services")
 Applied via the UI on TST703 (old -> new): Print Config AddLotReasonRequired N -> Y on Print1, LotNumber, OrderNumberMultiple, LotNumberMultiple; Print1 ReprintBasedOnBatchQty N -> Y (no restart). Global Settings PasswordNeedsLetters Y -> N and PasswordNeedsNumbers Y -> N (owner LegacySettings), PrintEntityRequired N -> Y (owner Innovatum): these three need a ServiceHost restart + IIS reset by the user. Restore later: the old values above. While PrintEntityRequired = Y, Lot_Management_Print_Entity_Off skips; while the password settings are N, specs that expect Y/Y (DIT-6512 UAT) will not match. Helper: `setGlobalSetting` in tests/support/global-settings.ts.
+
+## Specs that run only in ONE setting mode (2026-10-16, after the first full suite run) - flip once at the end, then rerun these
+Each skips with "precondition not met" while the setting has the other value (tests/support/preconditions.ts reads it, never changes it); the suite report lists them under "Settings to update at the end".
+| Setting (TST703 now) | Needed by | Specs |
+|---|---|---|
+| Print Config Print1 / ReprintBasedOnBatchQty (Y now) | N | Batch_Quantity_Reprint_Off |
+| Print Config Print1 / AddLotReasonRequired (Y now) | N | Blank_Expiration_Date_Calculated, Invalid_Combination_Blocked |
+| Global Setting PrintEntityRequired (Y now) | N | Lot_Management, Print_History_Inquiry_Requirements, Print_History_Inquiry_Security, Print_By_Lot (+ Lot_Management_Print_Entity_Off) |
+| Global Settings PasswordNeedsLetters / PasswordNeedsNumbers (N / N now) | Y / Y | Security_Users |
+The opposite mode (Y for the first three, N for passwords) is what Add_Lot_Reason_Required, Batch_Quantity_Reprint, Lot_Management_Print_Entity, the Print-Entity specs and Login-Password/n_run need. After flipping a Global Setting the user restarts ServiceHost + IIS. Lot_Management_Process_Icons / _Security now pick the ROBAR entity in the Add dialog and pass in both modes.

@@ -69,7 +69,7 @@ test('Lot Management: each process (Add / Change / Delete / Excel Import) switch
       g = await openLots(page);
       await du.retrieve(page, g, 'LotNum', 'Contains', 'MBMDPL', { expectRows: false });
       await g.locator('tr.jqgrow').first().waitFor({ timeout: 40_000 });
-      const dlg = await du.openFormDialog(g, 'add');
+      const dlg = await du.openFormDialog(g, 'add', { entity: 'ROBAR' });
       await dlg.locator('[name="OrderNum"]').fill(`${lot}O`);
       await dlg.locator('[name="LotNum"]').fill(lot);
       await dlg.locator('[name="ItemNumber"]').fill('MI080301');
