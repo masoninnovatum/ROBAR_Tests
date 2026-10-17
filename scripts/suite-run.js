@@ -3,6 +3,7 @@
 //   node scripts/suite-run.js                    all spec files
 //   node scripts/suite-run.js --only Lot         only files whose path matches the text
 //   node scripts/suite-run.js --report <dir>     rebuild report.md of an earlier run folder
+//   node scripts/suite-run.js --fast             FAST_WAITS=1: fixed waitForTimeout sleeps end early once the page's network traffic is quiet (tests/support/fast-waits.ts; ~30 % faster in samples)
 // Settings: nothing here changes any setting. A spec that needs a Global Setting / Print Config that is not set skips with a "precondition" message; the report collects these in one list
 // ("settings to update at the end"). Headed specs (print, template editor, Sentinel, Acrobat) use the real mouse and keyboard: nobody may touch the computer while it runs.
 
@@ -107,7 +108,7 @@ const t0 = Date.now();
 files.forEach((f, i) => {
   const jsonFile = path.join(outDir, f.replace(/\//g, '__').replace('.spec.ts', '') + '.json');
   const t1 = Date.now();
-  const r = spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'test', f, '--workers=1', '--reporter=json'], { cwd: ROOT, shell: process.platform === 'win32', env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: jsonFile }, encoding: 'utf8', maxBuffer: 1 << 28 });
+  const r = spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'test', f, '--workers=1', '--reporter=json'], { cwd: ROOT, shell: process.platform === 'win32', env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: jsonFile, ...(argv.includes('--fast') ? { FAST_WAITS: '1' } : {}) }, encoding: 'utf8', maxBuffer: 1 << 28 });
   console.log(`[${i + 1}/${files.length}] ${((Date.now() - t1) / 60000).toFixed(1)} min  exit ${r.status}  ${f}`);
   fs.appendFileSync(path.join(outDir, 'progress.log'), `${new Date().toISOString()} [${i + 1}/${files.length}] exit ${r.status} ${f}\n`);
 });

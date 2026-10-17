@@ -1,4 +1,7 @@
 import { defineConfig } from '@playwright/test';
+import { installFastWaits } from './tests/support/fast-waits';
+
+installFastWaits(); // only active with FAST_WAITS=1 (see tests/support/fast-waits.ts)
 
 export default defineConfig({
   testDir: './tests',
