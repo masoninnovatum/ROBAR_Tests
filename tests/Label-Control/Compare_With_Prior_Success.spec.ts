@@ -15,6 +15,7 @@
 // Confirmed reliable: 3 consecutive clean runs, ~2.0-2.1 minutes each, entirely headless.
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame, Page } from '@playwright/test';
 import { openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as cm from '../support/campaign-manager';
@@ -25,14 +26,7 @@ async function openLabelControlAndQuery(page: Page, itemNumber: string, attachme
   await page.locator(LC_TAB_CLOSE).click({ timeout: 2000 }).catch(() => {});
   await openMenuItem(page, 'Label Control');
   let frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
-
-  await frame.click('#btnReset');
-  await page.waitForTimeout(1500);
-  frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
+  frame = await resetLabelControlGrid(page, frame);
 
   await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
   await frame.locator('#drpAttachments').selectOption({ label: attachmentsLabel });

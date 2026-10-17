@@ -14,6 +14,7 @@
 //   J5 Master Data = Use Latest + Allow Unapproved again  -> Error "Could not update Master Data version, no latest version found."
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame, Page } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as cm from '../support/campaign-manager';
@@ -27,13 +28,7 @@ async function openLabelControlAndQuery(page: Page, itemNumber: string): Promise
   await page.locator('button.menuIcon:has-text("Label Control")').waitFor({ state: 'visible', timeout: 10_000 });
   await openMenuItem(page, 'Label Control');
   let frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
-  await frame.click('#btnReset');
-  await page.waitForTimeout(1500);
-  frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
+  frame = await resetLabelControlGrid(page, frame);
   await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
   await frame.locator('#drpAttachments').selectOption({ label: 'Any (Attachments)' });
   await frame.locator('#drpLabelMaster').selectOption({ label: 'Any (Label Masters)' });

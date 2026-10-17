@@ -17,6 +17,7 @@
 //    criteria in place (no page navigation); the grid's delete icon (`#del_grdSavedFilters`) removes the selected set.
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame, Page } from '@playwright/test';
 import { login, openMenuItem, findFrame } from '../support/robar';
 
@@ -25,13 +26,7 @@ async function openLabelControl(page: Page): Promise<Frame> {
   await page.locator('li.ui-tabs-tab:has-text("Main Menu")').click({ timeout: 3000 }).catch(() => {});
   await openMenuItem(page, 'Label Control');
   let frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
-  await frame.click('#btnReset');
-  await page.waitForTimeout(1500);
-  frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
+  frame = await resetLabelControlGrid(page, frame);
   return frame;
 }
 

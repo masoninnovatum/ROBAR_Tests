@@ -16,6 +16,7 @@
 // mbuser1 holds both, so no security changes are needed.
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame, Page } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -32,13 +33,7 @@ async function openLabelControlAndQuery(page: Page, itemNumber: string, labelMas
   await page.locator('button.menuIcon:has-text("Label Control")').waitFor({ state: 'visible', timeout: 10_000 });
   await openMenuItem(page, 'Label Control');
   let frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
-  await frame.click('#btnReset');
-  await page.waitForTimeout(1500);
-  frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
+  frame = await resetLabelControlGrid(page, frame);
   await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
   await frame.locator('#drpAttachments').selectOption({ label: 'Any (Attachments)' });
   await frame.locator('#drpLabelMaster').selectOption({ label: labelMasterLabel });

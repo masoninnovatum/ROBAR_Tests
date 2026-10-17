@@ -22,6 +22,7 @@
 // approved version -- a template version requires driving BarTender through Save As New > New Version).
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame, Page } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as mdm from '../support/master-data';
@@ -94,14 +95,7 @@ async function openLabelControlAndQuery(page: Page, itemNumber: string): Promise
   await page.locator(LC_TAB_CLOSE).click({ timeout: 2000 }).catch(() => {});
   await openMenuItem(page, 'Label Control');
   let frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
-
-  await frame.click('#btnReset');
-  await page.waitForTimeout(1500);
-  frame = await findFrame(page, 'LabelControl/Management');
-  await frame.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => {});
-  await page.waitForTimeout(3000);
+  frame = await resetLabelControlGrid(page, frame);
 
   await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
   await frame.locator('#drpAttachments').selectOption({ label: 'Any (Attachments)' });
