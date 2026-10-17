@@ -22,6 +22,7 @@
 // Same Playwright gotcha as Link_Attachments.spec.ts: give every call an explicit timeout (none by default).
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 import * as fs from 'fs';
@@ -89,14 +90,7 @@ test('Attachments row action opens Link Management for the record and Detach rem
   async function openLabelControlAndQuery(attachmentsLabel: string = 'Any (Attachments)'): Promise<Frame> {
     await openMenuItem(page, 'Label Control');
     let frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
-
-    await frame.click('#btnReset');
-    await page.waitForTimeout(1500);
-    frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
+    frame = await resetLabelControlGrid(page, frame);
 
     await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
     await frame.locator('#drpAttachments').selectOption({ label: attachmentsLabel });

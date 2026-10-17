@@ -21,6 +21,7 @@
 //   "Page of 0" immediately, poll until real).
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 
@@ -81,14 +82,7 @@ test('mass-update a freshly-assigned Label Control record, keeping all versions'
   async function openLabelControlAndQuery(lcnStatusLabel: string = 'All (LCN Status)'): Promise<Frame> {
     await openMenuItem(page, 'Label Control');
     let frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
-
-    await frame.click('#btnReset');
-    await page.waitForTimeout(1500);
-    frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
+    frame = await resetLabelControlGrid(page, frame);
 
     await frame.locator('#drpApproved').selectOption({ label: lcnStatusLabel });
     await frame.locator('#drpAttachments').selectOption({ label: 'Any (Attachments)' });

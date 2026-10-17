@@ -19,6 +19,7 @@
 //   master. Matching or latest label master record not found."
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 
@@ -79,14 +80,7 @@ test('Link to Label Master reports a clean "not found" error for a brand-new ite
   async function openLabelControlAndQuery(): Promise<Frame> {
     await openMenuItem(page, 'Label Control');
     let frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
-
-    await frame.click('#btnReset');
-    await page.waitForTimeout(1500);
-    frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
+    frame = await resetLabelControlGrid(page, frame);
 
     await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
     await frame.locator('#drpAttachments').selectOption({ label: 'Any (Attachments)' });

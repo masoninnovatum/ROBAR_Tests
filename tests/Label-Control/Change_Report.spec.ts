@@ -19,6 +19,7 @@
 //   2026-09-30 pass); this spec exercises the success path, which needs a real master.
 
 import { test, expect } from '@playwright/test';
+import { resetLabelControlGrid } from '../support/label-control';
 import type { Frame } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME, PASSWORD } from '../support/robar';
 
@@ -82,14 +83,7 @@ test('Change Report completes for a record with a Label Master and saves the rep
   ): Promise<Frame> {
     await openMenuItem(page, 'Label Control');
     let frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
-
-    await frame.click('#btnReset');
-    await page.waitForTimeout(1500);
-    frame = await findFrame(page, 'LabelControl/Management');
-    await frame.waitForLoadState('networkidle').catch(() => {});
-    await page.waitForTimeout(3000);
+    frame = await resetLabelControlGrid(page, frame);
 
     await frame.locator('#drpApproved').selectOption({ label: 'All (LCN Status)' });
     await frame.locator('#drpAttachments').selectOption({ label: attachmentsLabel });
