@@ -238,7 +238,8 @@ export async function closeTemplateEditor(page: Page, bartenderPid: number): Pro
   );
 
   let exited = false;
-  for (let attempt = 0; attempt < 30 && !exited; attempt++) {
+  const closeStart = Date.now();
+  for (let attempt = 0; attempt < 90 && !exited; attempt++) {
     const stillRunning = (await flaui.listProcesses()).some((p: { pid: number }) => p.pid === bartenderPid);
     if (!stillRunning) {
       exited = true;
@@ -246,6 +247,7 @@ export async function closeTemplateEditor(page: Page, bartenderPid: number): Pro
       await page.waitForTimeout(1000);
     }
   }
+  console.log(`Template Editor exited ${exited ? 'after' : 'NOT within'} ${Math.round((Date.now() - closeStart) / 1000)} s of Close Tab`);
   if (!exited) throw new Error(`Template Editor (pid ${bartenderPid}) never exited after clicking Close Tab.`);
   // The editor WINDOW being gone is not enough: the Sentinel plugin / BarTender can keep closing for several more seconds and a
   // still-closing window can end up on top of the browser (seen live 2026-10-04). Wait for them, then bring the browser back up.

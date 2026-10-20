@@ -22,6 +22,7 @@
 import { test, expect } from '@playwright/test';
 import { login, openMenuItem, findFrame, USERNAME } from '../support/robar';
 import * as bartender from '../support/bartender';
+import { selectAnyApproval } from '../support/templates';
 
 // See View_Label_Characteristics.spec.ts's comment: headless:true now uses a dedicated headless-
 // shell Chromium build with no real OS window, which FlaUI can never find. Comments itself never
@@ -67,6 +68,7 @@ test('view/edit comments supports adding, canceling an edit, editing, and deleti
   });
 
   await test.step('query for the template', async () => {
+    await selectAnyApproval(frame); // a saved Approved-Only filter would hide the new unapproved template
     await frame.click('.criteriaFilter-AddButton');
     await page.waitForTimeout(500);
     // Confirmed live: this page's CriteriaFilter widget instance is named "dvFilters" (unlike

@@ -66,6 +66,9 @@ export function installFastWaits(): void {
   const launch = BT.launch;
   BT.launch = async function (...a: unknown[]) {
     const b = await launch.apply(this, a);
+    // Headed browsers wait on native apps (BarTender shutdown, Sentinel, Acrobat) that the request tracker cannot see: a polling loop of waitForTimeout(1000) became ~600 ms
+    // and closeTemplateEditor gave up before BarTender had exited (suite run 2026-10-19: 8 Template-Management specs "Template Editor never exited"). Leave headed waits alone.
+    if ((a[0] as { headless?: boolean } | undefined)?.headless === false) return b;
     const nc = b.newContext;
     b.newContext = async function (...c: unknown[]) { return wrapCtx(await nc.apply(this, c)); };
     const np = b.newPage;

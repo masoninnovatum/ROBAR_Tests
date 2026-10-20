@@ -3,6 +3,7 @@
 //   node scripts/suite-run.js                    all spec files
 //   node scripts/suite-run.js --only Lot         only files whose path matches the text
 //   node scripts/suite-run.js --report <dir>     rebuild report.md of an earlier run folder
+//   (headed specs are always run first)
 //   node scripts/suite-run.js --fast             FAST_WAITS=1: fixed waitForTimeout sleeps end early once the page's network traffic is quiet (tests/support/fast-waits.ts; ~30 % faster in samples)
 // Settings: nothing here changes any setting. A spec that needs a Global Setting / Print Config that is not set skips with a "precondition" message; the report collects these in one list
 // ("settings to update at the end"). Headed specs (print, template editor, Sentinel, Acrobat) use the real mouse and keyboard: nobody may touch the computer while it runs.
@@ -22,7 +23,7 @@ function specFiles() {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
       if (e.isDirectory()) { if (!['Smoke', 'support', '_tmp'].includes(e.name) && !e.name.startsWith('DIT-')) walk(p); }
-      else if (e.name.endsWith('.spec.ts')) out.push(path.relative(ROOT, p).split(path.sep).join('/'));
+      else if (e.name.endsWith('.spec.ts') && e.name !== 'Link_Management_Edit_Document.spec.ts' /* blocked: Acrobat reinstall needs an admin */) out.push(path.relative(ROOT, p).split(path.sep).join('/'));
     }
   };
   walk(path.join(ROOT, 'tests'));
@@ -98,11 +99,25 @@ function report(outDir, meta) {
 if (opt('--report')) { console.log(report(path.resolve(opt('--report')), {})); process.exit(0); }
 
 const only = opt('--only');
-const files = specFiles().filter((f) => !only || f.includes(only));
+// Headed specs (they use the real mouse/keyboard, so the desktop must stay unlocked) run first, so a person can supervise that part; the rest is headless.
+const isHeaded = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8').includes('headless: false');
+const files = specFiles().filter((f) => !only || f.includes(only)).sort((a, b) => Number(isHeaded(b)) - Number(isHeaded(a)) || (a < b ? -1 : 1));
 const d = new Date();
 const stamp = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
-const outDir = path.join(ROOT, 'reports', 'suite', 'runs', stamp);
+// --resume <run folder>: continue an interrupted run in the same folder, skipping every spec file that already has its JSON result
+const resumeDir = opt('--resume') ? path.resolve(opt('--resume')) : undefined;
+const outDir = resumeDir || path.join(ROOT, 'reports', 'suite', 'runs', stamp);
 fs.mkdirSync(outDir, { recursive: true });
+if (resumeDir) {
+  // with --redo-failed a spec only counts as done when its earlier result has no failed test (use after an outage, e.g. the VPN dropping)
+  const doneFiles = (f) => {
+    const jf = path.join(outDir, f.replace(/\//g, '__').replace('.spec.ts', '') + '.json');
+    if (!fs.existsSync(jf)) return false;
+    if (!argv.includes('--redo-failed')) return true;
+    try { return !/"status": "unexpected"/.test(fs.readFileSync(jf, 'utf8')); } catch { return false; }
+  };
+  for (let i = files.length - 1; i >= 0; i--) if (doneFiles(files[i])) files.splice(i, 1);
+}
 console.log(`suite run ${stamp}: ${files.length} spec files -> ${outDir}`);
 const t0 = Date.now();
 files.forEach((f, i) => {

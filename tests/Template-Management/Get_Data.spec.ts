@@ -34,7 +34,7 @@ import { login, openMenuItem, findFrame } from '../support/robar';
 import * as cm from '../support/campaign-manager';
 import * as bartender from '../support/bartender';
 import * as flaui from '../../scripts/flaui_bridge';
-import { resolveBtwFile } from '../support/templates';
+import { resolveBtwFile, selectAnyApproval } from '../support/templates';
 
 // See View_Label_Characteristics.spec.ts's comment: headless:true now uses a dedicated headless-
 // shell Chromium build with no real OS window, which FlaUI can never find.
@@ -98,6 +98,7 @@ test('get data loads the associated item\'s data into the template, then restore
     await page.getByRole('tab', { name: 'Template Management' }).click();
     await page.waitForTimeout(500);
 
+    await selectAnyApproval(tmFrame); // a saved Approved-Only filter would hide the new unapproved template
     await tmFrame.click('.criteriaFilter-AddButton');
     await page.waitForTimeout(500);
     // Confirmed live: this page's CriteriaFilter widget instance is named "dvFilters" (unlike
