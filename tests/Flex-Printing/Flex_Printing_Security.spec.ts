@@ -9,7 +9,7 @@ import * as sec from '../support/security';
 import * as du from '../support/dynamic-ui';
 import { readGlobalSetting } from '../support/global-settings';
 import { setUserPrintEntities } from '../support/print-entity';
-import { FlexPrint } from '../support/flex-print';
+import { FlexPrint, ensureFlexBase } from '../support/flex-print';
 
 test.use({ headless: false, actionTimeout: 20_000 });
 
@@ -46,6 +46,7 @@ test('Flex Printing: tile, add-lot-at-print-time authorization (BP_FlexPrinting_
   sec.assertMb(GROUP);
   const prefix = `CLFLX${Date.now().toString().slice(-6)}`;
   await login(page);
+  await ensureFlexBase(page);
   const entityRequired = await readGlobalSetting(page, 'PrintEntityRequired', 'Innovatum');
   console.log(`PrintEntityRequired = ${entityRequired}`);
   if (entityRequired === 'Y') await setUserPrintEntities(page, MB, ['ROBAR']);

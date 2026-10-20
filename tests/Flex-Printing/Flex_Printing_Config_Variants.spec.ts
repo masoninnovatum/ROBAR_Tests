@@ -6,7 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { login } from '../support/robar';
-import { FlexPrint } from '../support/flex-print';
+import { FlexPrint, ensureFlexBase } from '../support/flex-print';
 import * as pc from '../support/print-config';
 
 test.use({ headless: false, actionTimeout: 20_000 });
@@ -22,8 +22,8 @@ function deviation(requirement: string, expected: string, actual: string): void 
 test('Flex Printing identifier layouts: Order+Item, Order+Lot (Item AddOnly / not AddOnly), date identifier (config restored afterwards)', async ({ page }) => {
   test.setTimeout(1_800_000);
   await login(page);
+  await ensureFlexBase(page);
   const cur: Record<number, string> = { ...BASE };
-  // the starting state must be the expected base (setParamValue also refuses to edit anything else)
   for (const n of [1, 2, 3]) expect(await pc.readParam(page, 'FlexPrinting', `Flex_Identifier_${n}`), `Flex_Identifier_${n} starts as the base value`).toBe(BASE[n]);
   const set = async (n: number, v: string) => {
     if (cur[n] !== v) {

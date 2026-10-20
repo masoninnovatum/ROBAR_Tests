@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { login } from '../support/robar';
 import * as du from '../support/dynamic-ui';
-import { FlexPrint } from '../support/flex-print';
+import { FlexPrint, ensureFlexBase } from '../support/flex-print';
 
 test.use({ headless: false, actionTimeout: 20_000 });
 
@@ -48,6 +48,7 @@ test('Flex Printing: entry screen, lot lookup, add-at-print-time, messages, Rese
   const stamp = Date.now().toString().slice(-6);
   const prefix = `CLFLX${stamp}`;
   await login(page);
+  await ensureFlexBase(page);
   const fp = new FlexPrint(page);
   try {
     await test.step('entry screen: Item Number + Lot Number, Next, Reset; the AddOnly Order Number box is not shown; first field has the cursor (DIT 6617)', async () => {
