@@ -59,6 +59,16 @@ test('save filters persists the current query, load filters restores it', async 
     await gridFrame.click('#btLoadFilters');
     await page.waitForResponse((r) => r.url().includes('/CampaignManager/GetNamedSearches'), { timeout: 15_000 });
 
+    // The Load Filter Set grid pages 10 rows at a time and every run (and other specs, e.g. CM-MDM-PDF) leaves saved sets behind, so the new set can sit on page 2:
+    // switch the page-size box to its largest option first (found live 2026-10-20, 18 saved sets).
+    const sizeBox = gridFrame.locator('.ui-dialog .ui-pg-selbox:visible').first();
+    // the pager renders a moment after the GetNamedSearches response, so wait for it instead of checking its count right away
+    if (await sizeBox.waitFor({ state: 'visible', timeout: 10_000 }).then(() => true, () => false)) {
+      const biggest = await sizeBox.locator('option').evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value).sort((a, b) => Number(b) - Number(a))[0]);
+      await sizeBox.selectOption(biggest);
+      await page.waitForResponse((r) => r.url().includes('/CampaignManager/GetNamedSearches'), { timeout: 15_000 }).catch(() => null);
+    }
+
     const row = gridFrame.locator('#jqGrid tr').filter({ hasText: filterName });
     await row.waitFor({ state: 'visible', timeout: 10_000 });
     await row.click();

@@ -44,6 +44,9 @@ test('Item Screen Layout: tabs, moving a field between tabs, Save persists, Canc
   /** Drags a field row (by its inner id) from the ACTIVE tab onto another tab's heading. */
   const dragToTab = async (f: Frame, row: string, headingSelector: string) => {
     const handle = f.locator(`#${row}`).locator('xpath=ancestor::div[contains(@class,"row-template")][1]').locator('.tabgrippy');
+    // wait for the row and the target heading to be rendered (a shortened fixed wait left boundingBox() null under FAST_WAITS)
+    await handle.waitFor({ state: 'visible', timeout: 15_000 });
+    await f.locator(headingSelector).waitFor({ state: 'visible', timeout: 15_000 });
     const hb = (await handle.boundingBox())!;
     const tb = (await f.locator(headingSelector).boundingBox())!;
     await page.mouse.move(hb.x + hb.width / 2, hb.y + hb.height / 2);

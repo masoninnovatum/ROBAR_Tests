@@ -14,6 +14,7 @@ import * as bartender from '../support/bartender';
 import * as flaui from '../../scripts/flaui_bridge';
 import * as mdm from '../support/master-data';
 import * as cm from '../support/campaign-manager';
+import { selectAnyApproval } from '../support/templates';
 
 const SCRATCH = 'C:/Users/Mason/AppData/Local/Temp/claude/C--DB-Copies-703-20198/a480f2e1-948d-42ae-aee0-d197f8c859fc/scratchpad/cmmdmpdf';
 const STATE_FILE = path.join(SCRATCH, 'state.json');
@@ -54,6 +55,7 @@ async function queryTemplate(page: Page, frame: import('@playwright/test').Frame
   }
   if (!(await frame.locator('select[name$="Column"]').count())) { await frame.locator('.criteriaFilter-AddButton span:not(.ui-icon)').first().click(); await page.waitForTimeout(500); }
   await frame.locator('#chkLatestVersion').uncheck().catch(() => {}); // the checkbox is persisted per user
+  await selectAnyApproval(frame); // the approval filter is persisted per user too: an Approved Only filter hides the new unapproved version 1
   await frame.selectOption('select[name="dvFilters[0].Column"]', 'LabelName');
   await frame.selectOption('select[name="dvFilters[0].Operator"]', 'ExactlyMatches');
   await frame.fill('input[name="dvFilters[0].Value"]', name);
