@@ -20,6 +20,7 @@ The single 570 KB file was split into per-module files in `modules/` (lossless; 
 | modules/label-control.md | Label Control |
 | modules/label-type-management.md | Label Type Management |
 | modules/login-and-passwords.md | legacy vs new web menu login, password surfaces |
+| modules/web-menu-improvements.md | the NEW web menu /ROBAR/ (landing page, Modules, favorites, dashboards, notifications, timeout, Settings gear) |
 | modules/lot-management.md | Lot Management (+ re-check) |
 | modules/master-data-management.md | Master Data Management (MDM), two passes |
 | modules/print-entity.md | Print Entity (PrintEntityRequired = Y), user entities |
