@@ -7,3 +7,4 @@ npm-debug.log*
 .claude-logs/
 test-data/run-results/
 reports/smoke/runs/
+test-data/pr-fixture-passwords.json
