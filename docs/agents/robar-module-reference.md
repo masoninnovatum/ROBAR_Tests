@@ -18,6 +18,7 @@ The single 570 KB file was split into per-module files in `modules/` (lossless; 
 | modules/dynamic-ui.md | generic Dynamic UI pages vs ValMaster |
 | modules/field-definitions-management.md | Field Definitions Management, Item Screen Layout |
 | modules/label-control.md | Label Control |
+| modules/label-history-inquiry.md | Label History Inquiry (barcode / item + lot, View Detail, label image) |
 | modules/label-type-exclusions.md | Label Type Exclusions (workstation x label type) |
 | modules/label-type-management.md | Label Type Management |
 | modules/login-and-passwords.md | legacy vs new web menu login, password surfaces |
