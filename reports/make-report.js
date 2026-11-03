@@ -2,7 +2,14 @@
 // Run: node reports/make-report.js <base-path-without-extension>  ->  <base>-Defects-Observations.xlsx and <base>-Script-Wording.xlsx
 // (optional 2nd arg D,O / S builds one workbook only; the 1st arg is then the full .xlsx path)
 const ExcelJS = require('exceljs');
-const allRows = require('./issues-data.js');
+// SINCE=YYYY-MM-DD keeps only rows discovered AFTER that date; EXTRA=a.js,b.js appends further entry files (used for the report of findings after 2026-10-08)
+let allRows = require('./issues-data.js');
+for (const f of (process.env.EXTRA || '').split(',').filter(Boolean)) allRows = allRows.concat(require(require('path').resolve(f)));
+// findings deemed non-issues by the user (2026-11-02) are never reported again
+const nonIssues = require('./non-issues.js');
+allRows = allRows.filter((r) => !nonIssues.some((p) => String(r.description).startsWith(p)));
+if (process.env.SINCE) allRows = allRows.filter((r) => r.dateDiscovered > process.env.SINCE);
+if (process.env.EXCLUDE) allRows = allRows.filter((r) => !new RegExp(process.env.EXCLUDE).test(r.module)); // EXCLUDE=regex on the Module text
 
 const base = process.argv[2] || 'Training-Issues-Report';
 const onlyTypes = process.argv[3];
@@ -70,7 +77,7 @@ async function build(out, types, label) {
 }
 
 (async () => {
-  if (onlyTypes) { await build(base, onlyTypes.split(','), onlyTypes === 'S' ? 'Script / wording differences' : 'Defects and Observations'); return; }
+  if (onlyTypes) { await build(base, onlyTypes.split(','), process.env.LABEL || (onlyTypes === 'S' ? 'Script / wording differences' : 'Defects and Observations')); return; }
   await build(`${base}-Defects-Observations.xlsx`, ['D', 'O'], 'Defects and Observations');
   await build(`${base}-Script-Wording.xlsx`, ['S'], 'Script / wording differences');
 })();

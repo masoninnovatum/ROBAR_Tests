@@ -1,9 +1,10 @@
-// Runs the whole MODULE-based spec suite (everything under tests/ except Smoke, DIT-* and support) as one end-to-end run, one Playwright process per spec file (so a crash or a stuck
+// Runs the whole MODULE-based spec suite (everything under tests/ except Smoke, DITs and support) as one end-to-end run, one Playwright process per spec file (so a crash or a stuck
 // Sentinel launch in one spec cannot poison the next), then builds a report: reports/suite/runs/<yyyymmdd-hhmmss>/report.md (+ results.json, one <spec>.json per file).
 //   node scripts/suite-run.js                    all spec files
 //   node scripts/suite-run.js --only Lot         only files whose path matches the text
 //   node scripts/suite-run.js --report <dir>     rebuild report.md of an earlier run folder
 //   (headed specs are always run first)
+//   node scripts/suite-run.js --datadog         upload the run's JUnit reports to Datadog when it ends (env DD_API_KEY, DD_SITE; service robar-e2e)
 //   node scripts/suite-run.js --fast             FAST_WAITS=1: fixed waitForTimeout sleeps end early once the page's network traffic is quiet (tests/support/fast-waits.ts; ~30 % faster in samples)
 // Settings: nothing here changes any setting. A spec that needs a Global Setting / Print Config that is not set skips with a "precondition" message; the report collects these in one list
 // ("settings to update at the end"). Headed specs (print, template editor, Sentinel, Acrobat) use the real mouse and keyboard: nobody may touch the computer while it runs.
@@ -22,7 +23,7 @@ function specFiles() {
   const walk = (dir) => {
     for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
       const p = path.join(dir, e.name);
-      if (e.isDirectory()) { if (!['Smoke', 'support', '_tmp'].includes(e.name) && !e.name.startsWith('DIT-')) walk(p); }
+      if (e.isDirectory()) { if (!['Smoke', 'support', '_tmp'].includes(e.name) && !e.name.startsWith('DIT-') && e.name !== 'DITs') walk(p); }
       else if (e.name.endsWith('.spec.ts') && e.name !== 'Link_Management_Edit_Document.spec.ts' /* blocked: Acrobat reinstall needs an admin */) out.push(path.relative(ROOT, p).split(path.sep).join('/'));
     }
   };
@@ -122,10 +123,14 @@ console.log(`suite run ${stamp}: ${files.length} spec files -> ${outDir}`);
 const t0 = Date.now();
 files.forEach((f, i) => {
   const jsonFile = path.join(outDir, f.replace(/\//g, '__').replace('.spec.ts', '') + '.json');
+  const junitFile = path.join(outDir, 'junit', f.replace(/\//g, '__').replace('.spec.ts', '') + '.xml');
+  fs.mkdirSync(path.dirname(junitFile), { recursive: true });
   const t1 = Date.now();
-  const r = spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'test', f, '--workers=1', '--reporter=json'], { cwd: ROOT, shell: process.platform === 'win32', env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: jsonFile, ...(argv.includes('--fast') ? { FAST_WAITS: '1' } : {}) }, encoding: 'utf8', maxBuffer: 1 << 28 });
+  const r = spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'test', f, '--workers=1', '--reporter=json,junit'], { cwd: ROOT, shell: process.platform === 'win32', env: { ...process.env, PLAYWRIGHT_JSON_OUTPUT_NAME: jsonFile, PLAYWRIGHT_JUNIT_OUTPUT_FILE: junitFile, ...(argv.includes('--fast') ? { FAST_WAITS: '1' } : {}) }, encoding: 'utf8', maxBuffer: 1 << 28 });
   console.log(`[${i + 1}/${files.length}] ${((Date.now() - t1) / 60000).toFixed(1)} min  exit ${r.status}  ${f}`);
   fs.appendFileSync(path.join(outDir, 'progress.log'), `${new Date().toISOString()} [${i + 1}/${files.length}] exit ${r.status} ${f}\n`);
 });
 const text = report(outDir, { wall: Date.now() - t0, files: files.length });
+// --datadog: upload the JUnit reports of this run to Datadog (needs DD_API_KEY in the environment, see scripts/datadog-upload.js)
+if (argv.includes('--datadog')) spawnSync(process.execPath, [path.join(__dirname, 'datadog-upload.js'), outDir, '--tags', 'suite:full'], { cwd: ROOT, stdio: 'inherit' });
 console.log('\n' + text);

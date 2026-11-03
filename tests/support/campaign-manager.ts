@@ -137,8 +137,13 @@ export async function retrieveAndSelectItem(
     await cmFrame.click('.criteriaFilter-AddButton');
     await page.waitForTimeout(500);
   }
-  await cmFrame.selectOption('select[name="Filters[0].Column"]', 'itemsItemNumber');
-  await cmFrame.selectOption('select[name="Filters[0].Operator"]', 'ExactlyMatches');
+  // VAL703 names the column value `ItemNumber` (TST703: `itemsItemNumber`) and may label the operator differently: fall back to the visible labels
+  const colSel = cmFrame.locator('select[name="Filters[0].Column"]');
+  if (await colSel.locator('option[value="itemsItemNumber"]').count()) await colSel.selectOption('itemsItemNumber');
+  else await colSel.selectOption({ label: 'Item Number' });
+  const opSel = cmFrame.locator('select[name="Filters[0].Operator"]');
+  if (await opSel.locator('option[value="ExactlyMatches"]').count()) await opSel.selectOption('ExactlyMatches');
+  else await opSel.selectOption({ label: 'Exactly Matches' });
   await cmFrame.fill('input[name="Filters[0].Value"]', itemNumber);
 
   const checkbox = cmFrame.locator(`input.cbox[id^="jqg_gridResults_${itemNumber}|"]`);

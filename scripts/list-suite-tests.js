@@ -1,6 +1,6 @@
 // Writes an inventory of the module suite: every spec file, its tests (titles via `playwright test --list`) and the named steps inside each file (test.step titles, in source order).
 //   node scripts/list-suite-tests.js [out.md]      default out: reports/suite-test-inventory.md
-// Uses the same file selection as scripts/suite-run.js (no Smoke, DIT-*, support; Link_Management_Edit_Document excluded). Does not run any test or open a browser.
+// Uses the same file selection as scripts/suite-run.js (no Smoke, DITs, support; Link_Management_Edit_Document excluded). Does not run any test or open a browser.
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -12,7 +12,7 @@ const files = [];
 const walk = (dir) => {
   for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, e.name);
-    if (e.isDirectory()) { if (!['Smoke', 'support', '_tmp'].includes(e.name) && !e.name.startsWith('DIT-')) walk(p); }
+    if (e.isDirectory()) { if (!['Smoke', 'support', '_tmp'].includes(e.name) && !e.name.startsWith('DIT-') && e.name !== 'DITs') walk(p); }
     else if (e.name.endsWith('.spec.ts') && e.name !== 'Link_Management_Edit_Document.spec.ts') files.push(path.relative(ROOT, p).split(path.sep).join('/'));
   }
 };

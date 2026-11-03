@@ -16,6 +16,8 @@ Batch_Quantity_Reprint_Off - ReprintBasedOnBatchQty = N: after ONE printed copy 
 Batch_Quantity_Serialized - serialized templates (S_USerial / S_Ser): Copy on Print by Order and Copies in Multi Document Printing with a batch quantity (no print)
 Blank_Expiration_Date_Calculated - blank expiration date is calculated from manufacturing date + shelf life on the Lot Panel
 Invalid_Combination_Blocked - invalid order/lot/item combination is blocked on every retry, never reaches the Lot Panel
+MDP_Printer_Control - MDP labeling grid vs Printer Control rows (no printing)
+MDP_Printer_Control_probe - probe printer control filter
 Multi_Document_Printing - Multi Document Printing: entry, lot panel, label rows, preview, Test Print and real Print to PDF
 Multi_Document_Printing_Batch_Quantity - Multi Document Printing: Copies = Batch Qty x Multiplier + Extra, Override Lot Data recalculation, no values -> 1, R marker after a print
 Multi_Document_Printing_Label_Master - Multi Document Printing: View Master and View Compare work for an item with a label master
@@ -121,6 +123,15 @@ Flex_Printing_Config_Variants - Flex Printing identifier layouts: Order+Item, Or
 Flex_Printing_Requirements - Flex Printing: entry screen, lot lookup, add-at-print-time, messages, Reset (config: Item + Lot visible, Order AddOnly)
 Flex_Printing_Security - Flex Printing: tile, add-lot-at-print-time authorization (BP_FlexPrinting_Option, BP_Add_Lot_PrintTime) for an MB user
 
+Images Import:
+
+Images_Import_Cases - Images import: case matrix
+Images_Import_Columns - Images import: which columns are saved (Images)
+Images_Reimport - Images re-import over existing record
+Images_UI_Create - Images: create a record in the UI with ECN + Revision, save, reopen
+Lang_Overlap - new Web Menu: header overlap with long language text and many tabs (1400px)
+Readback - readback CLIMG044824
+
 Label Control:
 
 Assign_Control_Number - create a fresh item and assign it a Label Control Number
@@ -194,6 +205,13 @@ Schemas_Field_Editor - Schemas editor: add fields with settings, persist, valida
 Schemas_Field_Settings_Effect - Schema field settings show up on a blank New Record page (required, length, mask, default, protected, hidden)
 View_History - View History lists the per-version field changes, filters by field and opens a record snapshot
 
+Password Management:
+
+Password_Change_Requirements - Password Change: page, edit checks, success, expired-password redirect
+Password_Reset_Requirements - Password Reset: reset, temporary / permanent, rules, locked and unlock lists, unlock, e-signature, disabled users
+Password_Reset_Security - Password Reset security: Option, Nontemporary and AllFacilities processes (UI and direct requests)
+Setup_Fixtures - Setup_Fixtures: Password Reset / Change fixtures exist
+
 Print Entity:
 
 Print_Entity_Inactive - Print Entity: an inactive entity assigned to the user never appears on the print screens
@@ -233,6 +251,15 @@ Submit_to_Workflow - submit to workflow submits a template into a workflow prese
 View_Edit_Template - view/edit template opens an existing template and persists a change made to it
 View_Label_Characteristics - view label characteristics shows a newly created template's attributes
 
+Web Menu Improvements:
+
+WebMenu_Dashboards - New web menu - dashboards: management, links, precedence, selection
+WebMenu_Expired_Password - New web menu - Expired Password page (F.2.3-F.2.10)
+WebMenu_Login_Landing - New web menu - login, landing page, Modules, tabs, favorites, Settings, Log off, language, auto-open, Help
+WebMenu_Notifications - New web menu - notifications: setup, popup at login, acknowledge, bell, attachment, history
+WebMenu_Settings_Security - New web menu - Settings menu security: one process per module, no wheel without any
+WebMenu_Timeout - New web menu - inactivity timeout and countdown
+
 Workflow Management:
 
 Attachments - workflow attachments: add, duplicate refused, closed-workflow warning, download, delete
@@ -245,9 +272,15 @@ Filters - Workflow Management filters: Included vs Can Vote, open-for-voting, st
 Item_Workflow - item workflow: Send to Workflow locks the item; approving closes it Approved (by the workflow id), rejecting releases it
 Linked_Documents - Linked Documents: item and template workflows open Link Management pre-filtered; a standalone workflow has no button
 Linked_Documents_Security - Linked Documents security: the button is disabled without LM_View_LinkManagement and opens Link Management with it
+Mixed_Vote_Evidence - mixed votes: reject then approve, one parallel group, approve-before-reject (WFRejectHasVetoPower = N)
 Multi_Step_Presets - multi-step presets: sequential groups, parallel group, Vote For Entire Group, Veto
 Preset_Management - Preset Management: create, add and edit steps, Save As, deactivate and delete a preset
 Report - workflow summary report: required subdirectory, merged PDF and one PDF per workflow on the report share
 Security_Gating - Workflow Management security: menu gating per process and the comment-required-on-reject rule
 Template_Workflow - template workflow: Submit to Workflow for two templates, then approve one and reject the other
 Workflow_Lifecycle - create two workflows from a preset, find and inspect them, vote one approved and one rejected in a single job
+
+_dryrun:
+
+Setup_WM_Export_Data - build WM_ExportToExcel-18.1 data
+Setup_WM_Export_Templates - submit TMP2/TMP3 to workflow and read WF1-WF4 ids

@@ -3,7 +3,7 @@
 //   item MBPDF6<stamp>      : approved item on that template                                         ("ITM6")
 //   item MBPDF2<stamp>      : approved item on A1SuperTemplate + Master Data record (RobarMasterData) with the same item number:
 //                             MD version 0 approved, version 1 UNAPPROVED (latest)                   -> "master data items whose latest versions are unapproved" ("ITM2")
-// Stages share their identifiers through state.json (scratchpad), so a failed stage can be re-run alone. HEADED (BarTender through FlaUI). Reuses the proven flows of DIT-6151/Execute_UAT_6151.spec.ts.
+// Stages share their identifiers through state.json (scratchpad), so a failed stage can be re-run alone. HEADED (BarTender through FlaUI). Reuses the proven flows of DITs/DIT-6151/Execute_UAT_6151.spec.ts.
 
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';

@@ -1,0 +1,20 @@
+{
+ "stamp": "917560",
+ "PRESET1": "CLExpPre917560",
+ "presetDone": true,
+ "ITM1": "CLExpItmA917560",
+ "ITM1Sent": true,
+ "ITM2": "CLExpItmB917560",
+ "ITM2Sent": true,
+ "TMP2": "CLExpTmp2917560",
+ "TMP3": "CLExpTmp3917560",
+ "templatesSent": true,
+ "WF1": "20261027-0001",
+ "WF1row": "20261027-0001 Item: CLExpItmA917560, Version: 0; Label Type: Carton Label; Label: A1Template, Version: 0 Open 10/27/2026 Detail",
+ "WF2": "20261027-0002",
+ "WF2row": "20261027-0002 Item: CLExpItmB917560, Version: 0; Label Type: Carton Label; Label: A1Template, Version: 0 Open 10/27/2026 Detail",
+ "WF3": "20261027-0003",
+ "WF3row": "20261027-0003 Label: CLExpTmp2917560; Label Type:Carton Label; Version:0 Open 10/27/2026 Detail",
+ "WF4": "20261027-0004",
+ "WF4row": "20261027-0004 Label: CLExpTmp3917560; Label Type:Carton Label; Version:0 Open 10/27/2026 Detail"
+}

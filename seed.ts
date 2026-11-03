@@ -37,4 +37,10 @@ export const ROBAR = {
   // generate a random "MBMDMNNNNN" item number each run (default behavior), matching how template
   // and item names are generated elsewhere in this suite.
   mdmItemNumber: process.env.ROBAR_MDM_ITEM_NUMBER || undefined,
+  // Test email inboxes (Gmail) for email-related tests, from ROBAR_TEST_EMAIL_N /
+  // ROBAR_TEST_EMAIL_PASSWORD_N (N = 1..4). Slots with no email set are skipped.
+  testInboxes: [1, 2, 3, 4].flatMap((n) => {
+    const email = process.env[`ROBAR_TEST_EMAIL_${n}`];
+    return email ? [{ email, password: process.env[`ROBAR_TEST_EMAIL_PASSWORD_${n}`] || '' }] : [];
+  }),
 };

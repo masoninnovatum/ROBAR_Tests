@@ -1,0 +1,35 @@
+import { test } from '@playwright/test';
+import * as path from 'path';
+import * as mdm from '../support/master-data';
+import { findFrame } from '../support/robar';
+const OUT = path.join(__dirname, '..', '..', 'runs', 'Images_Import_Lang_Overlap_2026-10-30');
+const ITEM = process.env.IMG_ITEM ?? 'CLIMG044824';
+const SCHEMA = process.env.IMG_SCHEMA ?? 'Images';
+const TAG = process.env.IMG_TAG ?? 'img';
+test('readback ' + ITEM, async ({ page }) => {
+  test.setTimeout(300_000);
+  const g = await mdm.openMasterData(page);
+  const rows = await mdm.retrieve(page, g, { value: ITEM, schema: SCHEMA, expectRows: 1 });
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: path.join(OUT, `${TAG}-04-grid.png`) });
+  console.log('GRID ROWS:', await rows.count(), (await rows.first().innerText()).replace(/\s+/g, ' '));
+  await rows.first().locator('a:has-text("Actions")').click({ timeout: 5000 });
+  await page.waitForTimeout(500);
+  await g.locator('ul:visible a').filter({ hasText: 'View/Edit' }).first().click({ force: true, timeout: 5000 });
+  await page.waitForTimeout(4000);
+  const ef = await findFrame(page, 'MasterData/Edit');
+  const saved = await ef.locator('tr').evaluateAll((trs) => trs.map((tr) => {
+    const label = (tr.querySelector('label, th, td') as HTMLElement | null)?.innerText.trim();
+    const el = tr.querySelector('input:not([type=hidden]), select, textarea') as HTMLInputElement | HTMLSelectElement | null;
+    if (!label || !el) return '';
+    const v = el.tagName === 'SELECT' ? (el as HTMLSelectElement).selectedOptions[0]?.text : (el as HTMLInputElement).type === 'checkbox' ? String((el as HTMLInputElement).checked) : el.value;
+    return `${label} = ${v}`;
+  }).filter(Boolean));
+  console.log('SAVED RECORD:\n' + saved.join('\n'));
+  await page.screenshot({ path: path.join(OUT, `${TAG}-05-saved-record.png`) });
+  await ef.getByText('Workflow', { exact: true }).first().click({ timeout: 5000 }).catch((e) => console.log('tab click failed', String(e).slice(0, 100)));
+  await page.waitForTimeout(1200);
+  await page.screenshot({ path: path.join(OUT, `${TAG}-06-saved-record-workflow-tab.png`) });
+  console.log('WORKFLOW TAB:', (await ef.locator('body').innerText()).replace(/\s+/g, ' ').slice(0, 600));
+  console.log('BODY:', (await ef.locator('body').innerText()).replace(/\s+/g, ' ').slice(0, 1500));
+});

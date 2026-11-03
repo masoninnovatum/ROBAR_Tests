@@ -94,7 +94,7 @@ export async function showNewestFirst(page: Page, status?: string): Promise<Fram
  * Management page > Actions > Create New Workflow with `preset`, Submit Job; returns the new Workflow Id ("YYYYMMDD-NNNN") and
  * leaves the browser back on the Management page (frame re-resolved by the caller with lastFrame).
  */
-export async function createWorkflow(page: Page, preset: string, description: string, comment: string): Promise<string> {
+export async function createWorkflow(page: Page, preset: string, description: string, comment: string, beforeSubmit?: (f: Frame) => Promise<void>): Promise<string> {
   let f = lastFrame(page, 'WorkflowManagement/Management');
   await f.locator('#drpMainActions').click();
   await delay(500); // the drop-down menu needs a moment before its items react to clicks (a click right after opening it is ignored)
@@ -109,6 +109,7 @@ export async function createWorkflow(page: Page, preset: string, description: st
   await settle(f, 4000); // the preset's steps load through ajax
   await f.locator('#txtComment').press('Tab');
   await expect(f.locator('#btnFormSubmit')).toBeEnabled({ timeout: 8000 });
+  if (beforeSubmit) await beforeSubmit(f); // e.g. an evidence screenshot of the filled form with the preset's steps
   await f.locator('#btnFormSubmit').click();
   let jf = await frameWhere(page, 'WFJobDetail', 'body', 30_000);
   let text = '';
@@ -132,7 +133,7 @@ export async function createWorkflow(page: Page, preset: string, description: st
  */
 export type VoteKind = 'approve' | 'reject' | 'approveForDept' | 'rejectForDept' | 'approveVeto' | 'rejectVeto';
 
-export async function voteTickedWorkflows(page: Page, f: Frame, votes: VoteKind[], user: string, password: string, comment = 'Voted by Playwright'): Promise<string> {
+export async function voteTickedWorkflows(page: Page, f: Frame, votes: VoteKind[], user: string, password: string, comment = 'Voted by Playwright', hooks?: { beforeUpdate?: (vf: Frame) => Promise<void>; afterJob?: () => Promise<void> }): Promise<string> {
   await f.locator('#drpActions').click();
   await delay(500); // the drop-down menu needs a moment before its items react to clicks (a click right after opening it is ignored)
   await f.locator('#actViewAndVote').waitFor({ state: 'visible', timeout: 5000 });
@@ -148,6 +149,7 @@ export async function voteTickedWorkflows(page: Page, f: Frame, votes: VoteKind[
     if (v.endsWith('ForDept')) await boxes.nth(2).check();
     if (v.endsWith('Veto')) await boxes.nth(3).check();
   }
+  if (hooks?.beforeUpdate) await hooks.beforeUpdate(vf); // e.g. an evidence screenshot of the ticked vote grid
   await vf.locator('#btnUpdate').click();
   await vf.locator('#jobDescription').waitFor({ state: 'visible', timeout: 10_000 });
   await vf.locator('#jobDescription').fill('PW vote');
@@ -164,6 +166,7 @@ export async function voteTickedWorkflows(page: Page, f: Frame, votes: VoteKind[
     if (/Status Completed/.test(text)) break;
     await delay(1000);
   }
+  if (hooks?.afterJob) await hooks.afterJob();
   return text;
 }
 

@@ -1,6 +1,6 @@
 # ROBAR module suite - inventory of tests and actions
 
-Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 791 named steps (test.step titles; template-literal steps show their raw text). Specs without named steps do their actions inline: read the spec file for the click-level detail.
+Generated 2026-11-02 by scripts/list-suite-tests.js: 201 spec files, 215 tests, 865 named steps (test.step titles; template-literal steps show their raw text). Specs without named steps do their actions inline: read the spec file for the click-level detail.
 
 ## Attachment-Management
 
@@ -124,6 +124,14 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
   1. a nonexistent order number is rejected with "No Lot found..." and offers Item/Lot fields
   2. retrying with Item/Lot still blank keeps blocking with "No item found." -- never advances
   3. supplying a nonexistent Item Number alongside stays blocked the same way
+
+### MDP_Printer_Control.spec.ts
+
+- **Test:** MDP labeling grid vs Printer Control rows (no printing)
+
+### MDP_Printer_Control_probe.spec.ts
+
+- **Test:** probe printer control filter
 
 ### Multi_Document_Printing.spec.ts
 
@@ -752,6 +760,33 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
 - **Test:** Flex Printing: tile, add-lot-at-print-time authorization (BP_FlexPrinting_Option, BP_Add_Lot_PrintTime) for an MB user
 
 
+## Images-Import
+
+### Images_Import_Cases.spec.ts
+
+- **Test:** Images import: case matrix
+
+### Images_Import_Columns.spec.ts
+
+- **Test:** Images import: which columns are saved (Images)
+
+### Images_Reimport.spec.ts
+
+- **Test:** Images re-import over existing record
+
+### Images_UI_Create.spec.ts
+
+- **Test:** Images: create a record in the UI with ECN + Revision, save, reopen
+
+### Lang_Overlap.spec.ts
+
+- **Test:** new Web Menu: header overlap with long language text and many tabs (1400px)
+
+### Readback.spec.ts
+
+- **Test:** readback CLIMG044824
+
+
 ## Label-Control
 
 ### Assign_Control_Number.spec.ts
@@ -1376,6 +1411,58 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
   5. Change User filter: selecting a user keeps that user\'s rows
 
 
+## Password-Management
+
+### Password_Change_Requirements.spec.ts
+
+- **Test:** Password Change: page, edit checks, success, expired-password redirect
+
+  Steps / actions:
+  1. setup: make CLPRTgtA01\'s password temporary (expired) through Password Reset
+  2. FRS-8.1.19.1: a browser page, reachable without a session, with the four fields and a button
+  3. FRS-8.1.19.2: the same edit checks as the other password pages (messages, order)
+  4. a wrong current password with a valid new one is refused and changes nothing
+  5. success: "Your password has been updated successfully." and the expired flag is cleared (URS-8.1.19)
+  6. new password = CURRENT password is accepted here (the Expired Password page refuses it)
+  7. FRS-8.1.19.3: an expired password at login is redirected to the Password Change page (legacy Web Menu login)
+
+### Password_Reset_Requirements.spec.ts
+
+- **Test:** Password Reset: reset, temporary / permanent, rules, locked and unlock lists, unlock, e-signature, disabled users
+
+  Steps / actions:
+  1. page anatomy (U100.0): reset list, unlock list, reasons, default temporary tick (F100.0.1)
+  2. validation dialogs before anything is sent (F100.0.8 + signature fields)
+  3. reset is temporary by default: the target must change the password at the next login (U100.0, F100.0.1)
+  4. the seed user may make a reset non-temporary: the target logs straight in (F100.0.2)
+  5. server rejects a password that cannot be reused (F100.0.8: settings rules apply)
+  6. e-signature checks on the server (F100.0.9 / F100.1.2): signer without the process, wrong signer password
+  7. locked users are marked in the reset list and are the only users in the unlock list (F100.0.5, F100.1.3)
+  8. resetting a locked user unlocks it (F100.0.7)
+  9. unlock without changing the password (U100.1, F100.1.2)
+  10. a DISABLED user: listed as "Locked", and a reset or an unlock re-enables the account (source: Unlock() sets Enabled = Y)
+
+### Password_Reset_Security.spec.ts
+
+- **Test:** Password Reset security: Option, Nontemporary and AllFacilities processes (UI and direct requests)
+
+  Steps / actions:
+  1. baseline: CLPRGrp = Login_WebMenu + ResetPassword_Option
+  2. Option only: tile is there, the list is limited to the operator\'s facility and the tick is locked (F100.0.2, F100.0.3)
+  3. + ResetPassword_Nontemporary: the tick can be cleared and a permanent reset works (F100.0.2)
+  4. + ResetPassword_AllFacilities: users of other facilities are listed and can be reset (F100.0.4)
+  5. without ResetPassword_Option: no tile, page and requests refused
+
+### Setup_Fixtures.spec.ts
+
+- **Test:** Setup_Fixtures: Password Reset / Change fixtures exist
+
+  Steps / actions:
+  1. group ${OP_GROUP}
+  2. ${OP_GROUP} holds exactly ${OP_PROCESSES.join(', ')}
+  3. user ${u.id} (${u.facility}, ${u.group})
+
+
 ## Print-Entity
 
 ### Print_Entity_Inactive.spec.ts
@@ -1695,6 +1782,89 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
   2. filter the grid for the new template and open View Label Characteristics
 
 
+## Web-Menu-Improvements
+
+### WebMenu_Dashboards.spec.ts
+
+- **Test:** New web menu - dashboards: management, links, precedence, selection
+
+  Steps / actions:
+  1. Dashboards Management: dialog fields, defaults, validation (F.5.1, F.5.3, F.5.4)
+  2. Create dashboards and links (F.5.4, F.5.5, F.5.7, F.5.8)
+  3. A user who is linked to several dashboards gets a drop-down in precedence order and the first one loads (F.5.12, F.5.10)
+  4. The seed user is linked to the default dashboard only: no drop-down (F.5.9, F.5.11)
+  5. Dashboard link opens the dashboard again after a module tab (F.5.10)
+  6. Inactive links and inactive dashboards are not shown (F.5.4 Active flag)
+
+### WebMenu_Expired_Password.spec.ts
+
+- **Test:** New web menu - Expired Password page (F.2.3-F.2.10)
+
+  Steps / actions:
+  1. Setup: the seed user resets CLPRTgtA01 temporarily (expires the password) and reads the live password rules
+  2. Login with an expired password shows the reset page: UserID, Old / New / Confirm, Submit and Reset, message (F.2.3)
+  3. Blank fields: Submit is not disabled; what happens on click (F.2.6)
+  4. Messages in the order of the server checks (F.2.4, F.2.5, F.2.7, F.2.8)
+  5. Reset button goes back to the login page and the password is not changed (F.2.10)
+  6. A valid new password is accepted: main menu, and the next login uses it (F.2.9, U.2)
+
+### WebMenu_Login_Landing.spec.ts
+
+- **Test:** New web menu - login, landing page, Modules, tabs, favorites, Settings, Log off, language, auto-open, Help
+
+  Steps / actions:
+  1. Login page anatomy (F.9.1, F.11.1)
+  2. Wrong credentials: one generic message (F.1.3)
+  3. Landing page after login (F.1.5, F.4.1, F.7.1, F.10.1 controls)
+  4. Modules list: alphabetical, security process as tooltip (F.7.1, F.7.6)
+  5. Single click opens a tab with an x; the panel hides; x closes the tab (F.7.1, F.7.2)
+  6. Favorites: star, order, persistence, silent preload (F.7.3, F.7.4, F.7.5, U.7)
+  7. Settings (gear): alphabetical list, hides after a pick or a second click (F.4.2, F.4.3)
+  8. Help button opens the help URL in a new window
+  9. Log off returns to the login page and ends the session (F.10.1, U.10)
+  10. Login page language: another language translates the labels, English fallback (F.9.2, F.9.3)
+  11. Auto-open a module from the URL (F.3.1, U.3)
+  12. Changing the language on the login page drops the module name from the URL
+  13. Auto-open of a module the user may not open shows the dashboard (F.3.2)
+  14. Logged in with another language the main menu is translated; untranslated texts fall back to English (F.9.2, F.9.3)
+
+### WebMenu_Notifications.spec.ts
+
+- **Test:** New web menu - notifications: setup, popup at login, acknowledge, bell, attachment, history
+
+  Steps / actions:
+  1. Notifications Management: add dialog fields and validation (F.6.1, F.6.3, F.6.5)
+  2. Create two notifications and link them to the fixture user (F.6.5, F.6.6, F.6.9)
+  3. Popup at login lists the active notifications with message, attachment, checkbox (F.6.10)
+  4. Acknowledge: the box that is ticked is the notification that is recorded (F.6.11)
+  5. After login with everything acknowledged there is no popup; the bell shows them with the acknowledgement time (F.6.11, F.6.12)
+  6. Attachment download is recorded; Acknowledgement History shows user, download time, acknowledgement time (F.6.4)
+  7. Effective dates: EffectiveEnd of today and DaysToKeepAfterExpiration (F.6.5)
+  8. The same notification linked twice for one user is listed twice (precedence rules are not de-duplicated)
+
+### WebMenu_Settings_Security.spec.ts
+
+- **Test:** New web menu - Settings menu security: one process per module, no wheel without any
+
+  Steps / actions:
+  1. No Settings process: no wheel, Settings modules are not in the Modules list either (F.4.4)
+  2. Only ${proc}: the wheel lists just "${name}" with the process as tooltip (F.4.3, F.4.4)
+  3. All four: alphabetical list (F.4.3)
+
+### WebMenu_Timeout.spec.ts
+
+- **Test:** New web menu - inactivity timeout and countdown
+
+  Steps / actions:
+  1. Global Settings of the new menu (F.8.1, F.11.1)
+  2. The timeout cookie follows the setting
+  3. 60 seconds before the end an inactivity countdown is shown (F.8.2)
+  4. Any activity during the countdown keeps the session (F.8.3)
+  5. Without activity the user is logged out with "Timed out due to inactivity" (F.8.3)
+  6. After the timeout the main menu cannot be re-entered by URL
+  7. Logging in as another user in the same browser times out the older tab
+
+
 ## Workflow-Management
 
 ### Attachments.spec.ts
@@ -1812,6 +1982,17 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
   4. with LM_View_LinkManagement the button is enabled and opens Link Management filtered by the template
   5. cleanup: both voters reject the workflow; delete the preset; leave the group without processes
 
+### Mixed_Vote_Evidence.spec.ts
+
+- **Test:** mixed votes: reject then approve, one parallel group, approve-before-reject (WFRejectHasVetoPower = N)
+
+  Steps / actions:
+  1. setup: log in both users, MBPWLoginGrp may vote, old CLPW presets removed
+  2. S1 two groups: group 1 rejects, group 2 approves
+  3. S2 one parallel group: one reject, one approve
+  4. S3 group 2 votes before group 1, then group 1 rejects
+  5. cleanup: close leftovers, delete presets, MBPWLoginGrp back to no processes
+
 ### Multi_Step_Presets.spec.ts
 
 - **Test:** multi-step presets: sequential groups, parallel group, Vote For Entire Group, Veto
@@ -1889,4 +2070,15 @@ Generated 2026-10-19 by scripts/list-suite-tests.js: 180 spec files, 194 tests, 
   4. View And Vote: approve A and reject B in ONE job
   5. both are closed: Open Only no longer lists them, Closed Only does (A Approved, B Rejected)
   6. cleanup: delete the throw-away preset
+
+
+## _dryrun
+
+### Setup_WM_Export_Data.spec.ts
+
+- **Test:** build WM_ExportToExcel-18.1 data
+
+### Setup_WM_Export_Templates.spec.ts
+
+- **Test:** submit TMP2/TMP3 to workflow and read WF1-WF4 ids
 
