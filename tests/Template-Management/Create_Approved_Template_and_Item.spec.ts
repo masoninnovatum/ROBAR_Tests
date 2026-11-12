@@ -53,7 +53,11 @@ async function findProcessIdByName(name: string): Promise<number | undefined> {
   }
 }
 
-async function bringWindowToForeground(pid: number): Promise<void> {
+// Delegates to the shared helper (Alt unlock + AttachThreadInput + TOPMOST toggle); the old local copy below no longer works while another app (Claude desktop) has focus (2026-11-11).
+function bringWindowToForeground(pid: number): Promise<void> {
+  return bartender.bringWindowToForeground(pid);
+}
+async function bringWindowToForegroundLegacyUnused(pid: number): Promise<void> {
   await execFileAsync('powershell.exe', [
     '-NoProfile',
     '-Command',

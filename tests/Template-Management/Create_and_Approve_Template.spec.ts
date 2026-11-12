@@ -118,6 +118,10 @@ test('create a new template and upload its file', async ({ page }, testInfo) => 
     // conservative inset (not the exact center, which isn't known without querying
     // BoundingRectangle -- get-property doesn't expose that property today) chosen to safely land
     // inside a button wide enough to render "Open SentinelLauncher" at normal dialog-button size.
+    // 2026-11-11: raise the test browser first. Another app (e.g. the Claude desktop app) can sit on top of the
+    // prompt and the real click then lands on that app; this spec used to click once without bringing it forward.
+    await bartender.bringWindowToForeground(browserPid);
+    await page.waitForTimeout(300);
     let clicked = false;
     for (let attempt = 0; attempt < 20 && !clicked; attempt++) {
       const result = await flaui.clickAt({ processId: browserPid, name: 'Open SentinelLauncher', offsetX: 20, offsetY: 14 });

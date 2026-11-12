@@ -26,7 +26,7 @@ const execFileAsync = promisify(execFile);
  * wrong window and the prompt never closes. Confirmed live (2026-10-02): the launch worked all
  * morning, then failed repeatedly once other windows were open on top. Best-effort -- Windows may
  * still refuse a background process's foreground request, which is why callers retry. */
-async function bringWindowToForeground(pid: number): Promise<void> {
+export async function bringWindowToForeground(pid: number): Promise<void> {
   await execFileAsync('powershell.exe', [
     '-NoProfile',
     '-Command',
@@ -37,12 +37,31 @@ async function bringWindowToForeground(pid: number): Promise<void> {
     public class FgWin {
       [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
       [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+      [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+      [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr pid);
+      [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a, uint b, bool attach);
+      [DllImport("user32.dll")] public static extern bool BringWindowToTop(IntPtr hWnd);
+      [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr hWnd, IntPtr after, int x, int y, int cx, int cy, uint flags);
+      [DllImport("user32.dll")] public static extern void keybd_event(byte vk, byte scan, uint flags, UIntPtr extra);
     }
 "@ -ErrorAction SilentlyContinue
     $p = Get-Process -Id ${pid} -ErrorAction SilentlyContinue
     if ($p -and $p.MainWindowHandle -ne [IntPtr]::Zero) {
-      [FgWin]::ShowWindow($p.MainWindowHandle, 9) | Out-Null
-      [FgWin]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
+      $h = $p.MainWindowHandle
+      # Windows refuses SetForegroundWindow while another app (e.g. the Claude desktop app) holds focus, so
+      # the prompt stayed hidden behind it and the real click landed on that app (2026-11-11). Unlock with an
+      # Alt tap, attach to the current foreground thread, and toggle TOPMOST to raise the window above it.
+      [FgWin]::ShowWindow($h, 9) | Out-Null
+      [FgWin]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero); [FgWin]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+      $fg = [FgWin]::GetForegroundWindow()
+      $t1 = [FgWin]::GetWindowThreadProcessId($fg, [IntPtr]::Zero)
+      $t2 = [FgWin]::GetWindowThreadProcessId($h, [IntPtr]::Zero)
+      if ($t1 -ne $t2) { [FgWin]::AttachThreadInput($t1, $t2, $true) | Out-Null }
+      [FgWin]::SetWindowPos($h, [IntPtr](-1), 0, 0, 0, 0, 0x0003) | Out-Null
+      [FgWin]::SetWindowPos($h, [IntPtr](-2), 0, 0, 0, 0, 0x0003) | Out-Null
+      [FgWin]::BringWindowToTop($h) | Out-Null
+      [FgWin]::SetForegroundWindow($h) | Out-Null
+      if ($t1 -ne $t2) { [FgWin]::AttachThreadInput($t1, $t2, $false) | Out-Null }
     }
     `,
   ]).catch(() => {});
