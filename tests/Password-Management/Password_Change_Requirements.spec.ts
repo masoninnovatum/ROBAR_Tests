@@ -103,6 +103,8 @@ test('Password Change: page, edit checks, success, expired-password redirect', a
       await loginAs(p, TGT_A, cur);
       await p.waitForTimeout(1500);
       console.log('after legacy login of an expired user:', p.url());
+      console.log('landing text:', (await p.locator('body').innerText().catch(() => '?')).replace(/\s+/g, ' ').slice(0, 300));
+      await p.screenshot({ path: 'test-results/zz-expired-landing.png' }).catch(() => {});
       expect(p.url()).toMatch(/WebMenu\/ChangePwd\.aspx\?Expired=true/i);
       expect((await p.locator(F.msg).innerText()).replace(/\s+/g, ' ').trim()).toBe('Your password has expired. Please update your password now.');
       const pwB = newPw();

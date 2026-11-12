@@ -33,7 +33,7 @@ test('Images: create a record in the UI with ECN + Revision, save, reopen', asyn
   await g2.locator('ul:visible a').filter({ hasText: 'View/Edit' }).first().click({ force: true, timeout: 5000 });
   await page.waitForTimeout(4000);
   const ef = await findFrame(page, 'MasterData/Edit');
-  console.log('ECN after reopen =', JSON.stringify(await ef.getByRole('row', { name: 'ECN', exact: true }).locator('input').first().inputValue()));
+  console.log('ECN after reopen =', JSON.stringify(await ef.getByRole('row', { name: /^ECN/ }).locator('input').first().inputValue()));
   console.log('Revision after reopen =', JSON.stringify(await ef.getByRole('row', { name: 'Image Revision' }).locator('input').first().inputValue()));
   await page.screenshot({ path: path.join(OUT, 'ui-03-reopened.png') });
 });

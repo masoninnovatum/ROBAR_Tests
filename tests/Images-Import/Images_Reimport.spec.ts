@@ -22,8 +22,8 @@ test('Images re-import over existing record', async ({ page }) => {
   await g.locator('ul:visible a').filter({ hasText: 'View/Edit' }).first().click({ force: true, timeout: 5000 });
   await page.waitForTimeout(4000);
   const ef = await findFrame(page, 'MasterData/Edit');
-  console.log('ECN =', JSON.stringify(await ef.getByRole('row', { name: 'ECN', exact: true }).locator('input').first().inputValue()));
-  console.log('Revision =', JSON.stringify(await ef.getByRole('row', { name: 'Image Revision', exact: true }).locator('input').first().inputValue()));
+  console.log('ECN =', JSON.stringify(await ef.getByRole('row', { name: /^ECN/ }).locator('input').first().inputValue()));
+  console.log('Revision =', JSON.stringify(await ef.getByRole('row', { name: /^Image Revision/ }).locator('input').first().inputValue()));
   await page.screenshot({ path: path.join(OUT, 'reimport-record-general.png') });
   await ef.getByText('Workflow', { exact: true }).first().click({ timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(1000);

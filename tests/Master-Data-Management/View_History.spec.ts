@@ -13,6 +13,8 @@ import { findFrame, USERNAME } from '../support/robar';
 test('View History lists the per-version field changes, filters by field and opens a record snapshot', async ({ page }) => {
   test.setTimeout(420_000);
   let frame: Frame = await mdm.openMasterData(page);
+  // The account persists the last-used schema: a previous spec (Images, a CL data schema) may have left another one selected.
+  await mdm.selectSchema(frame, 'RobarMasterData');
   const item = 'CLMDH' + Date.now().toString().slice(-6);
 
   await test.step('build a record with a known history (v0: create, edit, approve; v1: new version + edit)', async () => {
@@ -38,7 +40,7 @@ test('View History lists the per-version field changes, filters by field and ope
   /** Opens View History for one version row (0 = v0, 1 = v1) and returns the history frame. */
   const openHistory = async (index: number): Promise<Frame> => {
     frame = await findFrame(page, 'MasterData');
-    const rows = await mdm.retrieve(page, frame, { value: item, expectRows: 2 });
+    const rows = await mdm.retrieve(page, frame, { value: item, schema: 'RobarMasterData', expectRows: 2 });
     await rows.nth(index).locator('a:has-text("Actions")').click({ timeout: 5000 });
     await page.waitForTimeout(600);
     await frame.locator('ul:visible a').filter({ hasText: 'View History' }).first().click({ force: true, timeout: 5000 });
