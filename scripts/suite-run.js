@@ -5,7 +5,10 @@
 //   node scripts/suite-run.js --report <dir>     rebuild report.md of an earlier run folder
 //   (headed specs are always run first)
 //   node scripts/suite-run.js --datadog         upload the run's JUnit reports to Datadog when it ends (env DD_API_KEY, DD_SITE; service robar-e2e)
-//   node scripts/suite-run.js --fast             FAST_WAITS=1: fixed waitForTimeout sleeps end early once the page's network traffic is quiet (tests/support/fast-waits.ts; ~30 % faster in samples)
+//   node scripts/suite-run.js --fix-fixtures     before the run, restore the shared MB/CL fixture groups to their baseline if a killed spec left them changed (default: stop and say what is wrong)
+//   node scripts/suite-run.js --no-canary        skip the fixture baseline check that normally runs first (tests/Smoke/preflight/Fixture_Baseline.spec.ts)
+//   node scripts/suite-run.js --resume <run folder> --only <text> --redo-failed   (ALWAYS give --only with --resume: a spec counts as done only if THIS folder holds its result, so without --only every other spec runs)
+//   node scripts/suite-run.js --fast            FAST_WAITS=1: fixed waitForTimeout sleeps end early once the page's network traffic is quiet (tests/support/fast-waits.ts; ~30 % faster in samples)
 // Settings: nothing here changes any setting. A spec that needs a Global Setting / Print Config that is not set skips with a "precondition" message; the report collects these in one list
 // ("settings to update at the end"). Headed specs (print, template editor, Sentinel, Acrobat) use the real mouse and keyboard: nobody may touch the computer while it runs.
 
@@ -120,6 +123,20 @@ if (resumeDir) {
   for (let i = files.length - 1; i >= 0; i--) if (doneFiles(files[i])) files.splice(i, 1);
 }
 console.log(`suite run ${stamp}: ${files.length} spec files -> ${outDir}`);
+// Fixture canary (tests/Smoke/preflight/Fixture_Baseline.spec.ts, ~45 s, read-only): stops the run when a shared security fixture (e.g. MBPWLoginGrp) is not in its baseline state,
+// instead of producing many confusing "not authorized" failures. --fix-fixtures restores the MB/CL fixture groups to their baseline and goes on; --no-canary skips the check.
+if (!argv.includes('--no-canary') && files.length) {
+  const canary = (fix) => spawnSync(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['playwright', 'test', 'tests/Smoke/preflight/Fixture_Baseline.spec.ts', '--workers=1', '--reporter=line'], { cwd: ROOT, shell: process.platform === 'win32', env: { ...process.env, ...(fix ? { CANARY_FIX: '1' } : {}) }, encoding: 'utf8', maxBuffer: 1 << 26 });
+  const c = canary(argv.includes('--fix-fixtures'));
+  if (c.status !== 0) {
+    const out = `${c.stdout || ''}${c.stderr || ''}`;
+    const why = out.split(/\r?\n/).filter((l) => /^\s*- (group|user) /.test(l)).join('\n') || out.slice(-1500);
+    console.log(`\nFixture canary FAILED: a shared security fixture is not in its baseline state, so the run was NOT started:\n${why}\n(rerun with --fix-fixtures to restore the MB/CL fixture groups automatically, or --no-canary to skip this check)`);
+    fs.appendFileSync(path.join(outDir, 'progress.log'), `${new Date().toISOString()} fixture canary failed, run not started\n`);
+    process.exit(2);
+  }
+  console.log('fixture canary: shared security fixtures are in baseline');
+}
 const t0 = Date.now();
 files.forEach((f, i) => {
   const jsonFile = path.join(outDir, f.replace(/\//g, '__').replace('.spec.ts', '') + '.json');
