@@ -11,7 +11,8 @@
     "smoke:fast": "npm run smoke:preflight && playwright test tests/Smoke/tier0",
     "smoke:tier1": "playwright test --grep @tier1",
     "smoke:headed": "playwright test --grep @tier2",
-    "smoke:full": "npm run smoke:fast && npm run smoke:tier1 && npm run smoke:headed"
+    "smoke:full": "npm run smoke:fast && npm run smoke:tier1 && npm run smoke:headed",
+    "snapshot": "playwright test tests/Smoke/snapshot --workers=1"
   },
   "keywords": [],
   "author": "",

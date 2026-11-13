@@ -1,0 +1,3771 @@
+{
+ "build": "7.0.3.20349",
+ "takenAt": "2026-11-13T14:15:40.112Z",
+ "baseUrl": "http://vmsrvtst703/innovatum/WebMenu/",
+ "tiles": [
+  "Master Data",
+  "Template Management",
+  "Dictionary Management",
+  "Campaign Manager",
+  "View Label Master",
+  "Label Control",
+  "Lot Management",
+  "Workflow Management",
+  "Label Type Management",
+  "Bulk Master Review",
+  "Master Data Excel Import",
+  "Legacy Batch History",
+  "Attachment Management",
+  "Attachment Upload",
+  "Link Management",
+  "Training Upload",
+  "Version Printing",
+  "Misc. Printing",
+  "Print by order",
+  "Print by lot",
+  "Print by order multi",
+  "Print by lot multi",
+  "Print by order lot",
+  "Server Printing",
+  "DX Printing",
+  "Flex Printing",
+  "Multi Document Printing",
+  "Destination Labeling",
+  "Print Reconciliation",
+  "Single Piece Flow Printing",
+  "Print Prep Testing",
+  "Service and Repair Print",
+  "InnoView",
+  "Print History Inquiry",
+  "MD Job Inquiry",
+  "Job Inquiry",
+  "Template Image Inquiry",
+  "Transmission Inquiry",
+  "Label History Inquiry",
+  "Label Type Excl.",
+  "Printer Control",
+  "Print Entity Management",
+  "User Print Entity Management",
+  "Badge Maintenance",
+  "Password Reset",
+  "Password Change",
+  "Security Management",
+  "Codes Management",
+  "Field Defs Management",
+  "Schemas",
+  "Trading Partner Config.",
+  "Facility Management",
+  "Global Settings Management",
+  "Print Config Management",
+  "Notifications Management",
+  "Notifications Link Management",
+  "Dashboards Management",
+  "Dashboards Link Management",
+  "Printer User Commands",
+  "Prompt Samples",
+  "Alternate Print File Control"
+ ],
+ "modules": {
+  "Master Data": {
+   "status": "opened",
+   "url": "/InnovatumMDM/MasterData/Management?LinkedFromWebmenu",
+   "title": "MasterDataManagement",
+   "headings": [
+    "Advanced Options",
+    "Master Data Management"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Cancel",
+    "Close",
+    "Continue",
+    "Edit Selected Columns",
+    "Reset",
+    "Retrieve Data",
+    "Submit"
+   ],
+   "links": [
+    "Actions",
+    "Advanced Options",
+    "Assign GTIN",
+    "Assign Labels",
+    "Bulk Actions",
+    "Edit Schema",
+    "End Distribution",
+    "Excel Import",
+    "Export to Excel",
+    "Load Search",
+    "Mass Approve",
+    "Mass Retire - Unretire",
+    "Mass Update",
+    "New Record",
+    "Save Search",
+    "Save as New Version",
+    "Trading Partner Upload"
+   ],
+   "menus": [
+    "Assign GTIN",
+    "Assign Labels",
+    "Edit Schema",
+    "End Distribution",
+    "Excel Import",
+    "Export to Excel",
+    "Load Search",
+    "Mass Approve",
+    "Mass Retire - Unretire",
+    "Mass Update",
+    "New Record",
+    "Save Search",
+    "Save as New Version",
+    "Trading Partner Upload"
+   ],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [
+    "Description:",
+    "Effective Only",
+    "Export all columns",
+    "Export selected columns",
+    "Item Number:",
+    "Latest Version Only",
+    "Schema:",
+    "Use MD column captions"
+   ],
+   "inputs": [
+    "button:btAvlToSel",
+    "button:btSelToAvl",
+    "button:btnEditSelCol",
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "checkbox:chbMDColumnCaptions",
+    "checkbox:chkEffective",
+    "checkbox:chkLatest",
+    "radio:ko_unique_1",
+    "radio:ko_unique_2",
+    "text:dvFilters[0].Value",
+    "text:txtNewItemNumber",
+    "text:txtResultLimit",
+    "textarea:txtNewItemDescription"
+   ],
+   "selects": {
+    "ddlSchemas": [
+     "ALtNonITM",
+     "BenQueryIntTest",
+     "Box",
+     "CE",
+     "Characteristics",
+     "CLSchemaData",
+     "Country of Origin",
+     "Destination Templates",
+     "Destinations",
+     "FDAProductCodes",
+     "FP Images",
+     "GMDN",
+     "GTIN Counters",
+     "Heather",
+     "Images",
+     "ISO",
+     "LabelerDuns",
+     "Languages",
+     "LanSchema",
+     "lh-test",
+     "MasonItemSchema3",
+     "Material",
+     "MBExploreSchema1",
+     "MBItemSchema",
+     "MBNonItemSchema",
+     "MBNonItemschema2",
+     "MBSchema-New",
+     "NACert1",
+     "NACert2",
+     "NewNonSchemaName",
+     "RobarMasterData",
+     "SecurityGroupPrintEntity",
+     "SterilizationImages",
+     "StorageAndHandlingType",
+     "UOM",
+     "Vendors",
+     "VI Shares",
+     "VI Stocks",
+     "VI Templates",
+     "Workstations"
+    ],
+    "dvFilters[0].Column": [
+     "Active",
+     "Approve Date",
+     "Approved By",
+     "Description",
+     "Destination Folder",
+     "Document Reference",
+     "ECN",
+     "Effective Begin",
+     "Effective End",
+     "Image Extension",
+     "Image File",
+     "Image Revision",
+     "Image Type",
+     "Item Number",
+     "Send To Workflow",
+     "Version Number",
+     "Workflow ID",
+     "Workflow Preset",
+     "Workflow Status"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank",
+     "In External Column",
+     "Not In External Column"
+    ],
+    "drpApproved": [
+     "Approved",
+     "Unapproved",
+     "Any",
+     "Last Version Is Approved"
+    ],
+    "availableLimitColumns": [
+     "Active",
+     "Approve Date",
+     "Approved By",
+     "Description",
+     "Destination Folder",
+     "Document Reference",
+     "ECN",
+     "Effective Begin",
+     "Effective End",
+     "Image Extension",
+     "Image File",
+     "Image Revision",
+     "Image Type",
+     "Send To Workflow",
+     "Workflow ID",
+     "Workflow Preset",
+     "Workflow Status"
+    ],
+    "selectedLimitColumns": [
+     "Item Number",
+     "Version Number"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Template Management": {
+   "status": "opened",
+   "url": "/InnoPages/TemplateManagement/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Template Management"
+   ],
+   "buttons": [
+    "Cancel",
+    "Close",
+    "Reset",
+    "Retrieve Data",
+    "Submit"
+   ],
+   "links": [
+    "1",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "2",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "3",
+    "30",
+    "31",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "Actions",
+    "Approve Templates",
+    "Bulk Actions",
+    "Create New Template",
+    "Download",
+    "Next",
+    "Prev",
+    "Retire Templates",
+    "Submit to Workflow"
+   ],
+   "menus": [
+    "Approve Templates",
+    "Create New Template",
+    "Download",
+    "Retire Templates",
+    "Submit to Workflow"
+   ],
+   "tabs": [],
+   "labels": [
+    "Browse",
+    "Description",
+    "Description:",
+    "Effective Begin:",
+    "Effective End:",
+    "File Browse:",
+    "Label Type",
+    "Label Type:",
+    "New Template / Label Type",
+    "New Version",
+    "Template Name",
+    "Template Name:",
+    "Template Version:"
+   ],
+   "inputs": [
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "checkbox:",
+    "checkbox:chkEffectiveOnly",
+    "checkbox:chkFilterByDataSource",
+    "checkbox:chkLatestVersion",
+    "file:newFileInput",
+    "file:replaceFileInput",
+    "radio:rbNewTemplate",
+    "radio:rbNewVersion",
+    "text:dvFilters[0].Value",
+    "text:fileDisplay",
+    "text:replaceFileDisplay",
+    "text:txtDescription",
+    "text:txtEditDescription",
+    "text:txtEditEffectiveBegin",
+    "text:txtEditEffectiveEnd",
+    "text:txtResultLimit",
+    "text:txtSaveAsTemplateName",
+    "text:txtTemplateName",
+    "textarea:txtSaveAsDescription"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Approval Date Time",
+     "Approved By",
+     "Description",
+     "Document Owner",
+     "Effective Begin",
+     "Effective End",
+     "Label Type",
+     "Template Name",
+     "Version"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "drpApprove": [
+     "Approved Only",
+     "Unapproved Only",
+     "Approved and Unapproved"
+    ],
+    "dataSourceSelector": [
+     "Select Data Sources"
+    ],
+    "select#4": [
+     "Jan",
+     "Feb",
+     "Mar",
+     "Apr",
+     "May",
+     "Jun",
+     "Jul",
+     "Aug",
+     "Sep",
+     "Oct",
+     "Nov",
+     "Dec"
+    ],
+    "select#5": [
+     "2089",
+     "2090",
+     "2091",
+     "2092",
+     "2093",
+     "2094",
+     "2095",
+     "2096",
+     "2097",
+     "2098",
+     "2099",
+     "2100",
+     "2101",
+     "2102",
+     "2103",
+     "2104",
+     "2105",
+     "2106",
+     "2107",
+     "2108",
+     "2109"
+    ],
+    "ddlLabelType": [
+     "(many options)"
+    ],
+    "ddlSaveAsLabelType": [
+     "(Select)"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Template Name",
+     "Template Version"
+    ],
+    "table#1": [
+     "Su",
+     "Mo",
+     "Tu",
+     "We",
+     "Th",
+     "Fr",
+     "Sa"
+    ]
+   },
+   "childFrames": []
+  },
+  "Dictionary Management": {
+   "status": "opened",
+   "url": "/InnoPages/DictionaryManagement/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Dictionary Management"
+   ],
+   "buttons": [
+    "Reset",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Bulk Actions",
+    "Excel Import",
+    "Export to Excel",
+    "Mass Approve",
+    "Mass Retire/Unretire",
+    "New Entry",
+    "New Version",
+    "View/Edit"
+   ],
+   "menus": [
+    "Excel Import",
+    "Export to Excel",
+    "Mass Approve",
+    "Mass Retire/Unretire",
+    "New Entry",
+    "New Version",
+    "View/Edit"
+   ],
+   "tabs": [],
+   "labels": [
+    "Effective Only",
+    "Latest Only",
+    "Limit Results"
+   ],
+   "inputs": [
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "checkbox:cb_grdJqGrid",
+    "checkbox:chkEffective",
+    "checkbox:chkLatest",
+    "checkbox:jqg_grdJqGrid_{guid}",
+    "text:",
+    "text:dvFilters[0].Value",
+    "text:txtResultLimit"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Approved By",
+     "Approve Date",
+     "Effective Begin",
+     "Effective End",
+     "Language",
+     "Phrase",
+     "Translation",
+     "Version"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "drpApproved": [
+     "Any",
+     "Approved",
+     "Last Version Is Approved",
+     "Unapproved"
+    ],
+    "select#3": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Id",
+     "Category",
+     "Actions",
+     "Phrase",
+     "Language",
+     "Translation",
+     "Version",
+     "Effective Begin",
+     "Effective End",
+     "Approved By",
+     "Approve Date"
+    ]
+   },
+   "childFrames": []
+  },
+  "Campaign Manager": {
+   "status": "opened",
+   "url": "/Innovatum/CampaignManager/",
+   "title": "Campaign Manager",
+   "headings": [
+    "Advanced Options",
+    "Campaign Manager"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Create New Item",
+    "Do Action",
+    "Excel Import",
+    "Load Filters",
+    "Reset",
+    "Retrieve Items",
+    "Save Filters"
+   ],
+   "links": [
+    "Advanced Options"
+   ],
+   "menus": [],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [
+    "Description:",
+    "Item Number:",
+    "Label Type:",
+    "Name:",
+    "New",
+    "Overwrite",
+    "Public",
+    "Version:"
+   ],
+   "inputs": [
+    "button:btLoadFilters",
+    "button:btSaveFilters",
+    "button:btnCreateNew",
+    "button:btnDoAction",
+    "button:btnReset",
+    "button:btnRetrieveItems",
+    "button:btnXLSImport",
+    "button:moveAvailToSelected",
+    "button:moveSelectedToAvail",
+    "checkbox:chkEffective",
+    "checkbox:chkLatest",
+    "checkbox:chkMDLatestOnly",
+    "checkbox:chkPublic",
+    "hidden:PageNumber",
+    "hidden:QueryID",
+    "hidden:RecordsPerPage",
+    "hidden:SelectedItems",
+    "hidden:isNewRecord",
+    "hidden:itemNumber",
+    "hidden:labelType",
+    "hidden:versionNumber",
+    "radio:radExisting",
+    "radio:radNew",
+    "text:Filters[0].Value",
+    "text:ResultLimit",
+    "text:txtFilterSaveName",
+    "text:txtItemNumber",
+    "textarea:txtFilterSaveDescription"
+   ],
+   "selects": {
+    "Filters[0].Column": [
+     "(many options)"
+    ],
+    "Filters[0].Operator": [
+     "Begins With",
+     "Contains",
+     "Does Not Contain",
+     "Does Not Match",
+     "Exactly Matches",
+     "Greater Than",
+     "In",
+     "In External Column",
+     "Is Blank",
+     "Is Not Blank",
+     "Less Than",
+     "Not In",
+     "Not In External File"
+    ],
+    "drpApproved": [
+     "Approved and Unapproved",
+     "Approved Only",
+     "Unapproved Only"
+    ],
+    "fldLabelType": [
+     "Default",
+     "ALt Carton Label",
+     "ALt-LT-DefCaps01",
+     "ALt-LT-DefCaps02",
+     "BB Label Type1",
+     "BensNewLabelType",
+     "Carton Label",
+     "CofA",
+     "CSP",
+     "EA",
+     "HP",
+     "HV Label Type",
+     "MACarton Label",
+     "MAShipper Label",
+     "MBLT1",
+     "NA5",
+     "NALT1",
+     "PAC",
+     "PAC - Serial",
+     "Shipper Label",
+     "Supplemental"
+    ],
+    "selectedSchema": [
+     "FP Images",
+     "Images",
+     "MasonItemSchema3",
+     "MBExploreSchema1",
+     "MBItemSchema",
+     "MBSchema-New",
+     "NACert1",
+     "RobarMasterData"
+    ],
+    "availableLimitColumns": [
+     "(many options)"
+    ],
+    "selectedLimitColumns": [
+     "Item - Item Number",
+     "Item - Label Type",
+     "Item - Version Number"
+    ],
+    "Action": [
+     "Select Action",
+     "Export to XLS",
+     "Import Master",
+     "Item Data Compare",
+     "Item Translation",
+     "Mass Item Approve",
+     "Mass Item Update",
+     "Mass Print",
+     "Retire Items",
+     "Save as New",
+     "Save to PDF",
+     "Send to Workflow"
+    ],
+    "drpExistingSets": [
+     "MBMDFILTER09583",
+     "MBMDFILTER23740",
+     "MBMDFILTER27463",
+     "MBMDFILTER30352",
+     "MBMDFILTER53698",
+     "MBMDFILTER69711",
+     "MBMDFILTER71506",
+     "PWFilter03628475",
+     "PWFilter03663089",
+     "PWFilter03664147",
+     "PWFilter03715482",
+     "PWFilter03757795",
+     "PWFilter03813020",
+     "PWFilter03851814",
+     "PWFilter03890846",
+     "PWFilter03928140",
+     "PWFilter29376481",
+     "PWFilter31190326",
+     "PWFilter34818748",
+     "PWFilter39021593"
+    ],
+    "ddlLabelType": [
+     "(many options)"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "View Label Master": {
+   "status": "opened",
+   "url": "/Innovatum/ItemLabelMasterView/",
+   "title": "View Label Master",
+   "headings": [
+    "View Label Master"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveItems",
+    "text:Filters[0].Value",
+    "text:txtLimitResults"
+   ],
+   "selects": {
+    "Filters[0].Column": [
+     "ItemNumber",
+     "LabelType",
+     "VersionNumber",
+     "ItemApprovedBy",
+     "ItemApprovedDate",
+     "ItemEffectiveDate",
+     "LabelName",
+     "TemplateVersion",
+     "LabelApprovedBy",
+     "LabelApprovedDate",
+     "LabelEffectiveDate",
+     "MasterDataVersion",
+     "MasterDataApprovedBy",
+     "MasterDataApprovalDate",
+     "MasterDataEffectiveDate"
+    ],
+    "Filters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "queryModeDd": [
+     "With Masters",
+     "Without Masters",
+     "All"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Label Control": {
+   "status": "opened",
+   "url": "/InnoPages/LabelControl/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Advanced Options",
+    "Label Control Management"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Load Filter",
+    "Reset",
+    "Retrieve Data",
+    "Save Filter"
+   ],
+   "links": [
+    "Advanced Options",
+    "Assign Control Number",
+    "Bulk Actions",
+    "Change Report",
+    "Compare With Prior",
+    "Export Master",
+    "Link Attachments",
+    "Link to Label Master",
+    "Manage Production Availability",
+    "Mass Update Versions",
+    "Recreate Master",
+    "Redline Compare"
+   ],
+   "menus": [
+    "Assign Control Number",
+    "Change Report",
+    "Compare With Prior",
+    "Export Master",
+    "Link Attachments",
+    "Link to Label Master",
+    "Manage Production Availability",
+    "Mass Update Versions",
+    "Recreate Master",
+    "Redline Compare"
+   ],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [],
+   "inputs": [
+    "button:btAvlToSel",
+    "button:btLoadFilters",
+    "button:btSaveFilters",
+    "button:btSelToAvl",
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "hidden:hidFileName",
+    "text:dvFilters[0].Value",
+    "text:txtResultLimit"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "(many options)"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "drpApproved": [
+     "All (LCN Status)",
+     "Active Only",
+     "Latest Active Only",
+     "Latest Only",
+     "Unreleased Only"
+    ],
+    "drpAttachments": [
+     "Any (Attachments)",
+     "With Attachments",
+     "Without Attachments"
+    ],
+    "drpLabelMaster": [
+     "Any (Label Masters)",
+     "With Label Master",
+     "Without Label Master"
+    ],
+    "drpFieldDefLabelTypes": [
+     "ALt Carton Label",
+     "ALt-LT-DefCaps01",
+     "ALt-LT-DefCaps02",
+     "BB Label Type1",
+     "BensNewLabelType",
+     "CSP",
+     "Carton Label",
+     "CofA",
+     "Default",
+     "EA",
+     "HP",
+     "HV Label Type",
+     "MACarton Label",
+     "MAShipper Label",
+     "MBLT1",
+     "NA5",
+     "NALT1",
+     "PAC",
+     "PAC - Serial",
+     "Shipper Label",
+     "Supplemental"
+    ],
+    "drpMDSchemas": [
+     "FP Images",
+     "Images",
+     "MasonItemSchema3",
+     "MBExploreSchema1",
+     "MBItemSchema",
+     "MBSchema-New",
+     "NACert1",
+     "RobarMasterData"
+    ],
+    "availableLimitColumns": [
+     "(many options)"
+    ],
+    "selectedLimitColumns": [
+     "LC - LCN",
+     "Item - Item Number"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Lot Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Lot_Management",
+   "title": "",
+   "headings": [
+    "Lot Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "OrderNum",
+     "LotNum",
+     "ItemNumber",
+     "PrintEntity",
+     "Expires",
+     "Manufactured",
+     "Reassay",
+     "U1",
+     "U2",
+     "U3",
+     "U4",
+     "U5"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Workflow Management": {
+   "status": "opened",
+   "url": "/InnoPages/WorkflowManagement/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Workflow Management"
+   ],
+   "buttons": [
+    "Remove Filter",
+    "Reset",
+    "Retrieve Workflows"
+   ],
+   "links": [
+    "Actions",
+    "Advanced Options",
+    "Bulk Actions",
+    "Create New Workflow",
+    "Detail",
+    "Edit Workflows",
+    "Export to Excel",
+    "Preset Management",
+    "Report",
+    "Select All",
+    "Select Page",
+    "View And Vote",
+    "View Change Control"
+   ],
+   "menus": [
+    "Create New Workflow",
+    "Edit Workflows",
+    "Export to Excel",
+    "Preset Management",
+    "Report",
+    "View And Vote"
+   ],
+   "tabs": [],
+   "labels": [
+    "Effective Item Only",
+    "Field Definitions",
+    "Find Workflows for User",
+    "Latest Item Version Only",
+    "Limit Results",
+    "Show item open for voting",
+    "User Can Vote",
+    "User Is Included"
+   ],
+   "inputs": [
+    "button:btCancel",
+    "button:btGetWorkflows",
+    "checkbox:chkEffective",
+    "checkbox:chkLatest",
+    "checkbox:chkOpenForVotingOnly",
+    "checkbox:jqg_gridResults_{n}-{n}",
+    "hidden:isSelectAll",
+    "radio:rdCanVote",
+    "radio:rdIncluded",
+    "text:",
+    "text:txtLimit"
+   ],
+   "selects": {
+    "drpUser": [
+     "(many options)"
+    ],
+    "drpApproved": [
+     "All",
+     "Open Only",
+     "Closed Only"
+    ],
+    "drpFieldDefs": [
+     "Default",
+     "ALt Carton Label",
+     "ALt-LT-DefCaps01",
+     "ALt-LT-DefCaps02",
+     "BB Label Type1",
+     "BensNewLabelType",
+     "Carton Label",
+     "CofA",
+     "CSP",
+     "EA",
+     "HP",
+     "HV Label Type",
+     "MACarton Label",
+     "MAShipper Label",
+     "MBLT1",
+     "NA5",
+     "NALT1",
+     "PAC",
+     "PAC - Serial",
+     "Shipper Label",
+     "Supplemental"
+    ],
+    "drpCCIds": [
+     "(Filter by Change Control)",
+     "20240708-0001: test",
+     "20250228-0002: Creating a new ROBAR change control",
+     "20250722-0001: Testing",
+     "20250722-0003: Testing",
+     "20260724-0010: test",
+     "20261104-0001: WMRedline10.1 CC"
+    ],
+    "select#4": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Workflow ID",
+     "CC Number",
+     "Workflow Desc",
+     "Status",
+     "Last User",
+     "Last Status Changed",
+     "Detail"
+    ]
+   },
+   "childFrames": []
+  },
+  "Label Type Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Label_Type_Management",
+   "title": "",
+   "headings": [
+    "Label Type Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "LabelType",
+     "FileExtension",
+     "Description",
+     "FilePurpose"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Bulk Master Review": {
+   "status": "opened",
+   "url": "/InnoPages//LabelMasterReview/LabelMasterReview?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Advanced Options",
+    "Bulk Master Review"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Reset",
+    "Retrieve Data",
+    "Review"
+   ],
+   "links": [
+    "Advanced Options"
+   ],
+   "menus": [],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [],
+   "inputs": [
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "button:btnReview",
+    "hidden:sessionId",
+    "number:txtResultLimit"
+   ],
+   "selects": {
+    "availableLimitColumns": [
+     "AttachLCN",
+     "Aux1",
+     "Aux2",
+     "Aux3",
+     "Aux4",
+     "CreateNewMaster",
+     "DifferenceLevel",
+     "DoNotProcessAfterDateTime",
+     "EntryAddedDate",
+     "LabelName",
+     "MasterVersion",
+     "ProcessAfterDateTime",
+     "ProcessStatusTimestamp",
+     "RedlineCompare",
+     "SendtoBackup",
+     "TemplateVersion"
+    ],
+    "allColumns": [
+     "ItemNumber",
+     "ItemVersion",
+     "LabelType",
+     "LabelName",
+     "TemplateVersion",
+     "MasterVersion",
+     "EntryAddedDate",
+     "CreateNewMaster",
+     "SendtoBackup",
+     "AttachLCN",
+     "RedlineCompare",
+     "DifferenceLevel",
+     "ReviewStatus",
+     "ProcessStatus",
+     "ProcessStatusTimestamp",
+     "ProcessAfterDateTime",
+     "DoNotProcessAfterDateTime",
+     "Aux1",
+     "Aux2",
+     "Aux3",
+     "Aux4"
+    ],
+    "selectedLimitColumns": [
+     "ItemNumber",
+     "LabelType",
+     "ItemVersion",
+     "ReviewStatus",
+     "ProcessStatus"
+    ],
+    "sortBySelect": [
+     "ItemNumber",
+     "LabelType",
+     "ItemVersion",
+     "ReviewStatus",
+     "ProcessStatus"
+    ],
+    "sortDirectionSelect": [
+     "Ascending",
+     "Descending"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Master Data Excel Import": {
+   "status": "opened",
+   "url": "/InnoPages/MasterDataExcelImport/JobSubmission?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Master Data Excel Import"
+   ],
+   "buttons": [
+    "Submit Job"
+   ],
+   "links": [
+    "Download Template",
+    "Master Data Management"
+   ],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Apply Schema Data Defaults",
+    "Browse",
+    "Comment:",
+    "File:",
+    "Password:",
+    "Reason:",
+    "Schema:",
+    "Sheet:",
+    "User Id:",
+    "Validation Rule Override"
+   ],
+   "inputs": [
+    "checkbox:applySchemaDataDefaults",
+    "checkbox:validationRuleOverride",
+    "file:spreadsheetFile",
+    "hidden:fromMD",
+    "hidden:isNonItemSchema",
+    "hidden:jobId",
+    "hidden:mdWebRoot",
+    "password:sigPassword",
+    "text:fileDisplay",
+    "text:jobDescription",
+    "text:sigComments",
+    "text:sigUser"
+   ],
+   "selects": {
+    "ddlSchemas": [
+     "(many options)"
+    ],
+    "ddlSheets": [
+     "(Select a sheet)"
+    ],
+    "sigReason": [
+     "(Select Reason Code)",
+     "General Approval",
+     "QA Approval",
+     "RA Approval",
+     "Ready for GUDID"
+    ]
+   },
+   "tables": {},
+   "childFrames": [
+    {
+     "url": "/InnoPages/MasterDataExcelImport/JobSubmission?LinkedFromWebmenu",
+     "title": "",
+     "headings": [
+      "Master Data Excel Import"
+     ],
+     "buttons": [
+      "Submit Job"
+     ],
+     "links": [
+      "Download Template",
+      "Master Data Management"
+     ],
+     "menus": [],
+     "tabs": [],
+     "labels": [
+      "Apply Schema Data Defaults",
+      "Browse",
+      "Comment:",
+      "File:",
+      "Password:",
+      "Reason:",
+      "Schema:",
+      "Sheet:",
+      "User Id:",
+      "Validation Rule Override"
+     ],
+     "inputs": [
+      "checkbox:applySchemaDataDefaults",
+      "checkbox:validationRuleOverride",
+      "file:spreadsheetFile",
+      "hidden:fromMD",
+      "hidden:isNonItemSchema",
+      "hidden:jobId",
+      "hidden:mdWebRoot",
+      "password:sigPassword",
+      "text:fileDisplay",
+      "text:jobDescription",
+      "text:sigComments",
+      "text:sigUser"
+     ],
+     "selects": {
+      "ddlSchemas": [
+       "(many options)"
+      ],
+      "ddlSheets": [
+       "(Select a sheet)"
+      ],
+      "sigReason": [
+       "(Select Reason Code)",
+       "General Approval",
+       "QA Approval",
+       "RA Approval",
+       "Ready for GUDID"
+      ]
+     },
+     "tables": {}
+    }
+   ]
+  },
+  "Legacy Batch History": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Legacy_Batch_History",
+   "title": "",
+   "headings": [
+    "Legacy Batch History"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:resultLimitTxt"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Attachment Management": {
+   "status": "opened",
+   "url": "/InnoPages/LinkAttachmentManagement/AttachmentManagement?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Advanced Options",
+    "Attachment Management"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Link",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Advanced Options",
+    "Bulk Actions",
+    "Update Active Status"
+   ],
+   "menus": [
+    "Update Active Status"
+   ],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [],
+   "inputs": [
+    "button:btAvlToSel",
+    "button:btLink",
+    "button:btSelToAvl",
+    "button:btnRetrieveData",
+    "hidden:linkIds",
+    "hidden:linkType",
+    "text:dvFilters[0].Value",
+    "text:txtResultLimit"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "dvFilters[0].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[1].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[1].Operator": [
+     "Exactly Matches"
+    ],
+    "dvFilters[1].Value": [
+     "Yes",
+     "No"
+    ],
+    "dvFilters[1].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[2].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[2].Operator": [
+     "Exactly Matches"
+    ],
+    "dvFilters[2].Value": [
+     "Yes",
+     "No"
+    ],
+    "dvFilters[2].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[3].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[3].Operator": [
+     "Exactly Matches"
+    ],
+    "dvFilters[3].Value": [
+     "Yes",
+     "No"
+    ],
+    "dvFilters[3].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[4].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[4].Operator": [
+     "Exactly Matches"
+    ],
+    "dvFilters[4].Value": [
+     "Yes",
+     "No"
+    ],
+    "dvFilters[4].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[5].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Name",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "dvFilters[5].Operator": [
+     "Exactly Matches"
+    ],
+    "dvFilters[5].Value": [
+     "Yes",
+     "No"
+    ],
+    "availableLimitColumns": [],
+    "selectedLimitColumns": [
+     "File Name",
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Id",
+     "File Purpose",
+     "Last User",
+     "Originally Uploaded By",
+     "Param 1",
+     "Param 2",
+     "Sequence",
+     "Uploaded On"
+    ],
+    "drpActive": [
+     "Active",
+     "Inactive",
+     "Active and Inactive"
+    ]
+   },
+   "tables": {},
+   "childFrames": [
+    {
+     "url": "/InnoPages/LinkAttachmentManagement/AttachmentManagement?LinkedFromWebmenu",
+     "title": "",
+     "headings": [
+      "Advanced Options",
+      "Attachment Management"
+     ],
+     "buttons": [
+      "<<",
+      ">>",
+      "Link",
+      "Retrieve Data"
+     ],
+     "links": [
+      "Advanced Options",
+      "Bulk Actions",
+      "Update Active Status"
+     ],
+     "menus": [
+      "Update Active Status"
+     ],
+     "tabs": [
+      "Advanced Options"
+     ],
+     "labels": [],
+     "inputs": [
+      "button:btAvlToSel",
+      "button:btLink",
+      "button:btSelToAvl",
+      "button:btnRetrieveData",
+      "hidden:linkIds",
+      "hidden:linkType",
+      "text:dvFilters[0].Value",
+      "text:txtResultLimit"
+     ],
+     "selects": {
+      "dvFilters[0].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[0].Operator": [
+       "Contains",
+       "Does Not Match",
+       "Does Not Contain",
+       "In",
+       "Not In",
+       "Greater Than",
+       "Less Than",
+       "Exactly Matches",
+       "Is Blank",
+       "Is Not Blank"
+      ],
+      "dvFilters[0].AndOr": [
+       "And",
+       "Or"
+      ],
+      "dvFilters[1].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[1].Operator": [
+       "Exactly Matches"
+      ],
+      "dvFilters[1].Value": [
+       "Yes",
+       "No"
+      ],
+      "dvFilters[1].AndOr": [
+       "And",
+       "Or"
+      ],
+      "dvFilters[2].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[2].Operator": [
+       "Exactly Matches"
+      ],
+      "dvFilters[2].Value": [
+       "Yes",
+       "No"
+      ],
+      "dvFilters[2].AndOr": [
+       "And",
+       "Or"
+      ],
+      "dvFilters[3].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[3].Operator": [
+       "Exactly Matches"
+      ],
+      "dvFilters[3].Value": [
+       "Yes",
+       "No"
+      ],
+      "dvFilters[3].AndOr": [
+       "And",
+       "Or"
+      ],
+      "dvFilters[4].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[4].Operator": [
+       "Exactly Matches"
+      ],
+      "dvFilters[4].Value": [
+       "Yes",
+       "No"
+      ],
+      "dvFilters[4].AndOr": [
+       "And",
+       "Or"
+      ],
+      "dvFilters[5].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Name",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "dvFilters[5].Operator": [
+       "Exactly Matches"
+      ],
+      "dvFilters[5].Value": [
+       "Yes",
+       "No"
+      ],
+      "availableLimitColumns": [],
+      "selectedLimitColumns": [
+       "File Name",
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Id",
+       "File Purpose",
+       "Last User",
+       "Originally Uploaded By",
+       "Param 1",
+       "Param 2",
+       "Sequence",
+       "Uploaded On"
+      ],
+      "drpActive": [
+       "Active",
+       "Inactive",
+       "Active and Inactive"
+      ]
+     },
+     "tables": {}
+    }
+   ]
+  },
+  "Attachment Upload": {
+   "status": "opened",
+   "url": "/InnoPages/LinkAttachmentManagement/UploadAttachments?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Attachment Upload"
+   ],
+   "buttons": [
+    "Reset",
+    "Upload Attachments"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Browse..."
+   ],
+   "inputs": [
+    "checkbox:chkSelectAll",
+    "file:fileToUpload0",
+    "hidden:jsonString",
+    "text:attachmentGroup"
+   ],
+   "selects": {},
+   "tables": {
+    "selectedFiles": [
+     "File Purpose",
+     "File Name",
+     "Description",
+     "Param1",
+     "Param2"
+    ]
+   },
+   "childFrames": []
+  },
+  "Link Management": {
+   "status": "opened",
+   "url": "/InnoPages/LinkAttachmentManagement/LinkManagement?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Advanced Options",
+    "Link Management"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Detach",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Advanced Options"
+   ],
+   "menus": [],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [],
+   "inputs": [
+    "button:btAvlToSel",
+    "button:btSelToAvl",
+    "button:btnDetach",
+    "button:btnRetrieveData",
+    "checkbox:chkLatestItemVersion",
+    "checkbox:chkLatestTemplateVersion",
+    "checkbox:includeItems",
+    "checkbox:includeLCNs",
+    "checkbox:includeTemplates",
+    "text:dvFilters[0].Value",
+    "text:txtResultLimit"
+   ],
+   "selects": {
+    "ddlLinkType": [
+     "Associate Attachments",
+     "By LCN",
+     "By Item",
+     "By Item Version",
+     "By Template",
+     "By Template Version"
+    ],
+    "dvFilters[0].Column": [
+     "Active",
+     "Attachment Group",
+     "Description",
+     "File Extension",
+     "File Name",
+     "File Purpose",
+     "Item Number",
+     "Item Version",
+     "LCN",
+     "Label Type",
+     "Master Data Version",
+     "Originally Uploaded By",
+     "Param1",
+     "Param2",
+     "Template Name",
+     "Template Version",
+     "Uploaded On"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "availableLimitColumns": [
+     "Active",
+     "Description",
+     "File Extension",
+     "File Purpose",
+     "Item Version",
+     "Label Type",
+     "Master Data Version",
+     "Originally Uploaded By",
+     "Param1",
+     "Param2",
+     "Template Version",
+     "Uploaded On"
+    ],
+    "selectedLimitColumns": [
+     "LCN",
+     "Item Number",
+     "Template Name",
+     "File Name",
+     "Attachment Group"
+    ],
+    "drpActive": [
+     "Active",
+     "Inactive",
+     "Active and Inactive"
+    ]
+   },
+   "tables": {},
+   "childFrames": [
+    {
+     "url": "/InnoPages/LinkAttachmentManagement/LinkManagement?LinkedFromWebmenu",
+     "title": "",
+     "headings": [
+      "Advanced Options",
+      "Link Management"
+     ],
+     "buttons": [
+      "<<",
+      ">>",
+      "Detach",
+      "Retrieve Data"
+     ],
+     "links": [
+      "Advanced Options"
+     ],
+     "menus": [],
+     "tabs": [
+      "Advanced Options"
+     ],
+     "labels": [],
+     "inputs": [
+      "button:btAvlToSel",
+      "button:btSelToAvl",
+      "button:btnDetach",
+      "button:btnRetrieveData",
+      "checkbox:chkLatestItemVersion",
+      "checkbox:chkLatestTemplateVersion",
+      "checkbox:includeItems",
+      "checkbox:includeLCNs",
+      "checkbox:includeTemplates",
+      "text:dvFilters[0].Value",
+      "text:txtResultLimit"
+     ],
+     "selects": {
+      "ddlLinkType": [
+       "Associate Attachments",
+       "By LCN",
+       "By Item",
+       "By Item Version",
+       "By Template",
+       "By Template Version"
+      ],
+      "dvFilters[0].Column": [
+       "Active",
+       "Attachment Group",
+       "Description",
+       "File Extension",
+       "File Name",
+       "File Purpose",
+       "Item Number",
+       "Item Version",
+       "LCN",
+       "Label Type",
+       "Master Data Version",
+       "Originally Uploaded By",
+       "Param1",
+       "Param2",
+       "Template Name",
+       "Template Version",
+       "Uploaded On"
+      ],
+      "dvFilters[0].Operator": [
+       "Contains",
+       "Does Not Match",
+       "Does Not Contain",
+       "In",
+       "Not In",
+       "Greater Than",
+       "Less Than",
+       "Exactly Matches",
+       "Is Blank",
+       "Is Not Blank"
+      ],
+      "availableLimitColumns": [
+       "Active",
+       "Description",
+       "File Extension",
+       "File Purpose",
+       "Item Version",
+       "Label Type",
+       "Master Data Version",
+       "Originally Uploaded By",
+       "Param1",
+       "Param2",
+       "Template Version",
+       "Uploaded On"
+      ],
+      "selectedLimitColumns": [
+       "LCN",
+       "Item Number",
+       "Template Name",
+       "File Name",
+       "Attachment Group"
+      ],
+      "drpActive": [
+       "Active",
+       "Inactive",
+       "Active and Inactive"
+      ]
+     },
+     "tables": {}
+    }
+   ]
+  },
+  "Training Upload": {
+   "status": "opened",
+   "url": "/InnoPages/TrainingUpload/Index?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Training Upload"
+   ],
+   "buttons": [
+    "Upload"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Browse"
+   ],
+   "inputs": [
+    "file:filesToUpload",
+    "text:"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "InnoView": {
+   "status": "opened",
+   "url": "/Innovatum/innoview/Screens/MainMenu.aspx",
+   "title": "",
+   "headings": [
+    "InnoView Main Menu"
+   ],
+   "buttons": [],
+   "links": [
+    "21 CFR Part 11 Reporting",
+    "Change Control",
+    "Config Settings",
+    "Database",
+    "Destination Labeling",
+    "Items",
+    "Label Control",
+    "Main Menu",
+    "Print History",
+    "Sentinel",
+    "Templates",
+    "Translations",
+    "User Print Entity",
+    "Workflow"
+   ],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "hidden:__EVENTARGUMENT",
+    "hidden:__EVENTTARGET",
+    "hidden:__EVENTVALIDATION",
+    "hidden:__VIEWSTATE",
+    "hidden:__VIEWSTATEENCRYPTED",
+    "hidden:__VIEWSTATEGENERATOR",
+    "image:ctl00$bodyContent$ctl02",
+    "image:ctl00$bodyContent$ctl05",
+    "image:ctl00$bodyContent$ctl08",
+    "image:ctl00$bodyContent$ctl11",
+    "image:ctl00$bodyContent$ctl14",
+    "image:ctl00$bodyContent$ctl17",
+    "image:ctl00$bodyContent$ctl20",
+    "image:ctl00$bodyContent$ctl23",
+    "image:ctl00$bodyContent$ctl26",
+    "image:ctl00$bodyContent$ctl29",
+    "image:ctl00$bodyContent$ctl32",
+    "image:ctl00$bodyContent$ctl35",
+    "image:ctl00$bodyContent$ctl38"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Print History Inquiry": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Print_History_Inquiry",
+   "title": "",
+   "headings": [
+    "Print History Inquiry"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "PrintEntity",
+     "OrderNum",
+     "Lot",
+     "ItemNumber",
+     "LabelType",
+     "UserID",
+     "ExpDate",
+     "MfgDate",
+     "BatchQty",
+     "Copies",
+     "SerialNum",
+     "Printer",
+     "PrintDate",
+     "PrintStatus",
+     "PrintTime",
+     "PrintWorkflowName",
+     "Reprint",
+     "LCN",
+     "iVersion",
+     "ReprintReasonCode",
+     "ReprintComment",
+     "LabelName",
+     "lVersion",
+     "MasterDataItemVersion",
+     "Lu1",
+     "Lu2",
+     "Lu3",
+     "Lu4",
+     "Lu5",
+     "Qty",
+     "Workstation",
+     "TimeZone",
+     "FullName",
+     "ReaDate",
+     "PrinterModel",
+     "PrintID",
+     "FileName"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "MD Job Inquiry": {
+   "status": "opened",
+   "url": "/InnovatumMDM/MasterData/JobInquiry?LinkedFromWebmenu",
+   "title": "MasterDataJobInquiry",
+   "headings": [
+    "Master Data Job Inquiry"
+   ],
+   "buttons": [
+    "Retrieve Job Data"
+   ],
+   "links": [
+    "View Detail"
+   ],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "text:",
+    "text:dvFilters[0].Value"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Display Id",
+     "Job Description",
+     "Submitting User",
+     "Status",
+     "Date Inserted",
+     "Date Completed",
+     "% Complete",
+     "Bulk Action",
+     "Item Number",
+     "Item Version",
+     "Item Description",
+     "Item Approved By",
+     "Item Approval Date"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "select#2": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Job Id",
+     "Display Id",
+     "Action",
+     "% Comp.",
+     "Status",
+     "User",
+     "Job Description",
+     "Date Inserted",
+     "Date Completed",
+     "Job Detail"
+    ]
+   },
+   "childFrames": []
+  },
+  "Job Inquiry": {
+   "status": "opened",
+   "url": "/Innovatum/CampaignManager/JobInquiry",
+   "title": "",
+   "headings": [
+    "Job Inquiry"
+   ],
+   "buttons": [
+    "Retrieve Jobs"
+   ],
+   "links": [
+    "View Detail"
+   ],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveItems",
+    "text:",
+    "text:Filters[0].Value",
+    "text:txtLimitResults"
+   ],
+   "selects": {
+    "Filters[0].Column": [
+     "Display ID",
+     "Description",
+     "Submitting User",
+     "Status",
+     "Date Inserted",
+     "Date Completed",
+     "% Complete",
+     "Action ID",
+     "Item Number"
+    ],
+    "Filters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "select#2": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "ID",
+     "Link",
+     "ActionType",
+     "ActionUrl",
+     "DisplayID",
+     "Description",
+     "SubmittingUser",
+     "Status",
+     "DateInserted",
+     "DateCompleted",
+     "PercentComplete",
+     "PageName",
+     "ActionID"
+    ]
+   },
+   "childFrames": []
+  },
+  "Template Image Inquiry": {
+   "status": "opened",
+   "url": "/Innovatum/TemplateImageInquiry/",
+   "title": "Template Image View",
+   "headings": [
+    "Template Image View"
+   ],
+   "buttons": [
+    "Get Template Images"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Latest Version Only",
+    "Thumbnail Size"
+   ],
+   "inputs": [
+    "button:btnGetTemplateImages",
+    "checkbox:chkLatest",
+    "text:Filters[0].Value"
+   ],
+   "selects": {
+    "Filters[0].Column": [
+     "File Name",
+     "Version Number",
+     "Last Update"
+    ],
+    "Filters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches"
+    ],
+    "drpThumbnailSize": [
+     "Small",
+     "Medium",
+     "Large"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Transmission Inquiry": {
+   "status": "opened",
+   "url": "/InnovatumMDM/COM/TransmissionInquiry?LinkedFromWebmenu",
+   "title": "TransmissionInquiry",
+   "headings": [
+    "Transmission Inquiry"
+   ],
+   "buttons": [
+    "Close",
+    "Reset",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Needs Retransmission",
+    "Previous Page",
+    "Trading Partner Upload"
+   ],
+   "menus": [
+    "Needs Retransmission",
+    "Trading Partner Upload"
+   ],
+   "tabs": [],
+   "labels": [
+    "Latest Transmissions Only"
+   ],
+   "inputs": [
+    "checkbox:"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Label History Inquiry": {
+   "status": "opened",
+   "url": "/InnoPages/LabelHistory/LabelHistoryInquiry?PageMode&sp",
+   "title": "",
+   "headings": [
+    "Label History Inquiry"
+   ],
+   "buttons": [
+    "Submit"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Barcode Scan:",
+    "Item Number:",
+    "Lot Number:"
+   ],
+   "inputs": [
+    "button:btnRetrieveLabelHistory",
+    "text:barcode",
+    "text:itemnumber",
+    "text:lotnumber"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Label Type Excl.": {
+   "status": "opened",
+   "url": "/Innovatum/ROBAR/management/LabelTypeExclusion/ExclusionEdit.aspx",
+   "title": "Label Type Exclusions Maintenance",
+   "headings": [],
+   "buttons": [
+    "Add"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "hidden:__EVENTARGUMENT",
+    "hidden:__EVENTTARGET",
+    "hidden:__EVENTVALIDATION",
+    "hidden:__LASTFOCUS",
+    "hidden:__VIEWSTATE",
+    "hidden:__VIEWSTATEENCRYPTED",
+    "hidden:__VIEWSTATEGENERATOR",
+    "hidden:ctl00_ctl00_cpMainBody_hidSubSessionID",
+    "submit:ctl00_ctl00_cpMainBody_cpInnerBody_btnAddWorkstation",
+    "text:ctl00_ctl00_cpMainBody_cpInnerBody_txtboxAddWorkstation"
+   ],
+   "selects": {
+    "ctl00_ctl00_cpMainBody_cpInnerBody_lbWorkstations": [
+     "LAN-PC",
+     "MASON-LAPTOP",
+     "TAMMY-SAMSUNG",
+     "VMSRVTST703"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Printer Control": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Printer_Control_Maintenance",
+   "title": "",
+   "headings": [
+    "Printer Control Maintenance"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Template",
+     "Item",
+     "Workstation",
+     "Printer",
+     "SummaryTemplate",
+     "SummaryVerification",
+     "PostAction"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Print Entity Management": {
+   "status": "opened",
+   "url": "/InnoPages/PrintEntity/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Print Entity Management"
+   ],
+   "buttons": [
+    "Reset",
+    "Retrieve Data"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "text:"
+   ],
+   "selects": {
+    "select#0": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Id",
+     "Print Entity",
+     "Print Entity Description",
+     "Active"
+    ]
+   },
+   "childFrames": []
+  },
+  "User Print Entity Management": {
+   "status": "opened",
+   "url": "/InnoPages/PrintEntity/UserManagement?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "User Print Entity Management"
+   ],
+   "buttons": [
+    "Reset",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Bulk Actions",
+    "Print Entity Management",
+    "User Print Entity Update"
+   ],
+   "menus": [
+    "User Print Entity Update"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "checkbox:cb_grdJqGrid",
+    "checkbox:jqg_grdJqGrid_MBUser11",
+    "checkbox:jqg_grdJqGrid_MBUser12",
+    "text:",
+    "text:dvFilters[0].Value"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "User ID",
+     "Full Name",
+     "Security Group",
+     "Active User",
+     "Facility",
+     "Print Entity"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "select#2": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "User ID",
+     "Full Name",
+     "Security Group",
+     "Active User",
+     "Facility",
+     "Print Entity"
+    ]
+   },
+   "childFrames": []
+  },
+  "Badge Maintenance": {
+   "status": "opened",
+   "url": "/Innovatum/UserBadgeMaintenance/",
+   "title": "User Badge Maintenance",
+   "headings": [
+    "User Badge Maintenance"
+   ],
+   "buttons": [
+    "Get User Badges"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveBadges",
+    "text:Filters[0].Value"
+   ],
+   "selects": {
+    "Filters[0].Column": [
+     "UserID",
+     "BadgeID",
+     "RequireAuthentication",
+     "AuthenticationValidMinutes",
+     "LastAuthentication"
+    ],
+    "Filters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Password Reset": {
+   "status": "opened",
+   "url": "/Innovatum/PasswordReset/",
+   "title": "Password Reset",
+   "headings": [
+    "Password Reset"
+   ],
+   "buttons": [
+    "Submit"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [
+    "Comment",
+    "Confirm Password:",
+    "New Password:",
+    "Password",
+    "ReasonCode",
+    "Require user to change password on login",
+    "Username"
+   ],
+   "inputs": [
+    "checkbox:chkTemporary",
+    "hidden:minLength",
+    "hidden:needsLetters",
+    "hidden:needsNumbers",
+    "hidden:nontemporary",
+    "password:SignatureModel_Password",
+    "password:txtConfirmPassword",
+    "password:txtNewPassword",
+    "radio:radReset",
+    "radio:radUnlock",
+    "submit:btnSubmit",
+    "text:SignatureModel_Comment",
+    "text:SignatureModel_UserName"
+   ],
+   "selects": {
+    "drpUserReset": [
+     "(many options)"
+    ],
+    "drpUserUnlock": [
+     "(Select user)",
+     "CLPWU087027 - Locked",
+     "CLPWU456642 - Locked",
+     "CLPWU578020 - Locked",
+     "CLPWU681649 - Locked",
+     "CLPWU685458 - Locked",
+     "CLPWU734437 - Locked",
+     "CLPWU809596 - Locked",
+     "CLPWU910510 - Locked",
+     "CLSMR212695 - Locked",
+     "CLSMR348872 - Locked",
+     "CLSMR432453 - Locked",
+     "CLSMR649794 - Locked",
+     "CLSMR832858 - Locked",
+     "Frank - Locked",
+     "MBPWB_181624 - Locked",
+     "MBPWD_031461 - Locked",
+     "MBPWL1_464530 - Locked",
+     "MBPWN7_774253 - Locked",
+     "MBPWN8_464530 - Locked",
+     "MBPWR_774253 - Locked",
+     "MBPWU524195 - Locked",
+     "MBPWU614624 - Locked",
+     "MBPWU701200 - Locked",
+     "MBPWV_240465 - Locked",
+     "MBSMR188258 - Locked",
+     "MBSMR624535 - Locked",
+     "MBSMR903862 - Locked",
+     "MBTestUser1 - Locked",
+     "tmr44 - Locked",
+     "UPI-TC-User03 - Locked",
+     "UPI-TC-User05 - Locked",
+     "UPI-TC-User06 - Locked"
+    ],
+    "SignatureModel_ReasonCode": [
+     "QA Review"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Password Change": {
+   "status": "opened",
+   "url": "/Innovatum/WebMenu/ChangePwd.aspx",
+   "title": "",
+   "headings": [],
+   "buttons": [
+    "Close",
+    "Continue",
+    "Submit"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "hidden:__EVENTARGUMENT",
+    "hidden:__EVENTTARGET",
+    "hidden:__EVENTVALIDATION",
+    "hidden:__VIEWSTATE",
+    "hidden:__VIEWSTATEENCRYPTED",
+    "hidden:__VIEWSTATEGENERATOR",
+    "password:ctl00_cphMainContent_Txt_Confirm",
+    "password:ctl00_cphMainContent_Txt_CurrentPwd",
+    "password:ctl00_cphMainContent_Txt_NewPwd",
+    "submit:ctl00_cphMainContent_Button1",
+    "text:ctl00_cphMainContent_Txt_User"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Security Management": {
+   "status": "opened",
+   "url": "/InnoPages/Security/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Security Management"
+   ],
+   "buttons": [
+    "Apply Filter"
+   ],
+   "links": [],
+   "menus": [],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnApplyGroupFilter",
+    "button:btnApplyUserFilter",
+    "checkbox:",
+    "checkbox:cbActiveUsersOnly",
+    "checkbox:cbSelectAll",
+    "checkbox:{guid}",
+    "radio:rbAuth",
+    "radio:rbBoth",
+    "radio:rbGroups",
+    "radio:rbUnauth",
+    "radio:rbUsers",
+    "text:groupFilterInput",
+    "text:processFilterInput",
+    "text:userFilterInput"
+   ],
+   "selects": {
+    "userFilterColumnSelect": [
+     "UserID",
+     "Full Name",
+     "Group"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "UserID",
+     "Full Name",
+     "Group"
+    ],
+    "table#2": [
+     "Group",
+     "Description"
+    ],
+    "table#4": [
+     "Process",
+     "Auth"
+    ]
+   },
+   "childFrames": []
+  },
+  "Codes Management": {
+   "status": "opened",
+   "url": "/InnoPages/Codes/Management?LinkedFromWebmenu",
+   "title": "",
+   "headings": [
+    "Codes Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Excel Import"
+   ],
+   "menus": [
+    "Excel Import"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "text:"
+   ],
+   "selects": {
+    "select#0": [
+     "10",
+     "20",
+     "30"
+    ]
+   },
+   "tables": {
+    "table#0": [
+     "Id",
+     "Code Type",
+     "Code",
+     "Description",
+     "Active"
+    ]
+   },
+   "childFrames": []
+  },
+  "Field Defs Management": {
+   "status": "opened",
+   "url": "/InnoPages/FieldDefsManagement/Management?LinkedFromWebMenu",
+   "title": "",
+   "headings": [
+    "Advanced Options",
+    "Field Definitions Management"
+   ],
+   "buttons": [
+    "<<",
+    ">>",
+    "Cancel",
+    "Close",
+    "Create",
+    "Reset",
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Advanced Options",
+    "Create New Field Definitions",
+    "Item Screen Layout"
+   ],
+   "menus": [
+    "Create New Field Definitions",
+    "Item Screen Layout"
+   ],
+   "tabs": [
+    "Advanced Options"
+   ],
+   "labels": [
+    "Label Type:"
+   ],
+   "inputs": [
+    "button:btAvlToSel",
+    "button:btSelToAvl",
+    "button:btnReset",
+    "button:btnRetrieveData",
+    "text:txtResultLimit"
+   ],
+   "selects": {
+    "ddlLabelTypes": [
+     "(Default)",
+     "ALt Carton Label",
+     "ALt-LT-DefCaps01",
+     "ALt-LT-DefCaps02",
+     "BB Label Type1",
+     "BensNewLabelType",
+     "CSP",
+     "Carton Label",
+     "CofA",
+     "EA",
+     "HP",
+     "HV Label Type",
+     "MACarton Label",
+     "MAShipper Label",
+     "MBLT1",
+     "NA5",
+     "NALT1",
+     "PAC",
+     "PAC - Serial",
+     "Shipper Label",
+     "Supplemental"
+    ],
+    "dvFilters[0].Column": [
+     "Caption",
+     "Column Name",
+     "Default Caption",
+     "File/Form",
+     "Sharename",
+     "Tab Name"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "dvFilters[0].Value": [
+     "(many options)"
+    ],
+    "availableLimitColumns": [
+     "Column Name",
+     "Field Type",
+     "Tab Name",
+     "Sample Data",
+     "Drop Down",
+     "Read Only",
+     "Drop Down Language",
+     "Validate",
+     "Translate",
+     "Decimals",
+     "Fixed Length",
+     "Column"
+    ],
+    "selectedLimitColumns": [
+     "Label Type",
+     "File/Form",
+     "Caption",
+     "Default Caption",
+     "Sharename"
+    ],
+    "ddlNonFdsLabelTypes": [
+     "(many options)"
+    ],
+    "ddlOrigLabelTypes": [
+     "(Default)",
+     "ALt Carton Label",
+     "ALt-LT-DefCaps01",
+     "ALt-LT-DefCaps02",
+     "BB Label Type1",
+     "BensNewLabelType",
+     "CSP",
+     "Carton Label",
+     "CofA",
+     "EA",
+     "HP",
+     "HV Label Type",
+     "MACarton Label",
+     "MAShipper Label",
+     "MBLT1",
+     "NA5",
+     "NALT1",
+     "PAC",
+     "PAC - Serial",
+     "Shipper Label",
+     "Supplemental"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Schemas": {
+   "status": "opened",
+   "url": "/InnovatumMDM/Schemas/Edit?LinkedFromWebmenu",
+   "title": "Schema Edit",
+   "headings": [
+    "Schema Detail"
+   ],
+   "buttons": [
+    "Close",
+    "Submit"
+   ],
+   "links": [
+    "Actions",
+    "Export Schema",
+    "New Schema"
+   ],
+   "menus": [
+    "Export Schema",
+    "New Schema"
+   ],
+   "tabs": [],
+   "labels": [
+    "Schema"
+   ],
+   "inputs": [
+    "checkbox:",
+    "text:"
+   ],
+   "selects": {
+    "schemaSelector": [
+     "(many options)"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Trading Partner Config.": {
+   "status": "opened",
+   "url": "/InnovatumMDM/COM/TradingPartnerConfiguration?LinkedFromWebmenu",
+   "title": "TradingPartnerConfiguration",
+   "headings": [
+    "Trading Partner Configuration"
+   ],
+   "buttons": [
+    "Add Field",
+    "Close",
+    "Save"
+   ],
+   "links": [
+    "Configuration",
+    "Field Automation",
+    "View/Edit"
+   ],
+   "menus": [
+    "Configuration",
+    "Field Automation"
+   ],
+   "tabs": [
+    "Configuration",
+    "Field Automation"
+   ],
+   "labels": [
+    "Schema",
+    "Schema Field"
+   ],
+   "inputs": [
+    "checkbox:",
+    "text:"
+   ],
+   "selects": {
+    "select#0": [
+     "GUDID"
+    ],
+    "select#1": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#2": [
+     "(many options)"
+    ],
+    "select#3": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#4": [
+     "(many options)"
+    ],
+    "select#5": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#6": [
+     "(many options)"
+    ],
+    "select#7": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#8": [
+     "(many options)"
+    ],
+    "select#9": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#10": [
+     "(many options)"
+    ],
+    "select#11": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#12": [
+     "(many options)"
+    ],
+    "select#13": [
+     "Select...",
+     "RobarMasterData",
+     "NACert1",
+     "MBSchema-New",
+     "MBItemSchema",
+     "MasonItemSchema3",
+     "FP Images",
+     "Images",
+     "MBExploreSchema1"
+    ],
+    "select#14": [
+     "(many options)"
+    ],
+    "select#15": [
+     "Accepted Date Field",
+     "Not Uploadable Flag Field",
+     "Persistent ID Field",
+     "Publish Date Field",
+     "Sequence Field",
+     "Submission Status Field",
+     "Transient ID Field"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Facility Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Facility_Management",
+   "title": "",
+   "headings": [
+    "Facility Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:resultLimitTxt"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  },
+  "Global Settings Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Global_Settings_Management",
+   "title": "",
+   "headings": [
+    "Global Settings Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "SettingName",
+     "Value",
+     "ValueEncrypted",
+     "LastTouch",
+     "SettingOwner"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Print Config Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Print_Config_Management",
+   "title": "",
+   "headings": [
+    "Print Config Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:dvFilters[1].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "ConfigName",
+     "PrintFunction",
+     "PrintLayout",
+     "ParamName",
+     "ParamValue"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ],
+    "dvFilters[0].AndOr": [
+     "And",
+     "Or"
+    ],
+    "dvFilters[1].Column": [
+     "ConfigName",
+     "PrintFunction",
+     "PrintLayout",
+     "ParamName",
+     "ParamValue"
+    ],
+    "dvFilters[1].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Notifications Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Notifications_Management",
+   "title": "",
+   "headings": [
+    "Notifications Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Name",
+     "Message",
+     "AttachmentFileName",
+     "EffectiveBegin",
+     "EffectiveEnd",
+     "DaysToKeepAfterExpiration"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Notifications Link Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Notifications_Link_Management",
+   "title": "",
+   "headings": [
+    "Notifications Link Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "UserID",
+     "GroupID",
+     "PrintEntity",
+     "NotificationName"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Dashboards Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Dashboards_Management",
+   "title": "",
+   "headings": [
+    "Dashboards Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:dvFilters[0].Value",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "Name",
+     "SourceURL",
+     "PlaceholderURLForIE",
+     "IECompatible",
+     "Active"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Dashboards Link Management": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Dashboards_Link_Management",
+   "title": "",
+   "headings": [
+    "Dashboards Link Management"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:dvFilters[0].Value",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:resultLimitTxt"
+   ],
+   "selects": {
+    "dvFilters[0].Column": [
+     "UserID",
+     "GroupID",
+     "PrintEntity",
+     "DashboardName",
+     "Active"
+    ],
+    "dvFilters[0].Operator": [
+     "Contains",
+     "Does Not Match",
+     "Does Not Contain",
+     "In",
+     "Not In",
+     "Greater Than",
+     "Less Than",
+     "Exactly Matches",
+     "Is Blank",
+     "Is Not Blank"
+    ]
+   },
+   "tables": {},
+   "childFrames": []
+  },
+  "Prompt Samples": {
+   "status": "opened",
+   "url": "/InnoPages/DynamicUI/DynamicUI?Definition&Heading=Prompt_Samples",
+   "title": "",
+   "headings": [
+    "Prompt Samples"
+   ],
+   "buttons": [
+    "Retrieve Data"
+   ],
+   "links": [
+    "Actions",
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "menus": [
+    "Adjust Page Size",
+    "Audit",
+    "Excel Export",
+    "Excel Import",
+    "Load Search",
+    "Save Search"
+   ],
+   "tabs": [],
+   "labels": [],
+   "inputs": [
+    "button:btnRetrieveData",
+    "hidden:definition",
+    "hidden:initialGridLoad",
+    "hidden:pageid",
+    "text:resultLimitTxt"
+   ],
+   "selects": {},
+   "tables": {},
+   "childFrames": []
+  }
+ }
+}

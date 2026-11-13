@@ -6,7 +6,9 @@
 // To add a fixture: add a line to GROUP_BASELINES (exact process set) or INFO_GROUPS (logged only) / FIXTURE_USERS (user must exist, in this group).
 
 import { test, expect } from '@playwright/test';
-import { login } from '../../support/robar';
+import * as fs from 'fs';
+import * as path from 'path';
+import { BASE_URL, login } from '../../support/robar';
 import * as sec from '../../support/security';
 import { FIXTURE_USERS, OP_GROUP, OP_PROCESSES, TARGET_GROUP } from '../../Password-Management/pr-fixtures';
 
@@ -27,6 +29,18 @@ test('@smoke @preflight shared security fixtures are in their baseline state', a
   const fix = process.env.CANARY_FIX === '1';
   const problems: string[] = [];
   const facts: string[] = [];
+
+  // Reminder, never a failure: a build without a snapshot in docs/agents/build-snapshots has not been diffed against the previous build (npm run snapshot, then scripts/snapshot-diff.js).
+  await page.goto(BASE_URL);
+  await page.locator('.userID').waitFor({ timeout: 60_000 });
+  const banner = (await page.locator('body').innerText()).match(/\b\d+\.\d+\.\d+\.\d+\b/)?.[0] ?? '';
+  const snapDir = process.env.SNAPSHOT_DIR ? path.resolve(process.env.SNAPSHOT_DIR) : path.join(__dirname, '..', '..', '..', 'docs', 'agents', 'build-snapshots');
+  if (banner && !fs.existsSync(path.join(snapDir, `${banner}.json`))) {
+    const msg = `NO BUILD SNAPSHOT for ${banner}: run "npm run snapshot" and diff it against the previous build (node scripts/snapshot-diff.js <older> <newer>) before reading E2E failures`;
+    console.log(`WARNING: ${msg}`);
+    test.info().annotations.push({ type: 'warning', description: msg });
+    facts.push(`build ${banner}: no snapshot yet`);
+  } else facts.push(`build ${banner || '(unknown)'}: snapshot exists`);
 
   await login(page);
   let f = await sec.reopenSecurity(page);
