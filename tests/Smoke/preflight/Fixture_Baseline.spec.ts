@@ -11,16 +11,18 @@ import * as path from 'path';
 import { BASE_URL, login } from '../../support/robar';
 import * as sec from '../../support/security';
 import { FIXTURE_USERS, OP_GROUP, OP_PROCESSES, TARGET_GROUP } from '../../Password-Management/pr-fixtures';
+import { API_FIXTURE_USERS, API_GROUP, API_PROCESSES } from '../../API/api-fixtures';
 
 /** Groups with a fixed, known process set. */
 const GROUP_BASELINES: Array<{ group: string; processes: string[]; why: string }> = [
   { group: TARGET_GROUP, processes: ['Login_WebMenu'], why: 'shared by ~42 security specs and by the login fixtures MBPWLogin01 / CLPRTgtA01 / CLPRTgtB01 / CLPRLock01; empty = every fixture login is refused' },
   { group: OP_GROUP, processes: OP_PROCESSES, why: 'operator group of the Password Reset / Change specs (Login_WebMenu + ResetPassword_Option)' },
+  { group: API_GROUP, processes: API_PROCESSES, why: 'REST API callers: every API_* process + LT_CLLabelType / LT_Carton Label / LT_MBLT1; the Items spec toggles LT_MBDOCX / LT_MBLT1 and a killed run can leave them changed' },
 ];
 /** Groups without a fixed baseline: their process list is only logged. */
 const INFO_GROUPS = ['MBTestGroup1'];
 /** Users that must exist (they can never be deleted) and sit in the named group. MBPWLogin01 is the older login fixture. */
-const USERS: Array<{ id: string; group: string }> = [{ id: 'MBPWLogin01', group: TARGET_GROUP }, ...FIXTURE_USERS.map((u) => ({ id: u.id, group: u.group }))];
+const USERS: Array<{ id: string; group: string }> = [{ id: 'MBPWLogin01', group: TARGET_GROUP }, ...FIXTURE_USERS.map((u) => ({ id: u.id, group: u.group })), ...API_FIXTURE_USERS.map((u) => ({ id: u.id, group: u.group }))];
 
 const names = (m: Record<string, boolean>) => Object.keys(m).filter((k) => m[k]).sort();
 

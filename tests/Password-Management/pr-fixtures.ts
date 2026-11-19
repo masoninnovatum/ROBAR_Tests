@@ -50,12 +50,12 @@ export async function addGroup(page: Page, f: Frame, group: string, description:
 }
 
 /** Adds a user with "Reset password at next logon" OFF (the fixture must be able to log in directly). */
-export async function addUser(page: Page, f: Frame, id: string, facility: string, group: string): Promise<Frame> {
+export async function addUser(page: Page, f: Frame, id: string, facility: string, group: string, fullName?: string): Promise<Frame> {
   sec.assertMb(id);
   await sec.setView(f, 'USER');
   const d = await sec.openDialog(f, 'user', 'add');
   await d.locator('#users_input_userid').fill(id);
-  await d.locator('#users_input_fullname').fill(`Playwright password-module fixture ${id}`);
+  await d.locator('#users_input_fullname').fill(fullName ?? `Playwright password-module fixture ${id}`);
   await d.locator('#users_input_facility').selectOption({ label: facility }, { timeout: 5000 });
   await d.locator('#users_input_timezone').selectOption({ label: '[+00.00] Greenwich Mean Time' }, { timeout: 5000 });
   await d.locator('#users_input_group').selectOption({ label: group }, { timeout: 5000 });
