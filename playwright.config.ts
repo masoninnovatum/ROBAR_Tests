@@ -1,7 +1,9 @@
 import { defineConfig } from '@playwright/test';
 import { installFastWaits } from './tests/support/fast-waits';
+import { installLivePreview } from './tests/support/live-preview';
 
 installFastWaits(); // only active with FAST_WAITS=1 (see tests/support/fast-waits.ts)
+installLivePreview(); // only active in a run with LIVE_EVENTS_FILE set, and only captures while the live page's preview box is open (see tests/support/live-preview.ts)
 
 export default defineConfig({
   testDir: './tests',

@@ -43,11 +43,45 @@ web pages and DNS rebinding cannot trigger a run); inputs are validated and pass
   after a crash; verified: killed server was back at the next trigger). Remove: `Unregister-ScheduledTask -TaskName "ROBAR Live Run UI" -Confirm:$false`. It stops when the laptop sleeps, is shut down or the user logs off; the Balanced power plan sleeps it.
 - **Network:** `scripts/suite-ui.config.json` (gitignored, local) sets `"host": "0.0.0.0"`; delete the file (or set 127.0.0.1) to go back to this-computer-only. Optional `"auth": "user:password"` (or env `SUITE_UI_AUTH`) makes every request from another computer
   need that HTTP basic-auth login; this computer never needs it. Without `auth` there is NO login, and the page shows run errors and failure screenshots.
-- **View only for everyone else:** Start / Stop (POST /api/start, /api/stop) are refused unless the request comes from this computer (loopback address); other computers see the page with a "view only" tag and no buttons. Open the page on this laptop as http://127.0.0.1:4173 to control runs
+- **View only unless approved (changed 2026-11-20, see "Accounts" below):** Start / Stop / Pause (POST /api/start, /api/stop, ...) are refused unless the request comes from this computer (loopback address) or from a signed-in account the owner approved; everybody else sees the page with a "view only" tag and a Sign in button. Open the page on this laptop as http://127.0.0.1:4173 to control runs
   (http://MASON-LAPTOP:4173 from the laptop itself counts as "another computer").
 - **Reachability:** an inbound Windows Firewall rule "Node.js JavaScript Runtime" (Allow, Domain profile only, TCP+UDP) already existed, so no rule was added. Only computers that reach the laptop over a Domain-profile adapter can connect (on 2026-11-20 that was the
   "Local Area Connection" adapter, 192.168.113.7, i.e. the corporate VPN; the Wi-Fi adapter was on the Public profile, where the rule does not apply: expected blocked, not verified from another computer). Addresses change with the network, so share the name `http://MASON-LAPTOP:4173`.
 - Tested (2026-11-20, spare ports): other-computer requests get `canControl:false` and a 403 on start/stop; with `auth` set they get 401 without / with a wrong password and 200 with the right one; this computer needs none.
+
+## Hands-free signal (2026-11-20)
+
+The E2E runner already runs every headed spec first (a spec file containing `headless: false` counts as headed; checked 2026-11-20: 47 files, no headed spec missed, the six other files that use `page.mouse` only use Playwright's virtual mouse). The page now says when that block is over:
+once every headed spec file of the run has finished while others still wait, it shows a green banner "Headed specs finished at hh:mm: you can use the computer now. The remaining N spec files run headless.", prefixes the browser tab title with "hands-free" and, if the header box **notify when hands-free** is ticked,
+shows one desktop notification (opt-in, remembered in the browser; the browser asks for permission the first time; only for a phase that just ended, never for one replayed when the page is opened). Smoke runs have their headed stage (tier 2) last, so no banner there.
+
+The **Tests** tile (E2E / API runs; smoke runs keep **Stages**) shows tests finished / total tests. A spec file only announces its tests when it starts, so for files that have not started the total is estimated from the most recent earlier run that included them (`GET /api/testcounts`, rows per file in `results.json`) and shown with a "~" until every file has started; new specs with no history count 0 until they start.
+
+## Accounts: control from other computers with the owner's approval (2026-11-20)
+
+Everybody on the network can still WATCH. People on other computers can now also start / pause / resume / stop runs, but only with an account the owner (the user of the test computer) has approved. This replaces "view only for everyone off this computer".
+Flow: someone opens `http://MASON-LAPTOP:4173` -> **Sign in** -> **Request access** (name + password >= 8 characters) -> they are signed in as "awaiting approval" (view only). The owner opens `http://127.0.0.1:4173` ON THE TEST COMPUTER (the header shows **Users (n waiting)** and a banner) ->
+**Approve / Deny (Revoke) / Delete**. The remote page picks it up within ~5 s, no re-login; revoking / denying / deleting works on the next request. Nobody is approved by default, so nothing changes until the owner approves someone.
+- Code: `scripts/suite-ui-auth.js` (accounts, scrypt password hashes, sessions, audit); routes `POST /api/auth/register|login|logout` (anybody), `GET /api/users`, `POST /api/users/approve|deny|delete` (this computer only); `/api/state` now also returns `me`, `admin`, `pending`, and `canControl` = this computer OR approved account.
+- Storage: `scripts/suite-ui.users.json` (gitignored; hashed passwords, status, timestamps). Sessions are in memory and last 8 h sliding, so a server restart signs everybody out (accounts stay). Env `SUITE_UI_USERS` points at another accounts file (tests).
+- Audit: every start / stop / pause / resume, approval, login and failed login goes to `reports/suite-ui-audit.log` (tab-separated: time, who, from, action, detail; "local" = this computer).
+- Guards: session cookie is HttpOnly + SameSite=Strict; POSTs still need the `X-Suite-UI` header + JSON; from other computers the Host must be this computer's exact name or IP (`USERDNSDOMAIN` variant too) and Origin must equal it (look-alike names / DNS rebinding refused); from this computer only 127.0.0.1 / localhost as before.
+  Login: 5 wrong passwords for the same name from the same address lock it for 5 min; 5 registrations per address per hour; 50 accounts maximum. The run guards are unchanged (nothing starts while any runner / Playwright process runs).
+- Preview and on-demand report: approved accounts get the Live preview; building a missing report is still this computer only.
+- Caveats: plain http, so a password can be sniffed on a shared network (the dialog says to use a password used nowhere else). An approved remote user can start E2E or smoke tier 2, whose headed specs take over THIS computer's mouse and keyboard: the start dialog warns them and the audit log says who did it, but there is no "API only" permission level yet (easy to add).
+  The optional config `auth` (basic auth for the whole page) still works in front of all of this.
+- Tested 2026-11-20 on a spare port with a throw-away accounts file: not signed in / pending / denied / deleted = 403; approved = permission passes (409 "a test process is already running" because the real run was going); approve / deny only from this computer; wrong Host, foreign Origin, missing header = 403; lockout after 5 failures; then the page flow (request, Users dialog, approve, remote buttons appear, revoke). Not tested from a second physical computer.
+
+## Live preview (2026-11-20)
+
+The **Live preview** box (top of the right column, closed by default) shows the browser of the spec that is running: a JPEG about every 2 s, never video. Mechanism: `tests/support/live-preview.ts`, installed from `playwright.config.ts` (same pattern as `fast-waits.ts`, no spec changes),
+wraps `chromium.launch` / `newContext` / `newPage` and remembers the newest open page of the worker. While the box is open the page asks `GET /preview.jpg?run=<id>` every 2 s (only with the tab visible and a run in progress); the server touches `<run folder>/preview.want` on each ask, and the worker
+captures `page.screenshot` (JPEG q50, 4 s timeout, best effort) into `<run folder>/preview.jpg` + `preview.json` (page address without query) only while `preview.want` is younger than 8 s. Nobody watching = no capture, no cost. Works for headless and headed pages; native windows
+(BarTender, Sentinel prompt) are not part of a page, so those steps show the last web page. It needs `LIVE_EVENTS_FILE` (set by suite-run / smoke-run), so an ad hoc `npx playwright test` is untouched. A spec file that was already running when the preview was installed starts sending with the next spec file.
+Network viewers: the route answers 403 off this computer unless `auth` is configured (the preview shows real app screens). Tested with a local probe (no viewer: no frames; viewer: frames follow the page; viewer stops: capture stops within 8 s) and live on the 2026-11-20 E2E run (Campaign Manager page, 68 KB frames).
+Caveat: a screenshot is a CDP call; tracing (also CDP) once broke Campaign Manager's grid (see playwright.config.ts), so if a spec behaves differently with the box open, close it and tell Mason.
+
+The **Failures** card is collapsible (click its title; open by default; the choice is remembered per browser in localStorage `robarFailsOpen`).
 
 ## Pause / resume (2026-11-20)
 
@@ -73,7 +107,7 @@ That run's folder got a hand-written marker and a rebuilt report. `--report <dir
 
 ## How it works
 
-- The header logo is the "ROBAR by Innovatum" image from the Web Menu login page (`Images/LoginLogo.bmp`, converted to `scripts/suite-ui-logo.png`, served at `/logo.png`); it sits on a white badge because the image is opaque with dark text. After changing `suite-ui.js` the running server must be restarted to pick up new routes.
+- The header logo is the "ROBAR by Innovatum" image from the Web Menu login page (`Images/LoginLogo.bmp`, converted to `scripts/suite-ui-logo.png`, served at `/logo.png`); since 2026-11-20 the PNG has a transparent background (white converted to alpha), so it blends with the light page; in dark mode it sits on a white badge because its text is dark. After changing `suite-ui.js` the running server must be restarted to pick up new routes.
 
 - `scripts/live-reporter.js` is a Playwright reporter. It is active only when `LIVE_EVENTS_FILE` is set and appends one JSON line per event
   (`tests`, `testBegin`, `step`, `testEnd`, `error`) to `<run folder>/live.ndjson`; failure screenshots are copied to `<run folder>/shots/`

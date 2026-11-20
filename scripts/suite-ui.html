@@ -22,11 +22,14 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,"S
 main{max-width:1280px;margin:0 auto;padding:16px}
 header{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:14px}
 h1{font-size:18px;margin:0 8px 0 0}
-.logo{display:block;height:44px;width:auto;background:#fff;border-radius:6px;padding:3px 6px;margin-right:6px} /* the logo has an opaque white background and dark text: keep it on white in dark mode too */
+.logo{display:block;height:44px;width:auto;margin-right:6px} /* the logo is transparent with dark text: it blends with the light page; dark mode puts it on a white badge (dark text on a dark page would vanish) */
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .logo{background:#fff;border-radius:6px;padding:3px 6px} }
 select,button{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
 button{cursor:pointer}
 .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:12px}
-.pill.running{background:var(--runbg);color:var(--run)}
+.pill::first-letter{text-transform:uppercase} /* Running, Finished, Paused ... (the text itself is lower case) */
+.pill.running{background:var(--runbg);color:var(--run);animation:pulse 1.6s ease-in-out infinite} /* soft flash while a run is in progress (not while paused / finished) */
+@media (prefers-reduced-motion: reduce){ .pill.running{animation:none} }
 .pill.finished{background:var(--okbg);color:var(--ok)}
 .pill.failed,.pill.aborted,.pill.stopped{background:var(--badbg);color:var(--bad)}
 .pill.paused,.pill.pausing{background:var(--warnbg);color:var(--warn)}
@@ -70,6 +73,9 @@ tr.spec td:first-child{padding-left:24px;word-break:break-all}
 .feed .p{color:var(--ok)}.feed .f{color:var(--bad)}.feed .s{color:var(--skip)}.feed .x{color:var(--run)}
 .muted{color:var(--muted)}
 details summary{cursor:pointer;color:var(--muted);font-weight:600}
+details summary.h2{font-size:13px;letter-spacing:.04em}
+#prevImg{display:block;width:100%;height:auto;margin-top:8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+#prevImg.stale{opacity:.55}
 [hidden]{display:none !important} /* elements with their own display rule (the pills) would otherwise ignore the hidden attribute */
 a.btnlink{display:inline-block;font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 10px;text-decoration:none;font-weight:600}
 a.btnlink:hover{border-color:var(--run);color:var(--run)}
@@ -79,6 +85,16 @@ button:disabled{opacity:.5;cursor:not-allowed}
 /* the action buttons stay together as one group: on the right of the title row, wrapping below it as a whole on a narrow window (never splitting Start run from the report buttons) */
 .actions{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;margin-left:auto}
 #repWrap{display:inline-flex;gap:8px}
+.acct{display:inline-flex;gap:8px;align-items:center}
+button.badged{position:relative}
+.badge{position:absolute;top:-8px;right:-8px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px var(--bg)}
+.authform label{display:block;font-size:13px;margin:8px 0 2px;color:var(--muted)}
+.authform input{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;width:100%;box-sizing:border-box}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+.seg button{border:0;border-radius:0}.seg button.on{background:var(--run);color:#fff}
+.utbl{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+.utbl th,.utbl td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+.utbl td.act button{margin-right:4px}
 .meta{margin:-6px 0 12px;font-size:13px}
 dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:16px 18px;max-width:760px;width:calc(100vw - 32px)}
 dialog::backdrop{background:rgba(0,0,0,.55)}
@@ -92,6 +108,8 @@ dialog h2{margin:0 0 4px;font-size:17px}
 .confirm b{color:var(--warn)}
 .err{color:var(--bad);font-weight:600;margin-top:6px;font-size:13px}
 .banner.info{background:var(--runbg);color:var(--run)}
+.banner.ok{background:var(--okbg);color:var(--ok)}
+.notify{font-size:13px;white-space:nowrap}
 #zoom{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
 #zoom img{max-width:94vw;max-height:94vh}
 </style>
@@ -99,13 +117,14 @@ dialog h2{margin:0 0 4px;font-size:17px}
 <body>
 <main>
   <header>
-    <img class="logo" src="/logo.png" alt="ROBAR by Innovatum">
+    <img class="logo" src="/logo.png?v=2" alt="ROBAR by Innovatum">
     <h1>Live run</h1>
     <span id="status" class="pill waiting">waiting</span>
     <select id="runSel" title="Pick a run to watch or replay"></select>
     <label class="muted"><input type="checkbox" id="follow" checked> follow newest run</label>
+    <label class="muted notify" title="Pop up a desktop notification when the headed specs of a run have finished (the browser asks for permission once)"><input type="checkbox" id="notifyBox"> notify when hands-free</label>
     <div class="actions">
-      <span id="viewOnly" class="pill waiting" hidden title="Runs can only be started or stopped from the computer the tests run on">view only</span>
+      <span id="acct" class="acct"></span>
       <button id="startBtn" class="primary" title="Start a Smoke, E2E or API run">▶ Start Run</button>
       <button id="pauseBtn" hidden title="Pause after the spec file that is running now finishes (a spec cannot be frozen safely mid-test)">⏸ Pause Run</button>
       <button id="stopBtn" class="danger" hidden title="Stop the run that is in progress">■ Stop Run</button>
@@ -122,15 +141,18 @@ dialog h2{margin:0 0 4px;font-size:17px}
   <section class="card now" id="now"></section>
 
   <div class="cols">
-    <section class="card"><h2>Modules</h2><table id="modules"></table></section>
+    <section class="card"><h2 style="text-transform:none">Automated Tests</h2><table id="modules"></table></section>
     <section>
-      <div class="card"><h2>Failures <span id="failCount" class="muted"></span></h2><div id="fails"><span class="muted">None so far.</span></div></div>
+      <div class="card"><details id="prevBox"><summary class="h2">Live preview <span id="prevInfo" class="muted"></span></summary><div id="prevBody" class="muted" style="margin-top:8px">Open to watch the browser of the spec that is running (a new picture every 2 seconds, only while this box is open).</div><img id="prevImg" alt="live preview of the browser" hidden></details></div>
       <div class="card"><h2>Activity</h2><div class="feed" id="feed"></div></div>
+      <div class="card"><details id="failsBox" open><summary class="h2">Failures <span id="failCount" class="muted"></span></summary><div id="fails" style="margin-top:8px"><span class="muted">None so far.</span></div></details></div>
       <div class="card"><details id="skipsBox"><summary>Skipped tests <span id="skipCount"></span></summary><div id="skips" class="muted"></div></details></div>
     </section>
   </div>
 </main>
 <dialog id="startDlg"></dialog>
+<dialog id="authDlg"></dialog>
+<dialog id="usersDlg"></dialog>
 <div id="zoom"><img alt=""></div>
 
 <script>
@@ -147,11 +169,12 @@ const modOf = (file) => (file.startsWith('stage:') ? file.slice(6) : (file.split
 const shortFile = (f) => f.replace(/^tests\//, '').replace(/\.spec\.ts$/, '');
 
 let HISTORY = {};
+let TESTCOUNTS = {}; // tests per spec file in earlier runs: estimate for spec files that have not started yet
 let S, ES, runId, expanded = new Set(), alive = { alive: false, ended: false }, lastEvTs = 0, dirty = false;
 
 function fresh() {
   return { run: '', kind: 'suite', pid: 0, replay: false, startTs: 0, endTs: 0, endStatus: '', canary: '', only: null, resumed: false,
-    pause: '', pauseNext: '', units: new Map(), order: [], doneEarlier: [], cur: null, feed: [], fails: [], skips: [], lastActivity: 0, errors: 0 };
+    headedDoneTs: 0, notified: false, pause: '', pauseNext: '', units: new Map(), order: [], doneEarlier: [], cur: null, feed: [], fails: [], skips: [], lastActivity: 0, errors: 0 };
 }
 function unit(key, ev) {
   let u = S.units.get(key);
@@ -209,6 +232,11 @@ function apply(ev) {
     case 'fileEnd': {
       const u = unit(ev.file, ev); u.status = 'done'; u.endTs = ev.ts; u.ms = ev.ms; u.exit = ev.exit; u.cur = ''; u.step = ''; u.stderr = ev.stderr || '';
       if (S.cur === u.key) S.cur = null;
+      // end of the headed phase: every headed spec file has finished while other (headless) files still wait; the computer is free to use from here
+      if (!S.headedDoneTs) {
+        const all = [...S.units.values()], headed = all.filter((x) => x.headed);
+        if (headed.length && headed.every((x) => x.status === 'done') && all.some((x) => x.status !== 'done')) { S.headedDoneTs = ev.ts; feed('p', '✔ headed specs finished: the computer is free to use', ev.ts); }
+      }
       feed(ev.exit > 1 || ev.exit < 0 ? 'f' : 'x', `■ ${shortFile(ev.file)} finished in ${fmt(ev.ms)} (exit ${ev.exit})${u.stderr ? ' ' + u.stderr.slice(0, 120) : ''}`, ev.ts); return;
     }
     case 'runEnd': S.pause = ''; S.endTs = ev.ts; S.endStatus = ev.status; S.cur = null; feed(ev.status === 'finished' ? 'p' : 'f', `run ${ev.status}${ev.wallMs ? ' after ' + fmt(ev.wallMs) : ''}`, ev.ts); return;
@@ -245,6 +273,7 @@ function render() {
   const running = !S.endTs && (alive.alive || (!alive.ended && !S.replay && real - lastEvTs < 30000));
   const stopped = !S.endTs && !S.replay && !running && S.startTs;
   const state = S.replay ? 'replay' : S.endTs ? (S.endStatus === 'finished' ? (all.failed ? 'finished' : 'finished') : S.endStatus === 'aborted' ? 'aborted' : 'failed') : running ? 'running' : stopped ? 'stopped' : 'waiting';
+  curState = state;
   if (state !== 'running') now = S.endTs || lastEvTs || real; // freeze the clocks when nothing is live
   const stEl = $('status');
   stEl.className = 'pill ' + (state === 'finished' && all.failed ? 'failed' : state);
@@ -272,13 +301,32 @@ function render() {
   if (state === 'stopped') banners.push(`<div class="banner stuck">The runner process is no longer alive and the run did not finish (killed or crashed). Use --resume with --only to continue.</div>`);
   if (S.canary === 'failed') banners.push(`<div class="banner stuck">Fixture canary failed — the run was not started.</div>`);
   if (LAUNCH && real - LAUNCH.ts < 90000 && runId === LAUNCH.prev) banners.push(`<div class="banner info">Launching the ${esc(LAUNCH.label)} run… it appears here in a few seconds (the first step is the fixture check, about 45 s).</div>`);
+  // hands-free: all headed specs are done, the rest of the run is headless (the runner puts the headed ones first)
+  const handsFree = state === 'running' && !!S.headedDoneTs && units.some((u) => u.status !== 'done');
+  if (handsFree) { const left = units.filter((u) => u.status !== 'done').length; banners.push(`<div class="banner ok">✔ Headed specs finished at ${clock(S.headedDoneTs)}: you can use the computer now. The remaining ${left} spec file${left === 1 ? '' : 's'} run headless.</div>`); }
+  if (handsFree && !S.notified && $('notifyBox').checked && 'Notification' in window && Notification.permission === 'granted' && real - S.headedDoneTs < 60000) { // only for a phase that just ended, not for one replayed when the page is opened
+    S.notified = true;
+    try { new Notification('ROBAR run: headed specs finished', { body: 'You can use the computer now. The remaining specs run headless.' }); } catch { /* notifications unavailable */ }
+  }
+  if (STATE.admin && STATE.pending) banners.push(`<div class="banner info">${STATE.pending} access request${STATE.pending === 1 ? ' is' : 's are'} waiting for your approval: click “Users” in the header.</div>`);
   $('banners').innerHTML = banners.join('');
 
+  // tests finished / total: a spec file announces its tests when it starts, so the total of spec files not started yet is estimated from earlier runs ("~" while any is estimated)
+  const tests = (() => {
+    let fin = 0, tot = 0, est = false;
+    for (const u of units) {
+      const n = u.tests.size, known = Math.max(n, u.expected || 0); fin += n;
+      if (u.status === 'done' || known) tot += known;        // finished, or it has announced its tests
+      else { tot += TESTCOUNTS[u.key] ?? 0; est = true; }    // queued (or just starting): from the earlier runs, if any
+    }
+    for (const f of S.doneEarlier) { const c = TESTCOUNTS[f] ?? 0; fin += c; tot += c; } // resumed run: spec files finished in an earlier part
+    return { text: `${fin} / ${est ? '~' : ''}${tot || '–'}`, fin, tot };
+  })();
   const tile = (k, v, cls = '') => `<div class="tile"><div class="k">${k}</div><div class="v ${cls}">${v}</div></div>`;
   $('tiles').innerHTML =
     tile('Elapsed', fmt(elapsed)) +
     tile(state === 'running' ? 'Est. remaining' : 'Wall time', state === 'running' ? (P.haveHistory ? '~' + fmt(P.remaining) : '–') : fmt(elapsed)) +
-    tile(S.kind === 'smoke' ? 'Stages' : 'Spec files', `${doneAll} / ${totAll || '–'}`) +
+    (S.kind === 'smoke' ? tile('Stages', `${doneAll} / ${totAll || '–'}`) : tile('Tests', tests.text)) +
     tile('Passed', all.passed, 'ok') + tile('Failed', all.failed, all.failed ? 'bad' : '') +
     tile('Skipped', all.skipped, 'skip') + (all.flaky ? tile('Flaky', all.flaky, 'flaky') : '');
 
@@ -335,7 +383,7 @@ function render() {
   $('skipCount').textContent = S.skips.length ? `(${S.skips.length})` : '';
   $('skips').innerHTML = S.skips.map((x) => `<div>${esc(shortFile(x.file))} — ${esc(x.title)}${x.note ? `<br><span style="padding-left:12px">${esc(x.note)}</span>` : ''}</div>`).join('') || 'None.';
 
-  document.title = `${state === 'running' ? '▶ ' : ''}${all.failed ? '✗' + all.failed + ' ' : ''}ROBAR ${doneAll}/${totAll || '?'}`;
+  document.title = `${handsFree ? '✔ hands-free · ' : ''}${state === 'running' ? '▶ ' : ''}${all.failed ? '✗' + all.failed + ' ' : ''}ROBAR ${doneAll}/${totAll || '?'}`;
 }
 function schedule() { if (!dirty) { dirty = true; setTimeout(render, 250); } }
 
@@ -357,7 +405,8 @@ async function refreshRuns() {
   try {
     try { STATE = await (await fetch('/api/state')).json(); } catch { /* older server without /api/state */ }
     const can = STATE.canControl !== false; // false when the page is opened from another computer: view only
-    $('startBtn').hidden = !can; $('viewOnly').hidden = can;
+    $('startBtn').hidden = !can; renderAcct();
+    if ($('usersDlg').open) loadUsers();
     $('stopBtn').hidden = !(can && STATE.active);
     $('pauseBtn').hidden = !(can && STATE.active);
     if (STATE.active) { const pf = !!STATE.active.pauseFlag; $('pauseBtn').textContent = pf ? '▶ Resume Run' : '⏸ Pause Run'; $('pauseBtn').className = pf ? 'primary' : ''; $('pauseBtn').title = pf ? 'Continue the run (or cancel the pause that was requested)' : 'Pause after the spec file that is running now finishes (a spec cannot be frozen safely mid-test)'; }
@@ -379,6 +428,82 @@ const post = async (url, body) => {
   if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
   return j;
 };
+// ---- accounts: people on other computers sign in (or request access); the owner approves them from the test computer ----
+function renderAcct() {
+  const me = STATE.me, bits = [];
+  if (STATE.admin) {
+    const n = STATE.pending || 0;
+    bits.push(`<button data-acct="users" class="badged" title="${n ? `${n} access request${n === 1 ? '' : 's'} waiting for your approval` : 'Approve or remove accounts of people who watch from other computers'}">Users${n ? `<span class="badge">${n}</span>` : ''}</button>`);
+  } else if (!me) {
+    bits.push(`<span class="pill waiting" title="You can watch. To start, pause or stop runs, sign in with an approved account.">view only</span><button data-acct="signin">Sign in</button>`);
+  } else {
+    const st = { approved: ['finished', esc(me.name)], pending: ['paused', `${esc(me.name)} · awaiting approval`], denied: ['failed', `${esc(me.name)} · access denied`] }[me.status] || ['waiting', esc(me.name)];
+    const tip = me.status === 'approved' ? 'Signed in; you can start, pause and stop runs' : me.status === 'pending' ? 'The owner of the test computer has to approve your account; until then you can only watch' : 'Your account was not approved';
+    bits.push(`<span class="pill ${st[0]}" title="${tip}">${st[1]}</span><button data-acct="signout">Sign out</button>`);
+  }
+  const html = bits.join('');
+  if ($('acct').dataset.html !== html) { $('acct').innerHTML = html; $('acct').dataset.html = html; }
+}
+let AUTHMODE = 'signin';
+function openAuth(err) {
+  const dlg = $('authDlg'), req = AUTHMODE === 'request';
+  dlg.innerHTML = `
+    <h2>${req ? 'Request access' : 'Sign in'}</h2>
+    <div class="muted">Anyone can watch a run. To start, pause or stop runs you need an account that the owner of the computer running the tests has approved.</div>
+    <div class="seg"><button type="button" data-mode="signin" class="${req ? '' : 'on'}">Sign in</button><button type="button" data-mode="request" class="${req ? 'on' : ''}">Request access</button></div>
+    <form class="authform" id="authForm">
+      <label for="authName">Name${req ? ' (shown to the owner, 2 to 32 characters)' : ''}</label><input id="authName" name="name" autocomplete="username" maxlength="32" required>
+      <label for="authPw">Password${req ? ' (at least 8 characters)' : ''}</label><input id="authPw" name="password" type="password" autocomplete="${req ? 'new-password' : 'current-password'}" maxlength="100" required>
+      <div class="muted" style="margin-top:8px;font-size:12px">This page is not encrypted (plain http), so choose a password you use nowhere else.</div>
+      ${err ? `<div class="err">${esc(err)}</div>` : ''}
+      <div style="text-align:right;margin-top:10px"><button type="button" data-close="1">Cancel</button> <button type="submit" class="primary">${req ? 'Request access' : 'Sign in'}</button></div>
+    </form>`;
+  if (!dlg.open) dlg.showModal();
+  $('authName').focus();
+}
+$('authDlg').addEventListener('click', (e) => {
+  const t = e.target; if (!(t instanceof HTMLElement)) return;
+  if (t.dataset.close) $('authDlg').close();
+  if (t.dataset.mode) { AUTHMODE = t.dataset.mode; openAuth(); }
+});
+$('authDlg').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('authName').value.trim(), password = $('authPw').value;
+  try {
+    await post(AUTHMODE === 'request' ? '/api/auth/register' : '/api/auth/login', { name, password });
+    $('authDlg').close(); await refreshRuns();
+  } catch (err) { openAuth(err.message); }
+});
+async function loadUsers(msg) {
+  const dlg = $('usersDlg');
+  let list = [];
+  try { list = await (await fetch('/api/users')).json(); } catch { /* server restarting */ }
+  const when = (s) => (s ? new Date(s).toLocaleString() : '–');
+  const pill = (s) => `<span class="pill ${s === 'approved' ? 'finished' : s === 'denied' ? 'failed' : 'paused'}">${s}</span>`;
+  const rows = list.sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1) || a.name.localeCompare(b.name)).map((u) => `<tr>
+    <td><b>${esc(u.name)}</b></td><td>${pill(u.status)}</td><td>${when(u.requested)}</td><td>${when(u.lastLogin)}</td><td>${esc(u.lastIp || '')}</td>
+    <td class="act">${u.status !== 'approved' ? `<button class="primary" data-uact="approve" data-name="${esc(u.name)}">Approve</button>` : ''}${u.status !== 'denied' ? `<button data-uact="deny" data-name="${esc(u.name)}">${u.status === 'approved' ? 'Revoke' : 'Deny'}</button>` : ''}<button data-uact="delete" data-name="${esc(u.name)}">Delete</button></td></tr>`).join('');
+  dlg.innerHTML = `
+    <h2>Accounts for other computers</h2>
+    <div class="muted">People who open this page from another computer can request an account. <b>Approved</b> accounts can start, pause and stop runs on this computer (a run can use the real mouse and keyboard here); everyone else can only watch. A change applies immediately. Every action is logged in <code>reports/suite-ui-audit.log</code>.</div>
+    ${msg ? `<div class="err">${esc(msg)}</div>` : ''}
+    ${list.length ? `<table class="utbl"><tr><th>Name</th><th>Status</th><th>Requested</th><th>Last sign-in</th><th>From</th><th></th></tr>${rows}</table>` : '<p class="muted">No accounts yet.</p>'}
+    <div style="text-align:right"><button data-close="1">Close</button></div>`;
+  if (!dlg.open) dlg.showModal();
+}
+$('usersDlg').addEventListener('click', async (e) => {
+  const t = e.target; if (!(t instanceof HTMLElement)) return;
+  if (t.dataset.close) { $('usersDlg').close(); return; }
+  if (!t.dataset.uact) return;
+  if (t.dataset.uact === 'delete' && !confirm(`Delete the account "${t.dataset.name}"? They can request access again.`)) return;
+  try { await post('/api/users/' + t.dataset.uact, { name: t.dataset.name }); await loadUsers(); refreshRuns(); } catch (err) { loadUsers('Not done: ' + err.message); }
+});
+$('acct').addEventListener('click', async (e) => {
+  const t = e.target; if (!(t instanceof HTMLElement) || !t.dataset.acct) return;
+  if (t.dataset.acct === 'users') loadUsers();
+  else if (t.dataset.acct === 'signin') { AUTHMODE = 'signin'; openAuth(); }
+  else if (t.dataset.acct === 'signout') { try { await post('/api/auth/logout'); } catch { /* ignore */ } await refreshRuns(); }
+});
 const sumHist = (pred) => { let ms = 0, n = 0; for (const [f, v] of Object.entries(HISTORY)) if (pred(f)) { ms += v; n++; } return { ms, n }; };
 const SMOKE_STAGES = [['preflight', 'preflight'], ['tier0', 'tier 0'], ['tier1', 'tier 1'], ['tier2', 'tier 2 (headed)']];
 let pending = null; // which card is waiting for its confirmation
@@ -398,6 +523,7 @@ function openStart(err) {
   dlg.innerHTML = `
     <h2>Start a run</h2>
     <div class="muted">The run starts on this computer using the environment configured in <code>.env</code>, exactly like the command line. Only one run can be active at a time.</div>
+    ${STATE.admin ? '' : `<div class="banner stuck" style="margin-top:8px">You are starting this from another computer. The run happens on the test computer, and E2E and smoke tier 2 include headed specs that take over its mouse and keyboard. Unless you have agreed it with the person using that computer, choose API (headless). Your name is logged.</div>`}
     ${busy}${err ? `<div class="err">${esc(err)}</div>` : ''}
     <div class="scard"><h3>1) Smoke</h3>
       <p>Preflight, tier 0, tier 1 and tier 2 (about 22 minutes in total). Tier 2 is headed.</p>
@@ -454,13 +580,49 @@ $('stopBtn').addEventListener('click', async () => {
   refreshRuns();
 });
 
+// opt-in desktop notification for the end of the headed phase (remembered in this browser; the browser asks for permission the first time it is ticked)
+try { $('notifyBox').checked = localStorage.getItem('robarNotifyHandsFree') === '1'; } catch { /* storage blocked */ }
+$('notifyBox').addEventListener('change', async (e) => {
+  try { localStorage.setItem('robarNotifyHandsFree', e.target.checked ? '1' : '0'); } catch { /* storage blocked */ }
+  if (!e.target.checked) return;
+  if (!('Notification' in window)) { alert('This browser does not support desktop notifications.'); e.target.checked = false; return; }
+  if (Notification.permission === 'default') await Notification.requestPermission();
+  if (Notification.permission !== 'granted') { alert('Notifications are blocked for this page in the browser settings, so none will be shown. The banner and the tab title still tell you.'); e.target.checked = false; }
+});
 $('modules').addEventListener('click', (e) => { const tr = e.target.closest('tr.mod'); if (!tr) return; const m = tr.dataset.m; expanded.has(m) ? expanded.delete(m) : expanded.add(m); render(); });
+try { if (localStorage.getItem('robarFailsOpen') === '0') $('failsBox').open = false; } catch { /* storage unavailable: stay open */ }
+// live preview: while the box is open, a run is in progress and this tab is visible, ask the server every 2 s for the newest frame (the request itself tells the running spec to capture frames)
+let curState = '', prevUrl = '', prevBusy = false;
+async function pollPreview() {
+  const box = $('prevBox');
+  if (!box.open || prevBusy || document.visibilityState !== 'visible') return;
+  const body = $('prevBody'), img = $('prevImg'), info = $('prevInfo');
+  if (curState !== 'running' || !runId) { body.hidden = false; body.textContent = 'The preview is live only while a run is in progress.'; img.hidden = true; info.textContent = ''; return; }
+  prevBusy = true;
+  try {
+    const r = await fetch('/preview.jpg?run=' + encodeURIComponent(runId), { cache: 'no-store' });
+    if (r.status === 403) { body.hidden = false; body.textContent = await r.text(); img.hidden = true; }
+    else if (r.status === 200) {
+      const ts = Number(r.headers.get('X-Preview-Ts')) || 0, url = decodeURIComponent(r.headers.get('X-Preview-Url') || '');
+      const blob = await r.blob(); const u = URL.createObjectURL(blob);
+      img.src = u; if (prevUrl) URL.revokeObjectURL(prevUrl); prevUrl = u;
+      const age = Math.max(0, Math.round((Date.now() - ts) / 1000));
+      img.hidden = false; body.hidden = true; img.classList.toggle('stale', age > 10);
+      info.textContent = `· ${url.replace(/^https?:\/\/[^/]+/, '') || 'page'} · ${age > 10 ? `last picture ${age} s ago (between spec files, or the page is busy)` : 'live'}`;
+    } else { body.hidden = false; body.textContent = 'Waiting for the first picture (the next browser page that opens; spec files already running start sending within a few seconds)…'; img.hidden = true; info.textContent = ''; }
+  } catch { /* server unreachable: try again */ }
+  prevBusy = false;
+}
+setInterval(pollPreview, 2000);
+$('prevBox').addEventListener('toggle', pollPreview);
+$('failsBox').addEventListener('toggle', () => { try { localStorage.setItem('robarFailsOpen', $('failsBox').open ? '1' : '0'); } catch { /* ignore */ } });
 $('fails').addEventListener('click', (e) => { if (e.target.tagName === 'IMG') { $('zoom').querySelector('img').src = e.target.src; $('zoom').style.display = 'flex'; } });
 $('zoom').addEventListener('click', () => { $('zoom').style.display = 'none'; });
 
 (async () => {
   S = fresh();
   try { HISTORY = await (await fetch('/api/history')).json(); } catch { HISTORY = {}; }
+  try { TESTCOUNTS = await (await fetch('/api/testcounts')).json(); } catch { TESTCOUNTS = {}; }
   await refreshRuns();
   if (!runId) render();
   setInterval(refreshRuns, 5000);

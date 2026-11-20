@@ -9,6 +9,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { exec, execFile, spawn } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
@@ -33,6 +34,9 @@ function authOk(req) {
 }
 const DATA = process.env.SUITE_UI_ROOT || ROOT; // SUITE_UI_ROOT: point at another folder with reports/{suite,smoke}/runs (used to test the page with simulated runs)
 const KINDS = { suite: path.join(DATA, 'reports', 'suite', 'runs'), smoke: path.join(DATA, 'reports', 'smoke', 'runs') };
+
+// accounts + approval for people on other computers (scripts/suite-ui-auth.js): approved accounts may start / stop / pause runs, everybody else only watches
+const A = require('./suite-ui-auth')({ usersFile: process.env.SUITE_UI_USERS || path.join(__dirname, 'suite-ui.users.json'), auditFile: path.join(DATA, 'reports', 'suite-ui-audit.log'), isLoopback });
 
 const exists = (p) => { try { return fs.existsSync(p); } catch { return false; } };
 const readJson = (p) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return undefined; } };
@@ -95,6 +99,22 @@ function history() {
   }
   const out = {};
   for (const [f, arr] of per) { arr.sort((a, b) => a - b); out[f] = arr[Math.floor(arr.length / 2)]; }
+  return out;
+}
+
+// number of tests per spec file in the most recent earlier suite run that included the file (the page uses it to estimate the total number of tests of a run while
+// spec files that have not started yet have not announced their tests)
+function testCounts() {
+  const out = {};
+  const dir = KINDS.suite;
+  if (!exists(dir)) return out;
+  for (const stamp of fs.readdirSync(dir).sort()) {
+    const rows = readJson(path.join(dir, stamp, 'results.json'));
+    if (!Array.isArray(rows)) continue;
+    const n = new Map();
+    for (const r of rows) n.set(r.file, (n.get(r.file) ?? 0) + 1);
+    for (const [f, c] of n) if (exists(path.join(ROOT, f))) out[f] = c;
+  }
   return out;
 }
 
@@ -260,10 +280,20 @@ function resumeRun() {
 }
 
 // same-origin guard for the POST endpoints
+// From this computer only 127.0.0.1 / localhost are accepted as Host (as before). From other computers (approved accounts) the Host must be this computer's own name or IP address, EXACT match
+// (a look-alike name such as mason-laptop.attacker.example, DNS rebinding, is refused), and a browser's Origin must equal the Host the page was loaded from.
+function ownHosts() {
+  const names = new Set([os.hostname().toLowerCase()]);
+  if (process.env.USERDNSDOMAIN) names.add(`${os.hostname()}.${process.env.USERDNSDOMAIN}`.toLowerCase());
+  for (const list of Object.values(os.networkInterfaces())) for (const i of list || []) if (i.family === 'IPv4' && !i.internal) names.add(i.address);
+  return names;
+}
 function sameOrigin(req) {
-  const ok = new Set([`127.0.0.1:${PORT}`, `localhost:${PORT}`]);
-  if (!ok.has(String(req.headers.host || '').toLowerCase())) return false;
-  if (req.headers.origin && ![`http://127.0.0.1:${PORT}`, `http://localhost:${PORT}`].includes(req.headers.origin)) return false;
+  const host = String(req.headers.host || '').toLowerCase();
+  const m = /^(.+):(\d+)$/.exec(host);
+  const okHost = isLoopback(req) ? ['127.0.0.1', 'localhost'].includes(m && m[1]) : !!m && ownHosts().has(m[1]);
+  if (!okHost || Number(m[2]) !== PORT) return false;
+  if (req.headers.origin && req.headers.origin !== `http://${host}`) return false;
   return req.headers['x-suite-ui'] === '1' && /^application\/json/i.test(req.headers['content-type'] || '');
 }
 function readBody(req) {
@@ -350,18 +380,59 @@ const server = http.createServer(async (req, res) => {
   try {
     if (!authOk(req)) { res.writeHead(401, { 'WWW-Authenticate': 'Basic realm="ROBAR live run"', 'Content-Type': 'text/plain' }); res.end('login required'); return; }
     if (req.method === 'POST' && ['/api/start', '/api/stop', '/api/pause', '/api/resume'].includes(u.pathname)) {
-      if (!isLoopback(req)) return sendJson(res, 403, { error: 'view only: runs can only be started or stopped from the computer the tests run on (http://127.0.0.1:' + PORT + ')' });
+      if (!A.canControl(req)) return sendJson(res, 403, { error: A.sessionUser(req) ? 'view only: your account has not been approved yet (the owner of the computer the tests run on approves accounts)' : 'view only: sign in with an approved account, or open the page on the computer the tests run on (http://127.0.0.1:' + PORT + ')' });
+      if (!sameOrigin(req)) return sendJson(res, 403, { error: 'rejected: requests must come from this page (its own host name or address)' });
+      try {
+        const body = u.pathname === '/api/start' ? await readBody(req) : null;
+        const out = u.pathname === '/api/start' ? await startRun(body) : u.pathname === '/api/pause' ? pauseRun() : u.pathname === '/api/resume' ? resumeRun() : await stopRun();
+        A.audit(A.who(req), A.ip(req), u.pathname.slice(5), u.pathname === '/api/start' ? (out.command || '') : ((out.run || out.stopped || {}).id || ''));
+        return sendJson(res, 200, out);
+      } catch (e) { return sendJson(res, e.status || 500, { error: String(e.message || e) }); }
+    }
+    // accounts: sign in / request access (anybody), sign out; owner-only list / approve / deny / delete (this computer only)
+    if (req.method === 'POST' && u.pathname.startsWith('/api/auth/')) {
+      if (!sameOrigin(req)) return sendJson(res, 403, { error: 'rejected: requests must come from this page (its own host name or address)' });
+      try {
+        const b = await readBody(req);
+        if (u.pathname === '/api/auth/register') { const r = await A.register(req, b.name, b.password); res.writeHead(200, { 'Content-Type': 'application/json', 'Set-Cookie': r.cookie }); res.end(JSON.stringify({ ok: true, user: r.user })); return; }
+        if (u.pathname === '/api/auth/login') { const r = await A.login(req, b.name, b.password); res.writeHead(200, { 'Content-Type': 'application/json', 'Set-Cookie': r.cookie }); res.end(JSON.stringify({ ok: true, user: r.user })); return; }
+        if (u.pathname === '/api/auth/logout') { res.writeHead(200, { 'Content-Type': 'application/json', 'Set-Cookie': A.logout(req) }); res.end('{"ok":true}'); return; }
+        return sendJson(res, 404, { error: 'unknown' });
+      } catch (e) { return sendJson(res, e.status || 500, { error: String(e.message || e) }); }
+    }
+    if (u.pathname.startsWith('/api/users')) {
+      if (!isLoopback(req)) return sendJson(res, 403, { error: 'accounts are managed from the computer the tests run on (http://127.0.0.1:' + PORT + ')' });
+      if (req.method === 'GET') return sendJson(res, 200, A.list());
       if (!sameOrigin(req)) return sendJson(res, 403, { error: 'rejected: requests must come from this page on localhost' });
-      try { return sendJson(res, 200, u.pathname === '/api/start' ? await startRun(await readBody(req)) : u.pathname === '/api/pause' ? pauseRun() : u.pathname === '/api/resume' ? resumeRun() : await stopRun()); }
-      catch (e) { return sendJson(res, e.status || 500, { error: String(e.message || e) }); }
+      try {
+        const b = await readBody(req);
+        if (u.pathname === '/api/users/approve') A.setStatus(b.name, 'approved');
+        else if (u.pathname === '/api/users/deny') A.setStatus(b.name, 'denied');
+        else if (u.pathname === '/api/users/delete') A.remove(b.name);
+        else return sendJson(res, 404, { error: 'unknown' });
+        return sendJson(res, 200, { ok: true, users: A.list() });
+      } catch (e) { return sendJson(res, e.status || 500, { error: String(e.message || e) }); }
     }
     if (u.pathname === '/report') return await sendReport(req, res, u);
-    if (u.pathname === '/api/state') { const a = activeRun(); return sendJson(res, 200, { active: a && { ...a, pauseFlag: exists(pauseFlagOf(a.id)) }, launching: Date.now() - lastLaunch < 25000, canControl: isLoopback(req) }); }
+    if (u.pathname === '/api/state') { const a = activeRun(); return sendJson(res, 200, { active: a && { ...a, pauseFlag: exists(pauseFlagOf(a.id)) }, launching: Date.now() - lastLaunch < 25000, canControl: A.canControl(req), me: A.sessionUser(req), admin: isLoopback(req), pending: isLoopback(req) ? A.pendingCount() : 0 }); }
     if (u.pathname === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' }); res.end(fs.readFileSync(PAGE)); return; }
     if (u.pathname === '/logo.png') { res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'max-age=86400' }); res.end(fs.readFileSync(path.join(__dirname, 'suite-ui-logo.png'))); return; } // ROBAR by Innovatum logo (Web Menu login page, Images/LoginLogo.bmp)
     if (u.pathname === '/api/runs') { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(listRuns())); return; }
+    if (u.pathname === '/api/testcounts') { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(testCounts())); return; }
     if (u.pathname === '/api/history') { res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(history())); return; }
     if (u.pathname === '/events') return sse(req, res, u.searchParams.get('run'));
+    if (u.pathname === '/preview.jpg') {
+      // live preview: the newest frame the running spec wrote (tests/support/live-preview.ts). Asking for it also touches preview.want, which is what makes the spec capture frames (nobody asking = no capture).
+      const d = runDir(u.searchParams.get('run'));
+      if (!d || !exists(d)) { res.writeHead(404); res.end(); return; }
+      if (!A.canControl(req) && !AUTH) { res.writeHead(403, { 'Content-Type': 'text/plain' }); res.end('The live preview is only available on this computer and to approved accounts (it shows real app screens).'); return; }
+      try { fs.writeFileSync(path.join(d, 'preview.want'), String(Date.now())); } catch { /* run folder not writable: no preview */ }
+      const p = path.join(d, 'preview.jpg');
+      if (!exists(p)) { res.writeHead(204, { 'Cache-Control': 'no-store' }); res.end(); return; }
+      const m = readJson(path.join(d, 'preview.json')) || {};
+      res.writeHead(200, { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store', 'X-Preview-Ts': String(m.ts || 0), 'X-Preview-Url': encodeURIComponent(m.url || ''), 'Access-Control-Expose-Headers': 'X-Preview-Ts, X-Preview-Url' });
+      res.end(fs.readFileSync(p)); return;
+    }
     if (u.pathname === '/shot') {
       const d = runDir(u.searchParams.get('run')); const f = u.searchParams.get('f') || '';
       if (!d || !/^[\w.\-]+\.(png|jpe?g)$/i.test(f)) { res.writeHead(404); res.end(); return; }
