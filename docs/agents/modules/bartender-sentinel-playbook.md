@@ -386,3 +386,11 @@ A text object bound to the sharename `S_Ser` only prints Serial copies if its da
 
 ## S_Ser label count, SOLVED and automated (2026-10-16)
 Increment template CLSerITpl917248 + item CLSerIItm9992549 (variant `ser-inc`) vs plain CLSerSTpl714236 (variant `ser`), Print by Lot to Microsoft Print to PDF, Copy 1: print server log `printing ser=3, copies=1` with Increment vs `ser=0` without. The job's .prn on the server (\vmsrvtst703\c$\Innovatum\Network\PrintedImages\<yyyymm>\PID_*.prn) is a Letter PDF with TWO labels per page: Increment Serial 3 = 3 labels on 2 pages, Serial 5 = 5 labels on 3 pages, plain template = 1 label. **Count labels, not pages**: `tests/support/pdf-labels.ts` (pdfjs-dist, counts the item number text per label). Serial_Print_To_PDF.spec.ts asserts 3 labels for [ser-inc] and 1 for [ser]; env `SER_COUNT` sets the Serial typed (default 3). The `ser-counter` (S_Counter override) and `ser-existing` variants are skipped.
+
+## Leaving BarTender open after a failed test (2026-11-20)
+
+A test that fails inside `launchTemplateEditor` (e.g. the smoke tier 2 template workflow, UIA timeout 0x800705B4 on the "Text" toolbar check, 2026-11-20 08:51 run) never reaches `closeTemplateEditor`, so the editor stayed open until
+someone closed it by hand (the plugin log showed "Close action initiated" 3.5 min later). Plugin log timeline of that run: open action 9:11:56 -> BarTender process started 9:12:13 (16.8 s: the same ~16.5 s as on every day since 2026-09-17, so not a VPN slowdown) -> test gave up ~9:12:21.
+Safety net: `bartender.closeNewBartenderProcesses(before)` (tests/support/bartender.ts) force-closes only editor processes that were not in `before = await bartenderLeftovers()` taken before the test; call it from a `finally`. It never touches a BarTender window you had open
+yourself, nor `BarTend.exe` in session 0 (the BarTender service behind Seagull.Services.Integration.WebService, started at boot, no window). Used in `Smoke/tier2/Template_Workflow_Smoke.spec.ts`; other tier 2 / print specs do not use it yet.
+The root cause of the UIA timeout itself was not found (needs a repeat; the playbook's rule 6 applies: if the same error repeats, it is a real hang, not a need for more time).

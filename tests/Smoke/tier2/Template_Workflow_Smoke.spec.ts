@@ -20,6 +20,7 @@ test('@smoke @tier2 template workflow: create a template, send it to workflow, a
   const t0 = Date.now();
   const lap = (what: string) => console.log(`SMOKE ${((Date.now() - t0) / 1000).toFixed(0)}s ${what}`);
   await login(page);
+  const bartenderBefore = await bartender.bartenderLeftovers(); // BarTender processes that are open before this test (never closed by its cleanup)
   const keepAlive = setInterval(() => {
     page.evaluate(() => {
       const w = window as unknown as { RefreshTimeout?: () => void };
@@ -197,6 +198,9 @@ test('@smoke @tier2 template workflow: create a template, send it to workflow, a
     });
   } finally {
     clearInterval(keepAlive);
+    await test.step('cleanup: close a BarTender editor this test left open (failure inside the BarTender step)', async () => {
+      await bartender.closeNewBartenderProcesses(bartenderBefore);
+    });
     await test.step('cleanup: delete the throw-away preset', async () => {
       await page.locator('li.ui-tabs-tab:has-text("Template Management") .ui-icon-close').click({ timeout: 3000 }).catch(() => {});
       await page.locator('li.ui-tabs-tab:has-text("Main Menu")').click({ timeout: 3000 }).catch(() => {});

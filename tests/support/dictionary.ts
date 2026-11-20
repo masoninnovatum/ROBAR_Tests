@@ -63,9 +63,24 @@ export async function openMainAction(page: Page, item: 'New Entry' | 'Excel Impo
 
 export interface EntryInput { phrase?: string; language?: string; translation?: string; begin?: string; end?: string; html?: boolean }
 
+/** Waits until the nested ViewEdit dialog frame exists AND its form is there (the Submit button). The dialog opens empty and its page loads a moment later (2026-11-20 smoke run: a fixed 3 s sleep
+ *  after the menu click was not always enough, the frame was still undefined and `editFrame(page)!` threw "Cannot read properties of undefined (reading 'locator')"). */
+export async function waitEditFrame(page: Page, timeoutMs = 20_000): Promise<Frame> {
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeoutMs) {
+    const f = editFrame(page);
+    if (f) {
+      await f.locator('#btnSubmit').waitFor({ state: 'attached', timeout: Math.max(1000, timeoutMs - (Date.now() - t0)) }).catch(() => {});
+      return f;
+    }
+    await page.waitForTimeout(250);
+  }
+  throw new Error(`the Dictionary Management ViewEdit dialog did not load within ${timeoutMs / 1000} s`);
+}
+
 /** Fills the New Entry dialog (nested ViewEdit frame) and optionally submits. Returns the inline messages seen right after Submit. */
 export async function fillNewEntry(page: Page, e: EntryInput, submit = true): Promise<string> {
-  const nf = editFrame(page)!;
+  const nf = await waitEditFrame(page);
   const texts = nf.locator('input[type=text]:not([id^=dp])');
   if (e.phrase !== undefined) await texts.nth(0).fill(e.phrase);
   if (e.language !== undefined) await texts.nth(1).fill(e.language);

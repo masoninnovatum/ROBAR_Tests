@@ -146,15 +146,27 @@ export async function resolveBrowserPid(page: Page): Promise<number> {
  * that a "successful" attempt sometimes does nothing at all. So this dump-trees the window after
  * every attempt and keeps retrying the click until the dialog is actually confirmed gone, instead
  * of trusting a report that doesn't mean what it sounds like it means. */
-export async function confirmSentinelLaunchPrompt(page: Page, browserPid: number): Promise<void> {
+export async function confirmSentinelLaunchPrompt(page: Page, browserPid: number, waitForAppearSeconds = 0): Promise<void> {
+  // waitForAppearSeconds (opt-in, 2026-11-18): the prompt can show up well after the caller's fixed wait; with N > 0 an absent prompt is
+  // polled for up to N s before concluding "nothing to confirm". Only used before the first click: once clicked, absence means closed.
+  const appearDeadline = Date.now() + waitForAppearSeconds * 1000;
+  let clicked = false;
   for (let attempt = 0; attempt < 20; attempt++) {
     const tree = await flaui.dumpTree({ processId: browserPid, maxDepth: 15 });
     if (!(tree || '').includes('Open SentinelLauncher?')) {
+      if (!clicked && Date.now() < appearDeadline) { await page.waitForTimeout(1000); attempt--; continue; }
       return; // dialog confirmed gone -- a prior click (or none needed) already succeeded
     }
+    clicked = true;
     await bringWindowToForeground(browserPid);
     await page.waitForTimeout(200);
-    await flaui.clickAt({ processId: browserPid, name: 'Open SentinelLauncher', offsetX: 20, offsetY: 14 });
+    // 2026-11-18: from the 2nd attempt on, the UIA default click is tried too (the real-mouse clickAt alone left the prompt up 20 times in a row;
+    // in a diagnostic run only the default click closed it). The first attempt stays the proven clickAt.
+    if (attempt % 2 === 0) {
+      await flaui.clickAt({ processId: browserPid, name: 'Open SentinelLauncher', offsetX: 20, offsetY: 14 });
+    } else {
+      await flaui.click({ processId: browserPid, name: 'Open SentinelLauncher' }).catch(() => undefined);
+    }
     await page.waitForTimeout(500);
   }
   throw new Error(
@@ -289,6 +301,23 @@ export async function bartenderLeftovers(): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * Safety net for a test that fails while a BarTender editor is open (2026-11-20 smoke run: the template workflow test failed inside `launchTemplateEditor`, so `closeTemplateEditor` never ran and BarTender stayed open
+ * until someone closed it by hand). Take `const before = await bartenderLeftovers()` BEFORE the test opens the editor, then call this from a `finally`: it force-closes (taskkill /T /F) only the editor processes that
+ * are open now and were NOT in `before` -- a BarTender window the user had open for other work is never touched, and neither is the windowless BarTender service process (session 0). Unsaved editor changes are lost,
+ * which is the point: the test is over. Returns the processes it closed. Soft: never throws.
+ */
+export async function closeNewBartenderProcesses(before: string[]): Promise<string[]> {
+  const now = await bartenderLeftovers();
+  const mine = now.filter((p) => !before.includes(p));
+  for (const entry of mine) {
+    const pid = Number(entry.split(':').pop());
+    if (pid > 0) await execFileAsync('taskkill', ['/PID', String(pid), '/T', '/F']).catch(() => {});
+  }
+  if (mine.length) console.log(`closed BarTender processes left open by this test: ${JSON.stringify(mine)}`);
+  return mine;
 }
 
 /** Waits (up to `timeoutSeconds`) until `bartenderLeftovers()` is empty, then raises Playwright's browser window. Soft: logs, never throws. */

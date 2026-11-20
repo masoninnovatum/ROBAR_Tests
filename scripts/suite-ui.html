@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ROBAR Live Run</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --text:#1c2430; --muted:#667085; --line:#e3e7ee;
+  --ok:#1a8f4c; --bad:#d0342c; --warn:#b7791f; --run:#2563eb; --skip:#98a2b3; --flaky:#c2410c;
+  --okbg:#e6f6ec; --badbg:#fde8e6; --warnbg:#fdf3dc; --runbg:#e3ecfd;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#10141b; --panel:#171c25; --text:#e6e9ef; --muted:#8f9aae; --line:#2a3241;
+    --ok:#3ecf7d; --bad:#ff6b61; --warn:#e8b04b; --run:#6ea0ff; --skip:#6b7588; --flaky:#ff9a5c;
+    --okbg:#13301f; --badbg:#3a1a18; --warnbg:#3a2e12; --runbg:#16264a;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,"Segoe UI",sans-serif}
+main{max-width:1280px;margin:0 auto;padding:16px}
+header{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:14px}
+h1{font-size:18px;margin:0 8px 0 0}
+.logo{display:block;height:44px;width:auto;background:#fff;border-radius:6px;padding:3px 6px;margin-right:6px} /* the logo has an opaque white background and dark text: keep it on white in dark mode too */
+select,button{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+button{cursor:pointer}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:12px}
+.pill.running{background:var(--runbg);color:var(--run)}
+.pill.finished{background:var(--okbg);color:var(--ok)}
+.pill.failed,.pill.aborted,.pill.stopped{background:var(--badbg);color:var(--bad)}
+.pill.paused,.pill.pausing{background:var(--warnbg);color:var(--warn)}
+.pill.waiting,.pill.replay{background:var(--line);color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.tile .k{color:var(--muted);font-size:12px}
+.tile .v{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+.v.ok{color:var(--ok)}.v.bad{color:var(--bad)}.v.skip{color:var(--skip)}.v.flaky{color:var(--flaky)}
+.bar{height:12px;background:var(--line);border-radius:6px;overflow:hidden;display:flex;margin-bottom:12px}
+.bar i{display:block;height:100%}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:12px}
+.card h2{font-size:13px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.now .file{font-weight:650;word-break:break-all}
+.now .test{margin-top:2px}
+.now .step{color:var(--muted);font-size:13px}
+.banner{border-radius:6px;padding:8px 12px;margin-bottom:12px;font-weight:600}
+.banner.headed{background:var(--warnbg);color:var(--warn)}
+.banner.stuck{background:var(--badbg);color:var(--bad)}
+.cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px}
+td.n,th.n{text-align:right}
+tr.mod{cursor:pointer}
+tr.mod:hover{background:var(--bg)}
+tr.spec td{font-size:13px;color:var(--muted)}
+tr.spec td:first-child{padding-left:24px;word-break:break-all}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:var(--skip)}
+.dot.running{background:var(--run);animation:pulse 1.2s infinite}
+.dot.done{background:var(--ok)}.dot.bad{background:var(--bad)}
+@keyframes pulse{50%{opacity:.35}}
+.fail{border-left:3px solid var(--bad);padding:6px 10px;margin-bottom:8px;background:var(--badbg);border-radius:0 6px 6px 0}
+.fail .t{font-weight:600;word-break:break-word}
+.fail .f{color:var(--muted);font-size:12px;word-break:break-all}
+.fail .e{font-size:12px;margin-top:3px;white-space:pre-wrap;word-break:break-word}
+.fail img{max-width:220px;max-height:140px;border:1px solid var(--line);border-radius:4px;margin-top:6px;cursor:zoom-in}
+.feed{max-height:260px;overflow:auto;font:12px/1.5 ui-monospace,Consolas,monospace}
+.feed div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed .p{color:var(--ok)}.feed .f{color:var(--bad)}.feed .s{color:var(--skip)}.feed .x{color:var(--run)}
+.muted{color:var(--muted)}
+details summary{cursor:pointer;color:var(--muted);font-weight:600}
+[hidden]{display:none !important} /* elements with their own display rule (the pills) would otherwise ignore the hidden attribute */
+a.btnlink{display:inline-block;font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 10px;text-decoration:none;font-weight:600}
+a.btnlink:hover{border-color:var(--run);color:var(--run)}
+button.primary{background:var(--run);color:#fff;border-color:var(--run);font-weight:600}
+button.danger{background:var(--bad);color:#fff;border-color:var(--bad);font-weight:600}
+button:disabled{opacity:.5;cursor:not-allowed}
+/* the action buttons stay together as one group: on the right of the title row, wrapping below it as a whole on a narrow window (never splitting Start run from the report buttons) */
+.actions{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;margin-left:auto}
+#repWrap{display:inline-flex;gap:8px}
+.meta{margin:-6px 0 12px;font-size:13px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:16px 18px;max-width:760px;width:calc(100vw - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+dialog h2{margin:0 0 4px;font-size:17px}
+.scard{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0}
+.scard h3{margin:0 0 2px;font-size:15px}
+.scard p{margin:2px 0 6px;color:var(--muted);font-size:13px}
+.scard label{display:inline-block;margin-right:12px;font-size:13px}
+.scard input[type=text]{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:3px 8px;width:220px}
+.confirm{background:var(--warnbg);color:var(--text);border-radius:6px;padding:8px 10px;margin-top:8px;font-size:13px}
+.confirm b{color:var(--warn)}
+.err{color:var(--bad);font-weight:600;margin-top:6px;font-size:13px}
+.banner.info{background:var(--runbg);color:var(--run)}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
+#zoom img{max-width:94vw;max-height:94vh}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img class="logo" src="/logo.png" alt="ROBAR by Innovatum">
+    <h1>Live run</h1>
+    <span id="status" class="pill waiting">waiting</span>
+    <select id="runSel" title="Pick a run to watch or replay"></select>
+    <label class="muted"><input type="checkbox" id="follow" checked> follow newest run</label>
+    <div class="actions">
+      <span id="viewOnly" class="pill waiting" hidden title="Runs can only be started or stopped from the computer the tests run on">view only</span>
+      <button id="startBtn" class="primary" title="Start a Smoke, E2E or API run">▶ Start Run</button>
+      <button id="pauseBtn" hidden title="Pause after the spec file that is running now finishes (a spec cannot be frozen safely mid-test)">⏸ Pause Run</button>
+      <button id="stopBtn" class="danger" hidden title="Stop the run that is in progress">■ Stop Run</button>
+      <span id="repWrap" hidden><a id="repHtml" class="btnlink" href="#" download title="One self-contained page: the report plus the failure screenshots">⬇ Report (HTML)</a><a id="repMd" class="btnlink" href="#" download title="The report.md file as it is">⬇ Report (.md)</a></span>
+    </div>
+  </header>
+  <div id="meta" class="muted meta"></div>
+
+  <div id="banners"></div>
+
+  <section class="tiles" id="tiles"></section>
+  <div class="bar" id="bar" title="Estimated overall progress"></div>
+
+  <section class="card now" id="now"></section>
+
+  <div class="cols">
+    <section class="card"><h2>Modules</h2><table id="modules"></table></section>
+    <section>
+      <div class="card"><h2>Failures <span id="failCount" class="muted"></span></h2><div id="fails"><span class="muted">None so far.</span></div></div>
+      <div class="card"><h2>Activity</h2><div class="feed" id="feed"></div></div>
+      <div class="card"><details id="skipsBox"><summary>Skipped tests <span id="skipCount"></span></summary><div id="skips" class="muted"></div></details></div>
+    </section>
+  </div>
+</main>
+<dialog id="startDlg"></dialog>
+<div id="zoom"><img alt=""></div>
+
+<script>
+'use strict';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = (ms) => {
+  if (ms == null || !isFinite(ms)) return '–';
+  const s = Math.max(0, Math.round(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+  return h ? `${h}h ${String(m).padStart(2, '0')}m` : m ? `${m}m ${String(r).padStart(2, '0')}s` : `${r}s`;
+};
+const clock = (ts) => new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const modOf = (file) => (file.startsWith('stage:') ? file.slice(6) : (file.split('/')[1] || file));
+const shortFile = (f) => f.replace(/^tests\//, '').replace(/\.spec\.ts$/, '');
+
+let HISTORY = {};
+let S, ES, runId, expanded = new Set(), alive = { alive: false, ended: false }, lastEvTs = 0, dirty = false;
+
+function fresh() {
+  return { run: '', kind: 'suite', pid: 0, replay: false, startTs: 0, endTs: 0, endStatus: '', canary: '', only: null, resumed: false,
+    pause: '', pauseNext: '', units: new Map(), order: [], doneEarlier: [], cur: null, feed: [], fails: [], skips: [], lastActivity: 0, errors: 0 };
+}
+function unit(key, ev) {
+  let u = S.units.get(key);
+  if (!u) {
+    u = { key, module: modOf(key), headed: false, status: 'queued', startTs: 0, endTs: 0, ms: 0, exit: null, tests: new Map(), expected: 0, cur: '', step: '', stderr: '' };
+    S.units.set(key, u); S.order.push(key);
+  }
+  return u;
+}
+const ukey = (ev) => (ev.stage ? 'stage:' + ev.stage : ev.file);
+function feed(cls, text, ts) { S.feed.push({ cls, text, ts }); if (S.feed.length > 120) S.feed.shift(); }
+
+function apply(ev) {
+  if (ev.ts) lastEvTs = Math.max(lastEvTs, ev.ts);
+  switch (ev.t) {
+    case 'hb': return;
+    case 'runStart': {
+      if (!S.startTs) S.startTs = ev.ts;
+      S.run = ev.run; S.kind = ev.kind || 'suite'; S.pid = ev.pid || 0; S.replay = !!ev.replay; S.only = ev.only; S.resumed = S.resumed || !!ev.resumed;
+      S.endTs = 0; S.endStatus = '';
+      for (const f of ev.files || []) { const u = unit(f.file, ev); u.headed = !!f.headed; }
+      S.doneEarlier = [...new Set([...S.doneEarlier, ...(ev.doneEarlier || [])])];
+      feed('x', `run ${ev.resumed ? 'resumed' : 'started'}: ${(ev.files || []).length} ${S.kind === 'smoke' ? 'stages' : 'spec files'}${ev.doneEarlier && ev.doneEarlier.length ? `, ${ev.doneEarlier.length} already done` : ''}`, ev.ts);
+      return;
+    }
+    case 'canary': S.canary = ev.status; feed(ev.status === 'failed' ? 'f' : 'x', `fixture canary: ${ev.status}`, ev.ts); S.lastActivity = ev.ts; return;
+    case 'pause': {
+      if (ev.state === 'requested') { S.pause = S.pause === 'paused' ? 'paused' : 'requested'; feed('x', 'pause requested: the run holds after the spec file that is running finishes', ev.ts); }
+      else if (ev.state === 'paused') { S.pause = 'paused'; S.pauseNext = ev.next || ''; feed('x', `⏸ paused before ${shortFile(ev.next || 'the next spec file')}`, ev.ts); }
+      else { S.pause = ''; S.pauseNext = ''; feed('x', ev.state === 'cancelled' ? 'pause cancelled / run resumed' : '▶ resumed', ev.ts); }
+      S.lastActivity = ev.ts; return;
+    }
+    case 'fileStart': {
+      S.pause = '';
+      const u = unit(ev.file, ev); u.status = 'running'; u.startTs = ev.ts; S.cur = u.key; S.lastActivity = ev.ts;
+      feed('x', `▶ ${shortFile(ev.file)}${ev.i ? `  [${ev.i}/${ev.n}]` : ''}`, ev.ts); return;
+    }
+    case 'tests': { const u = unit(ukey(ev), ev); u.expected = (ev.stage ? u.expected : 0) + ev.count; return; }
+    case 'testBegin': {
+      const u = unit(ukey(ev), ev); if (u.status === 'queued') { u.status = 'running'; u.startTs = ev.ts; }
+      S.cur = u.key; u.cur = ev.title; u.curFile = ev.file; u.curTs = ev.ts; u.step = ''; S.lastActivity = ev.ts; return;
+    }
+    case 'step': { const u = unit(ukey(ev), ev); u.step = ev.title; S.lastActivity = ev.ts; return; }
+    case 'testEnd': {
+      const u = unit(ukey(ev), ev);
+      const key = ev.file + '\u0001' + ev.title;
+      u.tests.set(key, { title: ev.title, file: ev.file, status: ev.status, ms: ev.ms, error: ev.error, note: ev.note, shot: ev.shot });
+      if (u.cur === ev.title) { u.cur = ''; u.step = ''; }
+      S.lastActivity = ev.ts;
+      if (ev.status === 'failed') { S.fails.unshift({ unit: u.key, file: ev.file, title: ev.title, error: ev.error, shot: ev.shot, ts: ev.ts }); feed('f', `✗ ${ev.title}`, ev.ts); }
+      else if (ev.status === 'skipped') { S.skips.push({ file: ev.file, title: ev.title, note: ev.note }); feed('s', `– ${ev.title}`, ev.ts); }
+      else feed('p', `✓ ${ev.title}  (${fmt(ev.ms)})`, ev.ts);
+      return;
+    }
+    case 'fileEnd': {
+      const u = unit(ev.file, ev); u.status = 'done'; u.endTs = ev.ts; u.ms = ev.ms; u.exit = ev.exit; u.cur = ''; u.step = ''; u.stderr = ev.stderr || '';
+      if (S.cur === u.key) S.cur = null;
+      feed(ev.exit > 1 || ev.exit < 0 ? 'f' : 'x', `■ ${shortFile(ev.file)} finished in ${fmt(ev.ms)} (exit ${ev.exit})${u.stderr ? ' ' + u.stderr.slice(0, 120) : ''}`, ev.ts); return;
+    }
+    case 'runEnd': S.pause = ''; S.endTs = ev.ts; S.endStatus = ev.status; S.cur = null; feed(ev.status === 'finished' ? 'p' : 'f', `run ${ev.status}${ev.wallMs ? ' after ' + fmt(ev.wallMs) : ''}`, ev.ts); return;
+    case 'error': S.errors++; feed('f', `reporter error: ${ev.error}`, ev.ts); return;
+  }
+}
+
+function counts(u) { const c = { passed: 0, failed: 0, skipped: 0, flaky: 0 }; for (const t of u.tests.values()) c[t.status]++; return c; }
+
+// time-weighted progress and ETA from the median wall time of each spec file in earlier runs
+function progress(now) {
+  const units = S.order.map((k) => S.units.get(k)).filter((u) => !u.key.startsWith('stage:') || S.kind === 'smoke');
+  const known = units.map((u) => HISTORY[u.key]).filter(Boolean);
+  const avg = known.length ? known.reduce((a, b) => a + b, 0) / known.length : 60000;
+  let total = 0, done = 0, remaining = 0;
+  for (const u of units) {
+    const w = HISTORY[u.key] || avg; total += w;
+    if (u.status === 'done') done += w;
+    else if (u.status === 'running') { const el = now - u.startTs; const part = Math.min(w, el); done += part * 0.9; remaining += Math.max(w * 0.1, w - el); }
+    else remaining += w;
+  }
+  return { pct: total ? Math.min(1, done / total) : 0, remaining, haveHistory: known.length > 0 };
+}
+
+function render() {
+  dirty = false;
+  const real = Date.now();
+  let now = real;
+  const units = S.order.map((k) => S.units.get(k));
+  const all = { passed: 0, failed: 0, skipped: 0, flaky: 0 };
+  for (const u of units) { const c = counts(u); for (const k in all) all[k] += c[k]; }
+  const doneN = units.filter((u) => u.status === 'done').length;
+  const totalN = units.length;
+  const running = !S.endTs && (alive.alive || (!alive.ended && !S.replay && real - lastEvTs < 30000));
+  const stopped = !S.endTs && !S.replay && !running && S.startTs;
+  const state = S.replay ? 'replay' : S.endTs ? (S.endStatus === 'finished' ? (all.failed ? 'finished' : 'finished') : S.endStatus === 'aborted' ? 'aborted' : 'failed') : running ? 'running' : stopped ? 'stopped' : 'waiting';
+  if (state !== 'running') now = S.endTs || lastEvTs || real; // freeze the clocks when nothing is live
+  const stEl = $('status');
+  stEl.className = 'pill ' + (state === 'finished' && all.failed ? 'failed' : state);
+  stEl.textContent = { replay: 'replay (old run)', finished: all.failed ? `finished, ${all.failed} failed` : 'finished', aborted: 'aborted', failed: S.endStatus, running: 'running', stopped: 'runner stopped', waiting: 'waiting for a run' }[state];
+  const pausedNow = state === 'running' && S.pause === 'paused', pausingNow = state === 'running' && S.pause === 'requested';
+  if (pausedNow) { stEl.className = 'pill paused'; stEl.textContent = 'paused'; } else if (pausingNow) { stEl.className = 'pill pausing'; stEl.textContent = 'pausing after this file'; }
+
+  // report download: only when the run is not in progress; offered when the run has a report, or (from this computer) when one can be built
+  const runRow = RUNS.find((r) => r.id === runId);
+  const canDl = !!(runId && runRow && state !== 'running' && state !== 'waiting' && (runRow.hasReport || STATE.canControl !== false));
+  $('repWrap').hidden = !canDl;
+  if (canDl) { const q = '/report?run=' + encodeURIComponent(runId); $('repHtml').href = q + '&fmt=html'; $('repMd').href = q + '&fmt=md'; }
+  const elapsed = S.replay ? units.reduce((a, u) => a + (u.ms || 0), 0) : S.startTs ? ((S.endTs || (state === 'running' ? now : lastEvTs)) - S.startTs) : 0; // replay: sum of test durations (wall time was not recorded)
+  const P = progress(now);
+  const doneAll = doneN + S.doneEarlier.length, totAll = totalN + S.doneEarlier.length;
+  $('meta').textContent = S.run ? `${S.kind} run ${S.run}${S.only ? ` · only "${S.only}"` : ''}${S.resumed ? ' · resumed' : ''}${S.pid ? ` · pid ${S.pid}` : ''}` : '';
+
+  const banners = [];
+  const cur = S.cur && S.units.get(S.cur);
+  if (state === 'running' && cur && cur.status === 'running' && cur.headed) banners.push(`<div class="banner headed">Headed spec running - Please do not touch mouse or keyboard.</div>`);
+  const idle = now - (S.lastActivity || S.startTs);
+  if (pausedNow) banners.push(`<div class="banner headed">Run paused before ${esc(shortFile(S.pauseNext || 'the next spec file'))}. Click “Resume Run” to continue; nothing is running, so the computer is free to use meanwhile.</div>`);
+  if (pausingNow) banners.push(`<div class="banner headed">Pause requested: the run holds when the spec file that is running finishes${cur && cur.status === 'running' ? ` (${esc(shortFile(cur.key))})` : ''}. A spec cannot be frozen mid-test. Click “Resume Run” to cancel the pause.</div>`);
+  if (state === 'running' && !S.pause && S.lastActivity && idle > 180000) banners.push(`<div class="banner stuck">No test activity for ${fmt(idle)} — a spec may be stuck (screen lock, VPN drop, a Sentinel prompt behind another window?).</div>`);
+  if (state === 'stopped') banners.push(`<div class="banner stuck">The runner process is no longer alive and the run did not finish (killed or crashed). Use --resume with --only to continue.</div>`);
+  if (S.canary === 'failed') banners.push(`<div class="banner stuck">Fixture canary failed — the run was not started.</div>`);
+  if (LAUNCH && real - LAUNCH.ts < 90000 && runId === LAUNCH.prev) banners.push(`<div class="banner info">Launching the ${esc(LAUNCH.label)} run… it appears here in a few seconds (the first step is the fixture check, about 45 s).</div>`);
+  $('banners').innerHTML = banners.join('');
+
+  const tile = (k, v, cls = '') => `<div class="tile"><div class="k">${k}</div><div class="v ${cls}">${v}</div></div>`;
+  $('tiles').innerHTML =
+    tile('Elapsed', fmt(elapsed)) +
+    tile(state === 'running' ? 'Est. remaining' : 'Wall time', state === 'running' ? (P.haveHistory ? '~' + fmt(P.remaining) : '–') : fmt(elapsed)) +
+    tile(S.kind === 'smoke' ? 'Stages' : 'Spec files', `${doneAll} / ${totAll || '–'}`) +
+    tile('Passed', all.passed, 'ok') + tile('Failed', all.failed, all.failed ? 'bad' : '') +
+    tile('Skipped', all.skipped, 'skip') + (all.flaky ? tile('Flaky', all.flaky, 'flaky') : '');
+
+  const pct = S.endTs ? 1 : P.pct;
+  $('bar').title = `Estimated overall progress ${(pct * 100).toFixed(0)}% (weighted by earlier run durations)`;
+  const tot = all.passed + all.failed + all.skipped + all.flaky || 1;
+  // bar: finished work coloured by result, the rest of the estimated progress in blue
+  const wDone = pct * 100;
+  const f = (all.failed / tot) * wDone, sk = (all.skipped / tot) * wDone, fl = (all.flaky / tot) * wDone, ok = wDone - f - sk - fl;
+  $('bar').innerHTML = `<i style="width:${ok}%;background:var(--ok)"></i><i style="width:${fl}%;background:var(--flaky)"></i><i style="width:${sk}%;background:var(--skip)"></i><i style="width:${f}%;background:var(--bad)"></i>`;
+
+  // now running
+  let nowHtml = `<h2>${pausedNow ? 'Paused' : state === 'running' ? 'Now running' : 'Last active'}</h2>`;
+  if (cur && cur.status === 'running') {
+    const fe = now - cur.startTs;
+    const med = HISTORY[cur.key];
+    nowHtml += `<div class="file">${esc(shortFile(cur.key))} <span class="muted">· ${fmt(fe)} in this file${med ? ` (usually ${fmt(med)})` : ''}${cur.headed ? ' · headed' : ''}</span></div>`;
+    nowHtml += cur.cur ? `<div class="test">${esc(cur.cur)} <span class="muted">· ${fmt(now - (cur.curTs || now))}</span></div>` : `<div class="test muted">between tests / starting…</div>`;
+    if (cur.step) nowHtml += `<div class="step">step: ${esc(cur.step)}</div>`;
+    if (cur.expected) nowHtml += `<div class="step">${counts(cur).passed + counts(cur).failed + counts(cur).skipped} of ${cur.expected} tests finished in this file</div>`;
+  } else if (pausedNow) nowHtml += `<div class="muted">Paused. Nothing is running until you click “Resume Run”${S.pauseNext ? ` (next: ${esc(shortFile(S.pauseNext))})` : ''}.</div>`;
+  else if (state === 'running') nowHtml += `<div class="muted">${S.canary === 'start' ? 'Fixture canary check (~45 s)…' : 'Starting the next spec file…'}</div>`;
+  else nowHtml += `<div class="muted">${state === 'waiting' ? 'Nothing running. Start a run with <code>node scripts/suite-run.js</code>; this page follows it.' : 'Not running.'}</div>`;
+  $('now').innerHTML = nowHtml;
+
+  // modules
+  const mods = new Map();
+  for (const u of units) { if (!mods.has(u.module)) mods.set(u.module, []); mods.get(u.module).push(u); }
+  let mh = '<tr><th>Module</th><th class="n">Files</th><th class="n">Pass</th><th class="n">Fail</th><th class="n">Skip</th><th class="n">Time</th></tr>';
+  for (const [m, list] of mods) {
+    const c = { passed: 0, failed: 0, skipped: 0, flaky: 0 }; let ms = 0, d = 0, run = false;
+    for (const u of list) { const x = counts(u); for (const k in c) c[k] += x[k]; ms += u.status === 'done' ? u.ms : u.status === 'running' ? now - u.startTs : 0; if (u.status === 'done') d++; if (u.status === 'running') run = true; }
+    const cls = run ? 'running' : d === list.length ? (c.failed ? 'bad' : 'done') : '';
+    const open = expanded.has(m);
+    mh += `<tr class="mod" data-m="${esc(m)}"><td><span class="dot ${cls}"></span>${open ? '▾' : '▸'} ${esc(m)}</td><td class="n">${d}/${list.length}</td><td class="n" style="color:var(--ok)">${c.passed}</td><td class="n" style="color:${c.failed ? 'var(--bad)' : 'inherit'}">${c.failed}</td><td class="n muted">${c.skipped}</td><td class="n">${fmt(ms)}</td></tr>`;
+    if (open) for (const u of list) {
+      const x = counts(u);
+      mh += `<tr class="spec"><td><span class="dot ${u.status === 'running' ? 'running' : u.status === 'done' ? (x.failed || u.exit > 1 || u.exit < 0 ? 'bad' : 'done') : ''}"></span>${esc(shortFile(u.key).split('/').slice(1).join('/') || shortFile(u.key))}${u.headed ? ' <span class="muted">(headed)</span>' : ''}</td><td class="n">${u.status === 'queued' ? 'queued' : u.status === 'running' ? 'running' : ''}</td><td class="n">${x.passed}</td><td class="n">${x.failed}</td><td class="n">${x.skipped}</td><td class="n">${u.status === 'done' ? fmt(u.ms) : u.status === 'running' ? fmt(now - u.startTs) : ''}</td></tr>`;
+    }
+  }
+  if (S.doneEarlier.length) mh += `<tr><td colspan="6" class="muted">${S.doneEarlier.length} spec file(s) were already done in an earlier part of this run folder (results are in their JSON files, not shown here).</td></tr>`;
+  $('modules').innerHTML = mh;
+
+  // failures
+  $('failCount').textContent = S.fails.length ? `(${S.fails.length})` : '';
+  $('fails').innerHTML = S.fails.length ? S.fails.slice(0, 40).map((x) => `<div class="fail"><div class="t">${esc(x.title)}</div><div class="f">${esc(shortFile(x.file))} · ${clock(x.ts)}</div>${x.error ? `<div class="e">${esc(x.error)}</div>` : ''}${x.shot ? `<img loading="lazy" src="/shot?run=${encodeURIComponent(runId)}&f=${encodeURIComponent(x.shot)}" alt="failure screenshot">` : ''}</div>`).join('') : '<span class="muted">None so far.</span>';
+
+  // feed
+  const fe = $('feed'); const atBottom = fe.scrollTop + fe.clientHeight >= fe.scrollHeight - 20;
+  fe.innerHTML = S.feed.map((x) => `<div class="${x.cls}">${x.ts ? clock(x.ts) : ''}  ${esc(x.text)}</div>`).join('');
+  if (atBottom) fe.scrollTop = fe.scrollHeight;
+
+  // skips
+  $('skipCount').textContent = S.skips.length ? `(${S.skips.length})` : '';
+  $('skips').innerHTML = S.skips.map((x) => `<div>${esc(shortFile(x.file))} — ${esc(x.title)}${x.note ? `<br><span style="padding-left:12px">${esc(x.note)}</span>` : ''}</div>`).join('') || 'None.';
+
+  document.title = `${state === 'running' ? '▶ ' : ''}${all.failed ? '✗' + all.failed + ' ' : ''}ROBAR ${doneAll}/${totAll || '?'}`;
+}
+function schedule() { if (!dirty) { dirty = true; setTimeout(render, 250); } }
+
+function connect(id) {
+  if (ES) ES.close();
+  runId = id; S = fresh(); lastEvTs = 0; alive = { alive: false, ended: false };
+  render();
+  if (!id) return;
+  ES = new EventSource('/events?run=' + encodeURIComponent(id));
+  ES.addEventListener('ev', (m) => { try { apply(JSON.parse(m.data)); } catch (e) { console.error(e); } schedule(); });
+  ES.addEventListener('status', (m) => { try { alive = JSON.parse(m.data); } catch { /* ignore */ } schedule(); });
+  ES.addEventListener('end', () => { ES.close(); schedule(); });
+}
+
+let RUNS = [];
+let STATE = { active: null, launching: false };
+let LAUNCH = null; // { label, ts, prev } while a run launched from this page has not shown up yet
+async function refreshRuns() {
+  try {
+    try { STATE = await (await fetch('/api/state')).json(); } catch { /* older server without /api/state */ }
+    const can = STATE.canControl !== false; // false when the page is opened from another computer: view only
+    $('startBtn').hidden = !can; $('viewOnly').hidden = can;
+    $('stopBtn').hidden = !(can && STATE.active);
+    $('pauseBtn').hidden = !(can && STATE.active);
+    if (STATE.active) { const pf = !!STATE.active.pauseFlag; $('pauseBtn').textContent = pf ? '▶ Resume Run' : '⏸ Pause Run'; $('pauseBtn').className = pf ? 'primary' : ''; $('pauseBtn').title = pf ? 'Continue the run (or cancel the pause that was requested)' : 'Pause after the spec file that is running now finishes (a spec cannot be frozen safely mid-test)'; }
+    $('startBtn').disabled = !!(STATE.active || STATE.launching);
+    $('startBtn').title = STATE.active ? `A ${STATE.active.suite} run is in progress; stop it or wait` : 'Start a Smoke, E2E or API run';
+    RUNS = await (await fetch('/api/runs')).json();
+    const sel = $('runSel'); const cur = sel.value;
+    sel.innerHTML = RUNS.map((r) => `<option value="${r.id}">${r.id}${r.suite ? ' · ' + r.suite : ''}${r.live ? '' : ' (replay)'}</option>`).join('');
+    const newest = (RUNS.find((r) => r.live) || RUNS[0] || {}).id;
+    if ($('follow').checked && newest && newest !== runId) { sel.value = newest; connect(newest); }
+    else sel.value = runId || cur;
+  } catch { /* server restarting */ }
+}
+$('runSel').addEventListener('change', (e) => { $('follow').checked = e.target.value === (RUNS.find((r) => r.live) || RUNS[0] || {}).id; connect(e.target.value); });
+// ---- start / stop runs ----
+const post = async (url, body) => {
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Suite-UI': '1' }, body: JSON.stringify(body || {}) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+  return j;
+};
+const sumHist = (pred) => { let ms = 0, n = 0; for (const [f, v] of Object.entries(HISTORY)) if (pred(f)) { ms += v; n++; } return { ms, n }; };
+const SMOKE_STAGES = [['preflight', 'preflight'], ['tier0', 'tier 0'], ['tier1', 'tier 1'], ['tier2', 'tier 2 (headed)']];
+let pending = null; // which card is waiting for its confirmation
+const FORM = { stages: SMOKE_STAGES.map(([k]) => k), only: '', e2eFix: false, apiFix: false }; // survives the dialog's re-render
+$('startDlg').addEventListener('input', () => {
+  FORM.stages = [...document.querySelectorAll('input[name=stage]:checked')].map((x) => x.value);
+  FORM.only = ($('e2eOnly') || {}).value || ''; FORM.e2eFix = !!($('e2eFix') || {}).checked; FORM.apiFix = !!($('apiFix') || {}).checked;
+});
+
+function openStart(err) {
+  const dlg = $('startDlg');
+  const e2e = sumHist(() => true), api = sumHist((f) => f.startsWith('tests/API/'));
+  const busy = STATE.active ? `<div class="banner stuck">A ${esc(STATE.active.suite)} run is in progress (${esc(STATE.active.id)}). Stop it or wait for it to finish; nothing can be started meanwhile.</div>` : '';
+  const dis = STATE.active ? 'disabled' : '';
+  const confirmBox = (id, html) => pending === id ? `<div class="confirm">${html}<div style="margin-top:8px"><button class="primary" data-go="${id}">Yes, start ${id === 'e2e' ? 'the E2E run' : id === 'api' ? 'the API run' : 'the smoke run'}</button> <button data-cancel="1">Cancel</button></div></div>` : '';
+  const startRow = (id) => pending === id ? '' : `<button class="primary" data-start="${id}" ${dis}>Start…</button>`;
+  dlg.innerHTML = `
+    <h2>Start a run</h2>
+    <div class="muted">The run starts on this computer using the environment configured in <code>.env</code>, exactly like the command line. Only one run can be active at a time.</div>
+    ${busy}${err ? `<div class="err">${esc(err)}</div>` : ''}
+    <div class="scard"><h3>1) Smoke</h3>
+      <p>Preflight, tier 0, tier 1 and tier 2 (about 22 minutes in total). Tier 2 is headed.</p>
+      <div>${SMOKE_STAGES.map(([k, t]) => `<label><input type="checkbox" name="stage" value="${k}" ${FORM.stages.includes(k) ? 'checked' : ''}> ${t}</label>`).join('')}</div>
+      ${startRow('smoke')}
+      ${confirmBox('smoke', `<b>Tier 2 is headed</b> (real mouse and keyboard, if it stays ticked). Do not touch this computer and keep the screen unlocked until it ends. Deselect tier 2 to run headless only.`)}
+    </div>
+    <div class="scard"><h3>2) E2E</h3>
+      <p>The full suite: all module specs, API specs included${e2e.n ? ` (${e2e.n} spec files, about ${fmt(e2e.ms)} from earlier runs)` : ''}. Headed specs run first.</p>
+      <div><label>Only files matching <input type="text" id="e2eOnly" placeholder="optional, e.g. Lot-Management" maxlength="80" value="${esc(FORM.only)}"></label>
+      <label><input type="checkbox" id="e2eFix" ${FORM.e2eFix ? 'checked' : ''}> restore shared fixture groups if the fixture check finds them changed</label></div>
+      ${startRow('e2e')}
+      ${confirmBox('e2e', `<b>This is a long run and it includes headed specs</b> (print, template editor, Sentinel, Acrobat) that use the real mouse and keyboard. Do not touch this computer and keep the screen unlocked while they run. Nothing else may use the test account meanwhile.`)}
+    </div>
+    <div class="scard"><h3>3) API</h3>
+      <p>Only the API specs, on their own${api.n ? ` (${api.n} spec files, about ${fmt(api.ms)} from earlier runs)` : ''}. They are also part of the E2E run. Headless, you can keep working.</p>
+      <div><label><input type="checkbox" id="apiFix" ${FORM.apiFix ? 'checked' : ''}> restore shared fixture groups if the fixture check finds them changed</label></div>
+      ${startRow('api')}
+      ${confirmBox('api', `Headless; the fixture check runs first (about 45 s). Nothing else may use the test account meanwhile.`)}
+    </div>
+    <div style="text-align:right"><button data-close="1">Close</button></div>`;
+  if (!dlg.open) dlg.showModal();
+}
+$('startBtn').addEventListener('click', () => { pending = null; openStart(); });
+$('startDlg').addEventListener('click', async (e) => {
+  const t = e.target; if (!(t instanceof HTMLElement)) return;
+  if (t.dataset.close) { $('startDlg').close(); return; }
+  if (t.dataset.cancel) { pending = null; openStart(); return; }
+  if (t.dataset.start) { pending = t.dataset.start; openStart(); return; }
+  if (t.dataset.go) {
+    const id = t.dataset.go;
+    const body = id === 'smoke' ? { suite: 'smoke', stages: [...document.querySelectorAll('input[name=stage]:checked')].map((x) => x.value) }
+      : id === 'e2e' ? { suite: 'e2e', only: $('e2eOnly').value.trim(), fixFixtures: $('e2eFix').checked }
+      : { suite: 'api', fixFixtures: $('apiFix').checked };
+    t.disabled = true;
+    try {
+      const r = await post('/api/start', body);
+      pending = null; $('startDlg').close();
+      LAUNCH = { label: r.label, ts: Date.now(), prev: runId }; $('follow').checked = true; STATE.launching = true;
+      [1500, 4000, 8000, 14000].forEach((ms) => setTimeout(refreshRuns, ms));
+      schedule();
+    } catch (err) { pending = null; openStart('Not started: ' + err.message); }
+  }
+});
+$('pauseBtn').addEventListener('click', async () => {
+  const a = STATE.active; if (!a) return;
+  try { await post(a.pauseFlag ? '/api/resume' : '/api/pause'); } catch (err) { alert((a.pauseFlag ? 'Not resumed: ' : 'Not paused: ') + err.message); }
+  refreshRuns();
+});
+$('stopBtn').addEventListener('click', async () => {
+  const a = STATE.active; if (!a) return;
+  if (!confirm(`Stop the ${a.suite} run now (${a.id})?\n\nThe spec that is running is killed mid-test. It can leave test data or a shared fixture group changed (the next run's fixture check will report it), and headed specs can leave browser or BarTender windows open.`)) return;
+  try { await post('/api/stop'); } catch (err) { alert('Not stopped: ' + err.message); }
+  refreshRuns();
+});
+
+$('modules').addEventListener('click', (e) => { const tr = e.target.closest('tr.mod'); if (!tr) return; const m = tr.dataset.m; expanded.has(m) ? expanded.delete(m) : expanded.add(m); render(); });
+$('fails').addEventListener('click', (e) => { if (e.target.tagName === 'IMG') { $('zoom').querySelector('img').src = e.target.src; $('zoom').style.display = 'flex'; } });
+$('zoom').addEventListener('click', () => { $('zoom').style.display = 'none'; });
+
+(async () => {
+  S = fresh();
+  try { HISTORY = await (await fetch('/api/history')).json(); } catch { HISTORY = {}; }
+  await refreshRuns();
+  if (!runId) render();
+  setInterval(refreshRuns, 5000);
+  setInterval(render, 1000);
+})();
+</script>
+</body>
+</html>

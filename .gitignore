@@ -8,3 +8,7 @@ npm-debug.log*
 test-data/run-results/
 reports/smoke/runs/
 test-data/pr-fixture-passwords.json
+
+# local live-run-UI settings (host / optional login), see docs/agents/live-run-ui.md
+scripts/suite-ui.config.json
+reports/suite-ui-launches/

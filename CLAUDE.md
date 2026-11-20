@@ -17,6 +17,8 @@ the old `Desktop\MsBuild` copy was retired 2026-10-13.
   matches `*.spec.ts`).
 - `scripts/` — reusable helpers that aren't tests (form filling, screenshot/docx generation, field
   enumeration)
+  `node scripts/suite-ui.js` serves a live progress page for `suite-run.js` / `smoke-run.js` runs
+  (see `docs/agents/live-run-ui.md`).
 - `archive/` — one-off debug/exploration scripts and captured page dumps from past investigations,
   including the plain-script exploration chain that a given spec under `tests/` was consolidated
   from (see that spec's header comment for which archived scripts it supersedes)
